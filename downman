@@ -53,12 +53,5 @@ class TimeoutPing (Thread):
 if __name__ == '__main__':
     dm = DownMan ()
 
-    rurl = 'http://rapidshare.com/files/334455706/_DB__Bleach_253__B0770E96_.avi'
-
-    mfurl = 'http://www.megaupload.com/?f=DOOY34K7' # is a folder
-    mdurl = 'http://www.megaupload.com/?d=VMLSB6YD' # is a download
-
-    dm.add_download (rurl)
-
     dm.app.run ()
     sys.exit ()
