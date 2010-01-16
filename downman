@@ -1,0 +1,64 @@
+#!/usr/bin/env python
+
+import hosters
+from gui.application import Application
+from gui.mainwindow import MainWindow
+import sys
+import time
+from threading import Thread
+
+class DownMan:
+    downloads = []
+
+    def __init__ (self):
+        self.app = Application (self)
+        self.win = MainWindow (self)
+
+        self.updater = TimeoutPing (1, self.update_all)
+        self.updater.start ()
+
+    def add_download (self, url):
+        hoster = hosters.factory.create_host_object (url, self)
+
+        if hoster != None:
+            self.downloads.append (hoster)
+            self.win.add_download (hoster)
+
+            hoster.start ()
+        else:
+            print 'Cannot download from ', url
+
+    def remove_download (self, download):
+        pass
+
+    def update_download (self, download):
+        self.win.update_download (download)
+
+    def update_all (self):
+        for d in self.downloads:
+            self.update_download (d)
+
+class TimeoutPing (Thread):
+    def __init__ (self, interval, callback):
+        Thread.__init__ (self)
+        self.interval = interval
+        self.callback = callback
+
+    def run (self):
+        while True:
+            time.sleep (self.interval)
+            if self.callback () != None:
+                break
+
+if __name__ == '__main__':
+    dm = DownMan ()
+
+    rurl = 'http://rapidshare.com/files/334455706/_DB__Bleach_253__B0770E96_.avi'
+
+    mfurl = 'http://www.megaupload.com/?f=DOOY34K7' # is a folder
+    mdurl = 'http://www.megaupload.com/?d=VMLSB6YD' # is a download
+
+    dm.add_download (rurl)
+
+    dm.app.run ()
+    sys.exit ()
