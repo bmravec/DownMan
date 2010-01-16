@@ -1,10 +1,22 @@
 import gtk
 
+from mainwindow import MainWindow
+from downloadview import DownloadView
+
 gtk.gdk.threads_init ()
 
 class Application:
     def __init__ (self, downman):
         self.downman = downman
+
+        self.win = MainWindow (self.downman)
+        self.dv = DownloadView (self.downman)
+
+        scrolled = gtk.ScrolledWindow ()
+        scrolled.add (self.dv)
+        scrolled.set_policy (gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        scrolled.show_all ()
+        self.win.pack_widget (scrolled)
 
     def run (self):
         gtk.main ()
@@ -50,3 +62,12 @@ class Application:
 
     def prompt_entry_activated (self, entry, dialog):
         dialog.response (gtk.RESPONSE_OK)
+
+    def add_download (self, download):
+        self.dv.add_download (download)
+
+    def update_download (self, download):
+        self.dv.update_download (download)
+
+    def remove_download (self, download):
+        self.dv.remove_download (download)

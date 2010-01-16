@@ -12,7 +12,6 @@ class DownMan:
 
     def __init__ (self):
         self.app = Application (self)
-        self.win = MainWindow (self)
 
         self.updater = TimeoutPing (1, self.update_all)
         self.updater.start ()
