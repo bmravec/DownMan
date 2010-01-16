@@ -2,6 +2,7 @@ import gtk
 
 from mainwindow import MainWindow
 from downloadview import DownloadView
+from toolbar import Toolbar
 
 gtk.gdk.threads_init ()
 
@@ -9,9 +10,13 @@ class Application:
     def __init__ (self, downman):
         self.downman = downman
 
-        self.win = MainWindow (self.downman)
-        self.dv = DownloadView (self.downman)
+        self.win = MainWindow (self)
 
+        self.toolbar = Toolbar (self)
+        self.toolbar.show_all ()
+        self.win.pack_widget (self.toolbar, False)
+
+        self.dv = DownloadView (self)
         scrolled = gtk.ScrolledWindow ()
         scrolled.add (self.dv)
         scrolled.set_policy (gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)

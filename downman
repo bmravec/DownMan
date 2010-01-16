@@ -1,11 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/python
+
+import sys
+import time
+from threading import Thread
+import re
 
 import hosters
 from gui.application import Application
 from gui.mainwindow import MainWindow
-import sys
-import time
-from threading import Thread
 
 class DownMan:
     downloads = []
@@ -16,12 +18,17 @@ class DownMan:
         self.updater = TimeoutPing (1, self.update_all)
         self.updater.start ()
 
+    def parse_download (self, text):
+        m = re.findall ('((https?|ftps?)://[^\s]*)', text)
+        for i in m:
+            self.add_download (i[0])
+
     def add_download (self, url):
         hoster = hosters.factory.create_host_object (url, self)
 
         if hoster != None:
             self.downloads.append (hoster)
-            self.win.add_download (hoster)
+            self.app.add_download (hoster)
 
             hoster.start ()
         else:
@@ -31,7 +38,7 @@ class DownMan:
         pass
 
     def update_download (self, download):
-        self.win.update_download (download)
+        self.app.update_download (download)
 
     def update_all (self):
         for d in self.downloads:
