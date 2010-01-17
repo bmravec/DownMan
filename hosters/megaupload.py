@@ -3,7 +3,7 @@ import re
 from tempfile import TempFile
 from writefile import WriteFile
 from timeout import Timeout
-from generichost import GenericHost
+from generichost import *
 
 class Megaupload (GenericHost):
     def __init__ (self, url, dm):
@@ -62,6 +62,7 @@ class Megaupload (GenericHost):
         self.tfile.start ()
 
         self.status = 'Downloading...'
+        self.state = STATE_DOWNLOADING
 
 import hosters
 hosters.factory.add_hoster (Megaupload, 'http:\/\/(www\.)?megaupload\.com\/\?d=')

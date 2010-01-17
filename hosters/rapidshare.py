@@ -3,7 +3,7 @@ import re
 from tempfile import TempFile
 from writefile import WriteFile
 from timeout import Timeout
-from generichost import GenericHost
+from generichost import *
 
 class Rapidshare (GenericHost):
     def __init__ (self, url, dm):
@@ -28,15 +28,19 @@ class Rapidshare (GenericHost):
     def handle_download_limit (self, match):
         m2 = re.search ('Or try again in about (\d+) minutes', self.tfile.contents)
         self.status = 'Download limit, try again in %s minutes' % (m2.group (1))
+        self.state = STATE_WAITING
 
     def handle_already_downloading (self, match):
         self.status = 'You are already downloading %s' % (match.group (1))
+        self.state = STATE_WAITING
 
     def handle_no_slots (self, match):
         self.status = 'No download slots available'
+        self.state = STATE_WAITING
 
     def handle_no_slots_count (self, match):
         self.status = 'No download slots available, try again in %s minutes' % (match.group (1))
+        self.state = STATE_WAITING
 
     def handle_download (self, match):
         m = re.search ('var c=(\d+)', self.tfile.contents)
@@ -47,6 +51,7 @@ class Rapidshare (GenericHost):
 
         num = int (m.group (1))
         self.timeout = Timeout (num, self.start_download, self.print_progress)
+        self.state = STATE_WAITING
 
     def start_download (self):
         m = re.search ('([^\/]*)$', self.furl)
@@ -56,6 +61,9 @@ class Rapidshare (GenericHost):
         self.tfile.completed_cb = self.download_completed
         self.tfile.progress_cb = self.download_progress
         self.tfile.start ()
+
+        self.status = 'Downloading...'
+        self.state = STATE_WAITING
 
 import hosters
 hosters.factory.add_hoster (Rapidshare, 'http:\/\/rapidshare\.com')

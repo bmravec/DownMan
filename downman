@@ -44,6 +44,10 @@ class DownMan:
         for d in self.downloads:
             self.update_download (d)
 
+    def update_queue (self):
+        for d in self.downloads:
+            d.start ()
+
 class TimeoutPing (Thread):
     def __init__ (self, interval, callback):
         Thread.__init__ (self)
