@@ -4,12 +4,13 @@ import pycurl
 class TempFile (Thread):
     completed_cb = None
 
-    def __init__ (self, url, post_data=None, referer=None):
+    def __init__ (self, url, post_data=None, referer=None, headers=None):
         Thread.__init__ (self)
         self.url = url
         self.post_data = post_data
         self.referer = referer
         self.contents = ''
+        self.headers = headers
 
     def run (self):
         c = pycurl.Curl ()
@@ -22,6 +23,9 @@ class TempFile (Thread):
 
         if self.referer != None:
             c.setopt (pycurl.REFERER, self.referer)
+
+        if self.headers != None:
+            c.setopt (pycurl.HTTPHEADER, self.headers)
 
         c.perform ()
         c.close ()

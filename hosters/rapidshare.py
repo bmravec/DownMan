@@ -21,9 +21,24 @@ class Rapidshare (GenericHost):
     def handle_start_page (self, match):
         self.aurl = match.group (1)
 
-        self.tfile = TempFile (self.aurl, "dl.start=Free", self.url)
-        self.tfile.completed_cb = self.stage_download_completed
-        self.tfile.start ()
+        m = re.search ('<p class="downloadlink">[^<]*?<font [^>]*?>\| (\d+) (KB|MB|GB)</font></p>', self.tfile.contents)
+
+        self.total = int (m.group (1))
+        if m.group (2) == 'KB':
+            self.total = self.total * 1024
+        if m.group (2) == 'MB':
+            self.total = self.total * 1024 * 1024
+        if m.group (2) == 'GB':
+            self.total = self.total * 1024 * 1024 * 1024
+
+        self.name = re.search ('([^\/]*)$', self.url).group (1)
+
+        if self.mode == MODE_DOWNLOAD:
+            self.tfile = TempFile (self.aurl, "dl.start=Free", self.url)
+            self.tfile.completed_cb = self.stage_download_completed
+            self.tfile.start ()
+        else:
+            self.state == STATE_PAUSED
 
     def handle_download_limit (self, match):
         m2 = re.search ('Or try again in about (\d+) minutes', self.tfile.contents)

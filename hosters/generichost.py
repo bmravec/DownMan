@@ -13,19 +13,32 @@ STATE_WAITING = 5
 STATE_HOLDING = 6
 STATE_DONE = 7
 
+MODE_INFO = 0
+MODE_DOWNLOAD = 1
+
 class GenericHost:
     status = ''
     state = STATE_QUEUED
+    mode = MODE_DOWNLOAD
 
     def __init__ (self, url, dm):
         self.url = url
         self.dm = dm
         self.downloaded = 0
         self.total = 0
+        self.name = url
 
         self.case_handlers = []
 
-    def start (self):
+    def start (self, mode=MODE_INFO):
+        if mode == MODE_INFO:
+            self.mode = MODE_INFO
+
+            self.tfile = TempFile (self.url)
+            self.tfile.completed_cb = self.stage_download_completed
+            self.tfile.start ()
+            return
+
         if self.state == STATE_PAUSED or self.state == STATE_DISABLED or self.state == STATE_DONE:
             return
 

@@ -12,7 +12,6 @@ class Megaupload (GenericHost):
         self.case_handlers = [
             ('<FORM method="POST" id="captchaform">', self.handle_start_page),
             ('count=(\d+);', self.handle_correct_captcha),
-
         ]
 
     def stage_captcha_download_completed (self, tfile):
@@ -27,22 +26,37 @@ class Megaupload (GenericHost):
         else:
             self.status = 'Invalid Code'
 
+    def handle_info_page (self, tfile):
+        self.total = int (re.search ('s=(\d+)', self.tfile.contents).group (1))
+        self.name = re.search ('n=(.+)', self.tfile.contents).group (1)
+
+        self.state = STATE_PAUSED
+
     def handle_start_page (self, match):
-        ccstr = '<INPUT type="hidden" name="captchacode" value="(.*?)">'
-        m = re.search (ccstr, self.tfile.contents)
-        self.captchacode = m.group (1)
+        if self.mode == MODE_INFO:
+            fileid = re.search ('\?d=([A-Za-z0-9]+)', self.url).group (1)
+            postdata = 'id0=%s' % (fileid)
 
-        mvstr = '<INPUT type="hidden" name="megavar" value="(.*?)">'
-        m = re.search (mvstr, self.tfile.contents)
-        self.megavar = m.group (1)
+            self.tfile = TempFile ('http://www.megaupload.com/mgr_linkcheck.php', postdata, headers=['TE: trailers', 'Connection: TE'])
+            self.tfile.completed_cb = self.handle_info_page
+            self.tfile.start ()
 
-        imgstr = '<TD>Enter this </TD>\s*?<TD width="100" align="center" height="40"><img src="([^"]*?)" border="0" alt=""></TD>\s*?<TD> here:</TD>'
-        m = re.search (imgstr, self.tfile.contents)
-        self.iurl = m.group (1)
+        else:
+            ccstr = '<INPUT type="hidden" name="captchacode" value="(.*?)">'
+            m = re.search (ccstr, self.tfile.contents)
+            self.captchacode = m.group (1)
 
-        self.tfile = TempFile (self.iurl)
-        self.tfile.completed_cb = self.stage_captcha_download_completed
-        self.tfile.start ()
+            mvstr = '<INPUT type="hidden" name="megavar" value="(.*?)">'
+            m = re.search (mvstr, self.tfile.contents)
+            self.megavar = m.group (1)
+
+            imgstr = '<TD>Enter this </TD>\s*?<TD width="100" align="center" height="40"><img src="([^"]*?)" border="0" alt=""></TD>\s*?<TD> here:</TD>'
+            m = re.search (imgstr, self.tfile.contents)
+            self.iurl = m.group (1)
+
+            self.tfile = TempFile (self.iurl)
+            self.tfile.completed_cb = self.stage_captcha_download_completed
+            self.tfile.start ()
 
     def handle_correct_captcha (self, match):
         num = int (match.group (1))
