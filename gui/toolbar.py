@@ -11,6 +11,24 @@ class Toolbar (gtk.Toolbar):
         self.add_button.connect ('clicked', self.add_clicked)
         self.insert (self.add_button, -1)
 
+        self.remove_button = gtk.ToolButton (gtk.STOCK_REMOVE)
+        self.remove_button.set_tooltip_text ('Remove Selected')
+        self.remove_button.connect ('clicked', self.remove_clicked)
+        self.insert (self.remove_button, -1)
+
+        sep = gtk.SeparatorToolItem ()
+        self.insert (sep, -1)
+
+        self.start_button = gtk.ToolButton (gtk.STOCK_MEDIA_PLAY)
+        self.start_button.set_tooltip_text ('Start')
+        self.start_button.connect ('clicked', self.start_clicked)
+        self.insert (self.start_button, -1)
+
+        self.pause_button = gtk.ToolButton (gtk.STOCK_MEDIA_PAUSE)
+        self.pause_button.set_tooltip_text ('Pause')
+        self.pause_button.connect ('clicked', self.pause_clicked)
+        self.insert (self.pause_button, -1)
+
     def add_clicked (self, item):
         textview = gtk.TextView ()
 
@@ -34,3 +52,14 @@ class Toolbar (gtk.Toolbar):
             self.app.downman.parse_download (text)
 
         dialog.destroy ()
+
+    def remove_clicked (self, item):
+        ds = self.app.dv.get_selected ()
+        for d in ds:
+            self.app.downman.remove_download (d)
+
+    def start_clicked (self, item):
+        print 'Start Clicked'
+
+    def pause_clicked (self, item):
+        print 'Pause Clicked'

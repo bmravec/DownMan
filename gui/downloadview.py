@@ -9,6 +9,8 @@ class DownloadView (gtk.TreeView):
         self.store = gtk.TreeStore (object, str, str, int, int)
         self.set_model (self.store)
 
+        self.get_selection ().set_mode (gtk.SELECTION_MULTIPLE)
+
         cell = gtk.CellRendererText ()
         column = gtk.TreeViewColumn ('Name', cell, text=1)
         column.set_expand (True)
@@ -25,7 +27,7 @@ class DownloadView (gtk.TreeView):
         self.append_column (column)
 
     def add_download (self, download):
-        iter = self.store.append (None, row=(download, '', '', 0, 0))
+        iter = self.store.append (None, row=(download, download.name, '', download.downloaded, download.total))
 
     def update_download (self, download):
         for d in self.store:
@@ -38,5 +40,15 @@ class DownloadView (gtk.TreeView):
     def remove_download (self, download):
         for d in self.store:
             if d[0] == download:
-                self.store.remove (d)
+                self.store.remove (d.iter)
                 return
+
+    def get_selected (self):
+        ds = []
+
+        model, rows = self.get_selection ().get_selected_rows ()
+
+        for row in rows:
+            ds.append (model[row][0])
+
+        return ds
