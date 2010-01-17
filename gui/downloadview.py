@@ -30,7 +30,7 @@ class DownloadView (gtk.TreeView):
     def update_download (self, download):
         for d in self.store:
             if d[0] == download:
-                d[1] = download.url
+                d[1] = download.name
                 d[2] = download.status
                 d[3] = download.downloaded
                 d[4] = download.total
