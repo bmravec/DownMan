@@ -82,3 +82,7 @@ class GenericHost:
 
     def print_progress (self, num):
         self.status = 'Starting in %d seconds' % (num)
+
+    def close (self):
+        if self.tfile:
+            self.tfile.close ()

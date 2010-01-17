@@ -35,7 +35,10 @@ class DownMan:
             print 'Cannot download from ', url
 
     def remove_download (self, download):
-        pass
+        self.app.remove_download (download)
+        self.downloads.remove (download)
+
+        download.close ()
 
     def update_download (self, download):
         self.app.update_download (download)

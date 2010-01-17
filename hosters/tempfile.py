@@ -13,25 +13,28 @@ class TempFile (Thread):
         self.headers = headers
 
     def run (self):
-        c = pycurl.Curl ()
-        c.setopt (c.URL, self.url)
-        c.setopt (c.WRITEFUNCTION, self.write_cb)
+        self.c = pycurl.Curl ()
+        self.c.setopt (pycurl.URL, self.url)
+        self.c.setopt (pycurl.WRITEFUNCTION, self.write_cb)
 
         if self.post_data != None:
-            c.setopt (pycurl.POSTFIELDS, self.post_data)
-            c.setopt (pycurl.POST, 1)
+            self.c.setopt (pycurl.POSTFIELDS, self.post_data)
+            self.c.setopt (pycurl.POST, 1)
 
         if self.referer != None:
-            c.setopt (pycurl.REFERER, self.referer)
+            self.c.setopt (pycurl.REFERER, self.referer)
 
         if self.headers != None:
-            c.setopt (pycurl.HTTPHEADER, self.headers)
+            self.c.setopt (pycurl.HTTPHEADER, self.headers)
 
-        c.perform ()
-        c.close ()
+        self.c.perform ()
+        self.c.close ()
 
         if self.completed_cb != None:
             self.completed_cb (self)
 
     def write_cb (self, buf):
         self.contents = self.contents + buf
+
+    def close (self):
+        self.c.close ()
