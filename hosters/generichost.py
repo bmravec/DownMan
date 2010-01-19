@@ -1,3 +1,23 @@
+#
+#       generichost.py
+#
+#       Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
+#
+#       This program is free software; you can redistribute it and/or modify
+#       it under the terms of the GNU General Public License as published by
+#       the Free Software Foundation; either version 2 of the License, or
+#       (at your option) any later version.
+#
+#       This program is distributed in the hope that it will be useful,
+#       but WITHOUT ANY WARRANTY; without even the implied warranty of
+#       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#       GNU General Public License for more details.
+#
+#       You should have received a copy of the GNU General Public License
+#       along with this program; if not, write to the Free Software
+#       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#       MA 02110-1301, USA.
+
 import re
 
 from tempfile import TempFile
@@ -27,16 +47,14 @@ class GenericHost:
         self.downloaded = 0
         self.total = 0
         self.name = url
+        self.proto = 'http'
 
         self.case_handlers = []
 
-    def start (self, mode=MODE_INFO):
+    def start (self, mode=MODE_DOWNLOAD):
         if mode == MODE_INFO:
             self.mode = MODE_INFO
-
-            self.tfile = TempFile (self.url)
-            self.tfile.completed_cb = self.stage_download_completed
-            self.tfile.start ()
+            self.start_mode_info ()
             return
 
         if self.state == STATE_PAUSED or self.state == STATE_DISABLED or self.state == STATE_DONE:
@@ -55,7 +73,14 @@ class GenericHost:
 
         self.status = 'Connecting...'
         self.state = STATE_CONNECTING
+        self.start_mode_download ()
 
+    def start_mode_info (self):
+        self.tfile = TempFile (self.url)
+        self.tfile.completed_cb = self.stage_download_completed
+        self.tfile.start ()
+
+    def start_mode_download (self):
         self.tfile = TempFile (self.url)
         self.tfile.completed_cb = self.stage_download_completed
         self.tfile.start ()
@@ -64,12 +89,7 @@ class GenericHost:
         for handler in self.case_handlers:
             m = re.search (handler[0], self.tfile.contents)
             if m != None:
-#                print 'Matched:', handler[0]
                 handler[1] (m)
-
-#        f = open ('output', 'wb')
-#        f.write (self.tfile.contents)
-#        f.close ()
 
     def download_completed (self, wfile):
         self.status = 'Download Complete'
