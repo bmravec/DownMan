@@ -20,13 +20,14 @@
 
 import gtk
 
+import gui.toolbar
+
 from addwindow import AddWindow
 
-class Toolbar (gtk.Toolbar):
-    def __init__ (self, app):
+class Toolbar (gtk.Toolbar, gui.toolbar.Toolbar):
+    def __init__ (self, downman):
         gtk.Toolbar.__init__ (self)
-
-        self.app = app
+        gui.toolbar.Toolbar.__init__ (self, downman)
 
         self.add_button = gtk.ToolButton (gtk.STOCK_ADD)
         self.add_button.set_tooltip_text ('Add URL')
@@ -46,13 +47,13 @@ class Toolbar (gtk.Toolbar):
         self.start_button.connect ('clicked', self.start_clicked)
         self.insert (self.start_button, -1)
 
-        self.pause_button = gtk.ToolButton (gtk.STOCK_MEDIA_PAUSE)
-        self.pause_button.set_tooltip_text ('Pause')
-        self.pause_button.connect ('clicked', self.pause_clicked)
-        self.insert (self.pause_button, -1)
+        self.stop_button = gtk.ToolButton (gtk.STOCK_MEDIA_STOP)
+        self.stop_button.set_tooltip_text ('Stop')
+        self.stop_button.connect ('clicked', self.stop_clicked)
+        self.insert (self.stop_button, -1)
 
     def add_clicked (self, item):
-        awin = AddWindow ()
+        awin = AddWindow (self.app)
         rid = awin.run ()
 
         awin.destroy ()
@@ -83,10 +84,16 @@ class Toolbar (gtk.Toolbar):
     def remove_clicked (self, item):
         ds = self.app.dv.get_selected ()
         for d in ds:
-            self.app.downman.remove_download (d)
+            self.downman.remove_download (d)
 
     def start_clicked (self, item):
         print 'Start Clicked'
 
-    def pause_clicked (self, item):
-        print 'Pause Clicked'
+    def stop_clicked (self, item):
+        print 'Stop Clicked'
+
+    def set_start_enabled (self, val):
+        self.start_button.set_sensitive (val)
+
+    def set_stop_enabled (self, val):
+        self.stop_button.set_sensitive (val)
