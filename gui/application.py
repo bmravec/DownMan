@@ -18,81 +18,35 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-import gtk
-
-from mainwindow import MainWindow
-from downloadview import DownloadView
-from toolbar import Toolbar
-
-gtk.gdk.threads_init ()
-
 class Application:
+    """Main gui class.
+
+    The Application class handles all basic gui operation.  It handles the
+    application loop and quiting that, and also provides any extra functions
+    that do not fit into any of the other gui classes
+    """
     def __init__ (self, downman):
         self.downman = downman
 
-        self.win = MainWindow (self)
-
-        self.toolbar = Toolbar (self)
-        self.toolbar.show_all ()
-        self.win.pack_widget (self.toolbar, False)
-
-        self.dv = DownloadView (self)
-        scrolled = gtk.ScrolledWindow ()
-        scrolled.add (self.dv)
-        scrolled.set_policy (gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        scrolled.show_all ()
-        self.win.pack_widget (scrolled)
-
     def run (self):
-        gtk.main ()
+        """Start main application loop.
+        """
+        print 'Application.run (): stub'
 
     def quit (self):
-        gtk.main_quit ()
+        """Stop main application loop.
+        """
+        print 'Application.quit (): stub'
 
     def prompt_for_captcha (self, imagedata):
-        code = None
+        """Prompt the user for a captcha string
 
-        gtk.gdk.threads_enter ()
+        Takes the raw data of an image as a parameter
+        The application class will display that image to the user and prompt
+        them to enter the code.  The application class will then return either
+        the entered code when the user hit ok, or None when the user canceled
+        the operation.
+        """
+        print 'Application.prompt_for_captcha (imagedata): stub'
 
-        pbloader = gtk.gdk.PixbufLoader ()
-        pbloader.write (imagedata)
-        pbloader.close ()
-
-        pixbuf = pbloader.get_pixbuf ()
-
-        img = gtk.image_new_from_pixbuf (pixbuf)
-
-        entry = gtk.Entry ()
-
-        dialog = gtk.Dialog ('Enter Captcha Code...',
-            buttons=('Cancel', gtk.RESPONSE_CANCEL, 'Ok', gtk.RESPONSE_OK))
-
-        entry.connect ('activate', self.prompt_entry_activated, dialog)
-
-        ca = dialog.get_content_area ()
-        ca.pack_start (img)
-        ca.pack_start (entry)
-        ca.show_all ()
-
-        rid = dialog.run ()
-
-        if rid == gtk.RESPONSE_OK:
-            code = entry.get_text ()
-
-        dialog.destroy ()
-
-        gtk.gdk.threads_leave ()
-
-        return code
-
-    def prompt_entry_activated (self, entry, dialog):
-        dialog.response (gtk.RESPONSE_OK)
-
-    def add_download (self, download):
-        self.dv.add_download (download)
-
-    def update_download (self, download):
-        self.dv.update_download (download)
-
-    def remove_download (self, download):
-        self.dv.remove_download (download)
+        return None
