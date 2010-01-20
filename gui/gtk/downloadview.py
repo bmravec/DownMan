@@ -20,11 +20,12 @@
 
 import gtk
 
-class DownloadView (gtk.TreeView):
-    def __init__ (self, app):
-        gtk.TreeView.__init__ (self)
+import gui.downloadview
 
-        self.app = app
+class DownloadView (gtk.TreeView, gui.downloadview.DownloadView):
+    def __init__ (self, downman):
+        gtk.TreeView.__init__ (self)
+        gui.downloadview.DownloadView.__init__ (self, downman)
 
         self.store = gtk.TreeStore (object, str, str, int, int)
         self.set_model (self.store)
