@@ -19,8 +19,8 @@
 #       MA 02110-1301, USA.
 
 class DownloadView:
-    def __init__ (self, downman):
-        self.downman = downman
+    def __init__ (self, downloadlist):
+        self.downloadlist = downloadlist
 
     def add_download (self, download):
         print 'DownloadView.add_download (download): stub'

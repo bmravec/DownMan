@@ -18,7 +18,7 @@
 #       along with this program; if not, write to the Free Software
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
-
+"""
 import sys
 import time
 from threading import Thread
@@ -37,6 +37,36 @@ class DownMan:
 
         self.updater = TimeoutPing (1, self.update_all)
         self.updater.start ()
+
+    def create_downloads (self, text):
+        ds = []
+
+        if isinstance (text, str):
+            m = re.findall ('((https?|ftps?)://[^\s]*)', text)
+
+            for i in m:
+                hoster = hosters.download_factory.create_host_object (i[0], self)
+                if hoster != None:
+                    ds.append (hoster)
+                    continue
+
+                decryptor = hosters.decryptor_factory.create_host_object (i[0], self)
+                if decryptor != None:
+                    ds.append (decryptor)
+                    continue
+        else:
+            for i in text:
+                hoster = hosters.download_factory.create_host_object (i, self)
+                if hoster != None:
+                    ds.append (hoster)
+                    continue
+
+                decryptor = hosters.decryptor_factory.create_host_object (i, self)
+                if decryptor != None:
+                    ds.append (decryptor)
+                    continue
+
+        return ds
 
     def parse_download (self, text):
         m = re.findall ('((https?|ftps?)://[^\s]*)', text)
@@ -95,9 +125,12 @@ class TimeoutPing (Thread):
             time.sleep (self.interval)
             if self.callback () != None:
                 break
+"""
+import sys
+from downman.downman import DownMan
 
 if __name__ == '__main__':
     dm = DownMan ()
 
-    dm.app.run ()
+    dm.application.run ()
     sys.exit ()

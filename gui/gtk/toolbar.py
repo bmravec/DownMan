@@ -52,6 +52,8 @@ class Toolbar (gtk.Toolbar, gui.toolbar.Toolbar):
         self.stop_button.connect ('clicked', self.stop_clicked)
         self.insert (self.stop_button, -1)
 
+        self.show_all ()
+
     def add_clicked (self, item):
         awin = AddWindow (self.app)
         rid = awin.run ()

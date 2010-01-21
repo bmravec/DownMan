@@ -23,9 +23,9 @@ import gtk
 import gui.downloadview
 
 class DownloadView (gtk.TreeView, gui.downloadview.DownloadView):
-    def __init__ (self, downman):
+    def __init__ (self, downloadlist):
         gtk.TreeView.__init__ (self)
-        gui.downloadview.DownloadView.__init__ (self, downman)
+        gui.downloadview.DownloadView.__init__ (self, downloadlist)
 
         self.store = gtk.TreeStore (object, str, str, int, int)
         self.set_model (self.store)
@@ -46,6 +46,8 @@ class DownloadView (gtk.TreeView, gui.downloadview.DownloadView):
         cell = gtk.CellRendererText ()
         column = gtk.TreeViewColumn ('Total', cell, text=4)
         self.append_column (column)
+
+        self.show_all ()
 
     def add_download (self, download):
         iter = self.store.append (None, row=(download, download.name, '', download.downloaded, download.total))

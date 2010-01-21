@@ -36,45 +36,46 @@ class MainWindow (gtk.Window, gui.mainwindow.MainWindow):
         self.add (self.table)
 
         self.notebook = gtk.Notebook ()
-        self.table.attach (self.notebook, 0, 0, 2, 2)
+        self.table.attach (self.notebook, 0, 1, 2, 3)
 
-        self.downloadview = gtk.Label ('')
-        self.stagingview = gtk.Label ('')
+        self.downloadview_sw = gtk.ScrolledWindow ()
+        self.stagingview_sw = gtk.ScrolledWindow ()
 
-        self.notebook.insert_page (self.downloadview, gtk.Label ('Downloads'), 0)
-        self.notebook.insert_page (self.stagingview, gtk.Label ('Staging'), 1)
+        self.downloadview_sw.set_policy (gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        self.stagingview_sw.set_policy (gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+
+        self.notebook.insert_page (self.downloadview_sw, gtk.Label ('Downloads'), 0)
+        self.notebook.insert_page (self.stagingview_sw, gtk.Label ('Staging'), 1)
 
         self.show_all ()
 
     def destroy (self, widget):
-        self.app.quit ()
+        self.downman.application.quit ()
 
     def set_toolbar (self, toolbar):
         if self.toolbar != None:
             self.table.remove (self.toolbar)
 
-        self.table.attach (toolbar, 0, 0, 1, 1)
+        self.table.attach (toolbar, 0, 1, 1, 2, yoptions=0)
         self.toolbar = toolbar
 
     def set_downloadview (self, downloadview):
         if self.downloadview != None:
-            oldwidget = self.notebook.get_nth_page (0)
-            self.notebook.remove (oldwidget)
+            self.downloadview_sw.remove (self.downloadview)
 
-        self.notebook.insert_page (downloadview, gtk.Label ('Downloads'), 0)
+        self.downloadview_sw.add (downloadview)
         self.downloadview = downloadview
 
     def set_stagingview (self, stagingview):
         if self.stagingview != None:
-            oldwidget = self.notebook.get_nth_page (1)
-            self.notebook.remove (oldwidget)
+            self.stagingview_sw.remove (self.stagingview)
 
-        self.notebook_insert_page (stagingview, gtk.Label ('Staging'), 1)
+        self.stagingview_sw.add (stagingview)
         self.stagingview = stagingview
 
     def set_menubar (self, menubar):
         if self.menubar != None:
             self.table.remove (self.menubar)
 
-        self.table.attach (menubar, 0, 0, 0, 0)
+        self.table.attach (menubar, 0, 1, 0, 1, yoptions=0)
         self.menubar = menubar
