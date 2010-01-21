@@ -19,5 +19,24 @@
 #       MA 02110-1301, USA.
 
 class StagingList:
+    downloads = []
+    view = None
+
     def __init__ (self, downman):
-        pass
+        self.downman = downman
+
+    def add_download (self, download):
+        self.downloads.append (download)
+
+        if self.view != None:
+            self.view.add_download (download)
+
+    def remove_download (self, download):
+        self.downloads.remove (download)
+
+        if self.view != None:
+            self.view.remove_download (download)
+
+    def update_download (self, download):
+        if self.view != None:
+            self.view.update_download (download)

@@ -21,6 +21,7 @@
 class StagingView:
     def __init__ (self, staginglist):
         self.staginglist = staginglist
+        staginglist.view = self
 
     def add_download (self, download):
         print 'DownloadView.add_download (download): stub'
