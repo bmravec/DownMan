@@ -50,3 +50,25 @@ class Application:
         print 'Application.prompt_for_captcha (imagedata): stub'
 
         return None
+
+    def prompt_for_urls (self):
+        """Prompt the user for urls
+
+        Prompts the user for a list of urls.  The function will either return
+        a string containing all the urls or None to indicate that the user
+        canceled the input box
+        """
+        print 'Application.prompt_for_urls (): stub'
+
+        return None
+
+    def prompt_for_files (self):
+        """Prompt the user for filess
+
+        Prompts the user for one or more files.  The function will either return
+        an array containing all the file paths or None to indicate that the user
+        canceled the input box
+        """
+        print 'Application.prompt_for_files (): stub'
+
+        return None

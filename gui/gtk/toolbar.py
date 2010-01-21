@@ -29,10 +29,15 @@ class Toolbar (gtk.Toolbar, gui.toolbar.Toolbar):
         gtk.Toolbar.__init__ (self)
         gui.toolbar.Toolbar.__init__ (self, downman)
 
-        self.add_button = gtk.ToolButton (gtk.STOCK_ADD)
-        self.add_button.set_tooltip_text ('Add URL')
-        self.add_button.connect ('clicked', self.add_clicked)
-        self.insert (self.add_button, -1)
+        self.add_url_button = gtk.ToolButton (gtk.STOCK_NETWORK)
+        self.add_url_button.set_tooltip_text ('Add URL')
+        self.add_url_button.connect ('clicked', self.add_url_clicked)
+        self.insert (self.add_url_button, -1)
+
+        self.add_file_button = gtk.ToolButton (gtk.STOCK_OPEN)
+        self.add_file_button.set_tooltip_text ('Add File')
+        self.add_file_button.connect ('clicked', self.add_file_clicked)
+        self.insert (self.add_file_button, -1)
 
         self.remove_button = gtk.ToolButton (gtk.STOCK_REMOVE)
         self.remove_button.set_tooltip_text ('Remove Selected')
@@ -54,45 +59,20 @@ class Toolbar (gtk.Toolbar, gui.toolbar.Toolbar):
 
         self.show_all ()
 
-    def add_clicked (self, item):
-        awin = AddWindow (self.app)
-        rid = awin.run ()
+    def add_url_clicked (self, item):
+        self.downman.on_add_url ()
 
-        awin.destroy ()
-        """
-        textview = gtk.TextView ()
+    def add_file_clicked (self, item):
+        self.downman.on_add_file ()
 
-        dialog = gtk.Dialog ('Add URLs...',
-            buttons=('Cancel', gtk.RESPONSE_CANCEL, 'Ok', gtk.RESPONSE_OK))
-
-        ca = dialog.get_content_area ()
-        ca.pack_start (gtk.Label ("Enter URLs below:"), expand=False)
-
-        sw = gtk.ScrolledWindow ()
-        sw.set_policy (gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sw.add (textview)
-        ca.pack_start (sw)
-        ca.show_all ()
-
-        rid = dialog.run ()
-
-        if rid == gtk.RESPONSE_OK:
-            textbuf = textview.get_buffer ()
-            text = textbuf.get_text (textbuf.get_start_iter (), textbuf.get_end_iter ())
-            self.app.downman.parse_download (text)
-
-        dialog.destroy ()
-        """
     def remove_clicked (self, item):
-        ds = self.app.dv.get_selected ()
-        for d in ds:
-            self.downman.remove_download (d)
+        self.downman.on_remove ()
 
     def start_clicked (self, item):
-        print 'Start Clicked'
+        self.downman.on_start ()
 
     def stop_clicked (self, item):
-        print 'Stop Clicked'
+        self.downman.on_stop ()
 
     def set_start_enabled (self, val):
         self.start_button.set_sensitive (val)

@@ -74,11 +74,26 @@ class Application (gui.application.Application):
     def prompt_entry_activated (self, entry, dialog):
         dialog.response (gtk.RESPONSE_OK)
 
-    def add_download (self, download):
-        self.dv.add_download (download)
+    def prompt_for_urls (self):
+        text = None
 
-    def update_download (self, download):
-        self.dv.update_download (download)
+        textview = gtk.TextView ()
+        dialog = gtk.Dialog ('Add URLs...',
+            buttons=('Cancel', gtk.RESPONSE_CANCEL, 'Ok', gtk.RESPONSE_OK))
 
-    def remove_download (self, download):
-        self.dv.remove_download (download)
+        ca = dialog.get_content_area ()
+        ca.pack_start (gtk.Label ('Enter URLs below:'), expand=False)
+
+        sw = gtk.ScrolledWindow ()
+        sw.set_policy (gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        sw.add (textview)
+        ca.pack_start (sw)
+        ca.show_all ()
+
+        if dialog.run () == gtk.RESPONSE_OK:
+            textbuf = textview.get_buffer ()
+            text = textbuf.get_text (textbuf.get_start_iter (), textbuf.get_end_iter ())
+
+        dialog.destroy ()
+
+        return text

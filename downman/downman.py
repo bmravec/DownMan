@@ -18,7 +18,10 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
+import re
+
 import gui
+import hosters
 
 from downloadlist import DownloadList
 from staginglist import StagingList
@@ -126,3 +129,34 @@ class DownMan:
     def update_queue (self):
         for d in self.downloads:
             d.start ()
+
+    def on_add_url (self):
+        text = self.application.prompt_for_urls ()
+
+        if text == None:
+            return
+
+        m = re.findall ('((https?|ftps?)://[^\s]*)', text)
+
+        for i in m:
+            hoster = hosters.download_factory.create_host_object (i[0], self)
+            if hoster != None:
+                self.staginglist.add_download (hoster)
+                continue
+
+            decryptor = hosters.decryptor_factory.create_host_object (i[0], self)
+            if decryptor != None:
+                self.staginglist.add_download (decryptor)
+                continue
+
+    def on_add_file (self):
+        print 'DownMan.on_add_file (): stub'
+
+    def on_remove (self):
+        print 'DownMan.on_remove (): stub'
+
+    def on_start (self):
+        print 'DownMan.on_start (): stub'
+
+    def on_stop (self):
+        print 'DownMan.on_stop (): stub'
