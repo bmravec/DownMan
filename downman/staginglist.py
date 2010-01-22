@@ -18,6 +18,8 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
+import downloaders
+
 class StagingList:
     downloads = []
     view = None
@@ -31,6 +33,8 @@ class StagingList:
         if self.view != None:
             self.view.add_download (download)
 
+        download.start_get_info (self.on_info_cb)
+
     def remove_download (self, download):
         self.downloads.remove (download)
 
@@ -40,3 +44,18 @@ class StagingList:
     def update_download (self, download):
         if self.view != None:
             self.view.update_download (download)
+
+    def update_all (self):
+        for d in self.downloads:
+            self.update_download (d)
+
+    def on_info_cb (self, download):
+        if download.links != None:
+            self.remove_download (download)
+
+            for link in download.links:
+                d = downloaders.create_download (link)
+                if d != None:
+                    self.add_download (d)
+        else:
+            self.update_download (download)
