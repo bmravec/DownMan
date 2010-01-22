@@ -22,12 +22,14 @@ import gtk
 
 import gui.stagingview
 
+from downman.utils import *
+
 class StagingView (gtk.TreeView, gui.stagingview.StagingView):
     def __init__ (self, staginglist):
         gtk.TreeView.__init__ (self)
         gui.stagingview.StagingView.__init__ (self, staginglist)
 
-        self.store = gtk.TreeStore (object, str, int, str)
+        self.store = gtk.TreeStore (object, str, str, str)
         self.set_model (self.store)
 
         self.get_selection ().set_mode (gtk.SELECTION_MULTIPLE)
@@ -49,13 +51,13 @@ class StagingView (gtk.TreeView, gui.stagingview.StagingView):
         self.show_all ()
 
     def add_download (self, download):
-        iter = self.store.append (None, row=(download, download.name, download.total, 'Unknown'))
+        iter = self.store.append (None, row=(download, download.name, size_to_string (download.total), 'Unknown'))
 
     def update_download (self, download):
         for d in self.store:
             if d[0] == download:
                 d[1] = download.name
-                d[2] = download.total
+                d[2] = size_to_string (download.total)
                 d[3] = download.status
 
     def remove_download (self, download):

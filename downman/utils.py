@@ -1,5 +1,5 @@
 #
-#       downloadview.py
+#       utils.py
 #
 #       Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
 #
@@ -18,21 +18,31 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-class DownloadView:
-    def __init__ (self, downloadlist):
-        self.downloadlist = downloadlist
-        downloadlist.view = self
+def size_to_string (size):
+    digits = 2
 
-    def add_download (self, download):
-        print 'DownloadView.add_download (download): stub'
+    if size < 1024:
+        return '%d Bytes' % (size)
 
-    def update_download (self, download):
-        print 'DownloadView.update_download (download): stub'
+    size = size / 1024.0
 
-    def remove_download (self, download):
-        print 'DownloadView.remove_download (download): stub'
+    if size < 1024:
+        if size > 100:
+            digits = 1
+        return '%.*f KB' % (digits, size)
 
-    def get_selected (self):
-        print 'DownloadView.get_selected (): stub'
+    size = size / 1024.0
 
-        return []
+    if size < 1024:
+        if size > 100:
+            digits = 1
+        return '%.*f MB' % (digits, size)
+
+    size = size / 1024.0
+
+    if size > 1000:
+        digits = 0
+    elif size > 100:
+        digits = 1
+
+    return '%.*f GB' % (digits, size)

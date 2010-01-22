@@ -22,12 +22,14 @@ import gtk
 
 import gui.downloadview
 
+from downman.utils import *
+
 class DownloadView (gtk.TreeView, gui.downloadview.DownloadView):
     def __init__ (self, downloadlist):
         gtk.TreeView.__init__ (self)
         gui.downloadview.DownloadView.__init__ (self, downloadlist)
 
-        self.store = gtk.TreeStore (object, str, str, int, int)
+        self.store = gtk.TreeStore (object, str, str, str, float, int)
         self.set_model (self.store)
 
         self.get_selection ().set_mode (gtk.SELECTION_MULTIPLE)
@@ -36,29 +38,42 @@ class DownloadView (gtk.TreeView, gui.downloadview.DownloadView):
         column = gtk.TreeViewColumn ('Name', cell, text=1)
         column.set_expand (True)
         self.append_column (column)
+
         cell = gtk.CellRendererText ()
         column = gtk.TreeViewColumn ('Status', cell, text=2)
+        self.append_column (column)
+
+        cell = gtk.CellRendererProgress ()
+        column = gtk.TreeViewColumn ('Progress', cell, text=3, value=4, pulse=5)
         column.set_expand (True)
-        self.append_column (column)
-        cell = gtk.CellRendererText ()
-        column = gtk.TreeViewColumn ('Downloaded', cell, text=3)
-        self.append_column (column)
-        cell = gtk.CellRendererText ()
-        column = gtk.TreeViewColumn ('Total', cell, text=4)
         self.append_column (column)
 
         self.show_all ()
 
     def add_download (self, download):
-        iter = self.store.append (None, row=(download, download.name, '', download.downloaded, download.total))
+        if download.total != -1:
+            text = '%s / %s' % (size_to_string (download.downloaded), size_to_string (download.total))
+            pulse = -1
+            value = 100.0 * download.downloaded / download.total
+        else:
+            text = '%d' % (size_to_string (download.downloaded))
+            pulse = download.downloaded
+            value = 0.0
+
+        iter = self.store.append (None, row=(download, download.name, download.status, text, value, pulse))
 
     def update_download (self, download):
         for d in self.store:
             if d[0] == download:
                 d[1] = download.name
                 d[2] = download.status
-                d[3] = download.downloaded
-                d[4] = download.total
+
+                if download.total != -1:
+                    d[4] = 100.0 * download.downloaded / download.total
+                    d[3] = '%s / %s' % (size_to_string (download.downloaded), size_to_string (download.total))
+                else:
+                    d[5] = download.downloaded
+                    d[3] = '%s' % (size_to_string (download.downloaded))
 
     def remove_download (self, download):
         for d in self.store:
