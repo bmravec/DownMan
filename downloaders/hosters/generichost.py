@@ -20,70 +20,37 @@
 
 import re
 
-from tempfile import TempFile
-from writefile import WriteFile
-from timeout import Timeout
+from downloaders.download import *
 
-STATE_PAUSED = 0
-STATE_QUEUED = 1
-STATE_CONNECTING = 2
-STATE_DOWNLOADING = 3
-STATE_DISABLED = 4
-STATE_WAITING = 5
-STATE_HOLDING = 6
-STATE_DONE = 7
+from downloaders.tempfile import TempFile
+from downloaders.writefile import WriteFile
+from downloaders.timeout import Timeout
 
-MODE_INFO = 0
-MODE_DOWNLOAD = 1
+class GenericHost (Download):
+    proto = 'http'
+    case_handlers = []
 
-class GenericHost:
-    status = ''
-    state = STATE_QUEUED
-    mode = MODE_DOWNLOAD
-
-    def __init__ (self, url, dm):
+    def __init__ (self, url):
         self.url = url
-        self.dm = dm
-        self.downloaded = 0
-        self.total = 0
         self.name = url
-        self.proto = 'http'
 
-        self.case_handlers = []
+    def start_get_info (self, state_cb=None):
+        Dowload.start_get_info (self, state_cb)
 
-    def start (self, mode=MODE_DOWNLOAD):
-        if mode == MODE_INFO:
-            self.mode = MODE_INFO
-            self.start_mode_info ()
-            return
-
-        if self.state == STATE_PAUSED or self.state == STATE_DISABLED or self.state == STATE_DONE:
-            return
-
-        for d in self.dm.downloads:
-            if d == self:
-                break
-
-            if isinstance (d, self.__class__):
-                print 'd.state =',d.state
-                if d.state == STATE_DOWNLOADING or d.state == STATE_HOLDING or d.state == STATE_WAITING or d.state == STATE_CONNECTING:
-                    self.state = STATE_HOLDING
-                    self.status = 'Queued'
-                    return
-
-        self.status = 'Connecting...'
-        self.state = STATE_CONNECTING
-        self.start_mode_download ()
-
-    def start_mode_info (self):
         self.tfile = TempFile (self.url)
         self.tfile.completed_cb = self.stage_download_completed
         self.tfile.start ()
 
-    def start_mode_download (self):
+        self.set_state (STATE_INFO)
+
+    def start_download (self, state_cb=None):
+        Download.start_download (self, state_cb)
+
         self.tfile = TempFile (self.url)
         self.tfile.completed_cb = self.stage_download_completed
         self.tfile.start ()
+
+        self.set_state (STATE_CONNECTING)
 
     def stage_download_completed (self, tfile):
         for handler in self.case_handlers:
@@ -93,8 +60,7 @@ class GenericHost:
 
     def download_completed (self, wfile):
         self.status = 'Download Complete'
-        self.state = STATE_DONE
-        self.dm.update_queue ()
+        self.set_state (STATE_COMPLETED)
 
     def download_progress (self, dt, dd, ut, ud):
         self.downloaded = dd

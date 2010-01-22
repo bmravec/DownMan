@@ -20,21 +20,24 @@
 
 import re
 
-from tempfile import TempFile
-from writefile import WriteFile
-from timeout import Timeout
+from downloaders.tempfile import TempFile
+from downloaders.writefile import WriteFile
+from downloaders.timeout import Timeout
 from generichost import *
+from downloaders.download import *
 
 class MUDownload (GenericHost):
-    def __init__ (self, url, dm):
-        GenericHost.__init__ (self, url, dm)
+    def __init__ (self, url):
+        GenericHost.__init__ (self, url)
 
         self.case_handlers = [
             ('<FORM method="POST" id="captchaform">', self.handle_start_page),
             ('count=(\d+);', self.handle_correct_captcha),
         ]
 
-    def start_mode_info (self):
+    def start_get_info (self, state_cb=None):
+        Download.start_get_info (self, state_cb)
+
         fileid = re.search ('\?d=([A-Za-z0-9]+)', self.url).group (1)
         postdata = 'id0=%s' % (fileid)
 
@@ -46,7 +49,7 @@ class MUDownload (GenericHost):
         self.total = int (re.search ('s=(\d+)', self.tfile.contents).group (1))
         self.name = re.search ('n=(.+)', self.tfile.contents).group (1)
 
-        self.state = STATE_PAUSED
+        self.set_state (STATE_INFO_COMPLETED)
 
     def handle_start_page (self, match):
         ccstr = '<INPUT type="hidden" name="captchacode" value="(.*?)">'
@@ -76,6 +79,7 @@ class MUDownload (GenericHost):
             self.tfile.start ()
         else:
             self.status = 'Invalid Code'
+            self.set_state (STATE_DISABLED)
 
     def handle_correct_captcha (self, match):
         num = int (match.group (1))
@@ -84,6 +88,7 @@ class MUDownload (GenericHost):
         self.furl = m.group (1)
 
         self.timeout = Timeout (num, self.start_download, self.print_progress)
+        self.set_state (STATE_WAITING)
 
     def start_download (self):
         m = re.search ('([^\/]*)$', self.furl)
@@ -95,31 +100,41 @@ class MUDownload (GenericHost):
         self.tfile.start ()
 
         self.status = 'Downloading...'
-        self.state = STATE_DOWNLOADING
+        self.set_state (STATE_DOWNLOADING)
 
-class MUDecryptor:
-    def __init__ (self, url, dm):
+class MUDecryptor (GenericHost):
+    status = 'Unchecked'
+
+    def __init__ (self, url):
         self.url = url
-        self.downman = dm
+        self.name = url
+        self.total = 0
 
         self.folderid = re.search ('\?f=([A-Za-z0-9]+)', self.url).group (1)
 
-    def start (self):
+    def start_get_info (self, state_cb=None):
+        Download.start_get_info (self, state_cb)
+
         self.tfile = TempFile ('http://megaupload.com/xml/folderfiles.php?folderid=%s' % (self.folderid))
         self.tfile.completed_cb = self.handle_tfile_done
         self.tfile.start ()
 
     def handle_tfile_done (self, tfile):
         rows = re.findall ('<ROW .*?</ROW>', tfile.contents)
+
+        if len (rows) != 0:
+            self.links = []
+
         for row in rows:
-            name = re.search ('name="([^"]*)"', row).group (1)
-            url = re.search ('url="([^"]*)"', row).group (1)
-            total = int (re.search ('sizeinbytes="([^"]*)"', row).group (1))
+            self.links.append (re.search ('url="([^"]*)"', row).group (1))
 
-            download = MUDownload (url, self.downman)
-            download.total = total
-            download.name = name
+        self.set_state (STATE_INFO_COMPLETED)
 
-import hosters
-hosters.download_factory.add_hoster (MUDownload, 'http:\/\/(www\.)?megaupload\.com\/\?d=')
-hosters.decryptor_factory.add_hoster (MUDecryptor, 'http:\/\/(www\.)?megaupload\.com\/\?f=')
+    def start_download (self, state_cb=None):
+        Download.start_download (self, state_cb)
+
+        self.set_state (STATE_COMPLETED)
+
+from downloaders.hosters import factory
+factory.add_hoster (MUDownload, 'http:\/\/(www\.)?megaupload\.com\/\?d=')
+factory.add_hoster (MUDecryptor, 'http:\/\/(www\.)?megaupload\.com\/\?f=')

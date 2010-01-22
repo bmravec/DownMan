@@ -20,7 +20,6 @@
 
 import hosterfactory
 
-download_factory = hosterfactory.HosterFactory ()
-decryptor_factory = hosterfactory.HosterFactory ()
+factory = hosterfactory.HosterFactory ()
 
 import megaupload, rapidshare
