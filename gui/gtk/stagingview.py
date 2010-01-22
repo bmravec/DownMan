@@ -43,7 +43,7 @@ class StagingView (gtk.TreeView, gui.stagingview.StagingView):
 
         cell = gtk.CellRendererText ()
         column = gtk.TreeViewColumn ('Status', cell, text=3)
-        column.set_expand (True)
+#        column.set_expand (True)
         self.append_column (column)
 
         self.show_all ()

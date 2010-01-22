@@ -59,3 +59,7 @@ class StagingList:
                     self.add_download (d)
         else:
             self.update_download (download)
+
+    def clear (self):
+        while len (self.downloads):
+            self.remove_download (self.downloads[0])

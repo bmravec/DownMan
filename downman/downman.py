@@ -103,7 +103,7 @@ class DownMan:
         print 'DownMan.on_start_staging (): stub'
 
     def on_clear_staging (self):
-        print 'DownMan.on_clear_staging (): stub'
+        self.staginglist.clear ()
 
 class TimeoutPing (Thread):
     def __init__ (self, interval, callback):
