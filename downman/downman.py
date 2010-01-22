@@ -64,11 +64,11 @@ class DownMan:
 
     def update_download (self, download):
         self.staginglist.update_download (download)
-#        self.downloadlist.update_download (download)
+        self.downloadlist.update_download (download)
 
     def update_all (self):
         self.staginglist.update_all ()
-#        self.downloadlist.update_all ()
+        self.downloadlist.update_all ()
 
     def update_queue (self):
         for d in self.downloads:
@@ -83,7 +83,7 @@ class DownMan:
         m = re.findall ('((https?|ftps?)://[^\s]*)', text)
 
         for i in m:
-            download = downloaders.create_download (i[0])
+            download = downloaders.create_download (i[0], self)
             if download != None:
                 self.staginglist.add_download (download)
 
@@ -100,7 +100,11 @@ class DownMan:
         print 'DownMan.on_stop (): stub'
 
     def on_start_staging (self):
-        print 'DownMan.on_start_staging (): stub'
+        sds = self.staginglist.get_all ()
+
+        for d in sds:
+            self.staginglist.remove_download (d)
+            self.downloadlist.add_download (d)
 
     def on_clear_staging (self):
         self.staginglist.clear ()

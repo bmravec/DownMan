@@ -27,8 +27,8 @@ from generichost import *
 from downloaders.download import *
 
 class MUDownload (GenericHost):
-    def __init__ (self, url):
-        GenericHost.__init__ (self, url)
+    def __init__ (self, url, downman):
+        GenericHost.__init__ (self, url, downman)
 
         self.case_handlers = [
             ('<FORM method="POST" id="captchaform">', self.handle_start_page),
@@ -69,7 +69,7 @@ class MUDownload (GenericHost):
         self.tfile.start ()
 
     def stage_captcha_download_completed (self, tfile):
-        self.code = self.dm.app.prompt_for_captcha (tfile.contents)
+        self.code = self.downman.application.prompt_for_captcha (tfile.contents)
 
         if self.code != None:
             post_data = 'captchacode=%s&megavar=%s&captcha=%s' % (self.captchacode, self.megavar, self.code)
@@ -87,12 +87,11 @@ class MUDownload (GenericHost):
         m = re.search ('id="downloadlink"><a href="([^"]*)"', self.tfile.contents)
         self.furl = m.group (1)
 
-        self.timeout = Timeout (num, self.start_download, self.print_progress)
+        self.timeout = Timeout (num, self.handle_start_download, self.print_progress)
         self.set_state (STATE_WAITING)
 
-    def start_download (self):
-        m = re.search ('([^\/]*)$', self.furl)
-        filename = m.group (1)
+    def handle_start_download (self):
+        filename = re.search ('([^\/]*)$', self.furl).group (1)
 
         self.tfile = WriteFile (self.furl, filename, None, self.url)
         self.tfile.completed_cb = self.download_completed
@@ -105,7 +104,7 @@ class MUDownload (GenericHost):
 class MUDecryptor (GenericHost):
     status = 'Unchecked'
 
-    def __init__ (self, url):
+    def __init__ (self, url, downman):
         self.url = url
         self.name = url
         self.total = 0

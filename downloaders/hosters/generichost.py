@@ -30,9 +30,10 @@ class GenericHost (Download):
     proto = 'http'
     case_handlers = []
 
-    def __init__ (self, url):
+    def __init__ (self, url, downman):
         self.url = url
         self.name = url
+        self.downman = downman
 
     def start_get_info (self, state_cb=None):
         Dowload.start_get_info (self, state_cb)
@@ -64,10 +65,12 @@ class GenericHost (Download):
 
     def download_progress (self, dt, dd, ut, ud):
         self.downloaded = dd
-        self.total = dt
+        if dt != 0:
+            self.total = dt
 
     def print_progress (self, num):
         self.status = 'Starting in %d seconds' % (num)
+        self.set_state (STATE_WAITING)
 
     def close (self):
         if self.tfile:

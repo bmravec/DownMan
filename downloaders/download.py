@@ -36,7 +36,7 @@ class Download:
     links = None
     dmax = -1
     umax = -1
-    downloaded = -1
+    downloaded = 0
     total = -1
     state = STATE_NULL
     status = ''

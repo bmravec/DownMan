@@ -22,8 +22,8 @@ import hosters
 
 from http import HttpDownload
 
-def create_download (url):
-    hoster = hosters.factory.create_host_object (url)
+def create_download (url, downman):
+    hoster = hosters.factory.create_host_object (url, downman)
 
     if hoster != None:
         return hoster
@@ -31,6 +31,6 @@ def create_download (url):
     if url.startswith ('http://'):
         if url.endswith ('.html') or url.endswith ('.php') or url.endswith ('htm'):
             return None
-        return HttpDownload (url)
+        return HttpDownload (url, downman)
 
     return None

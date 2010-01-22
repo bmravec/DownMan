@@ -54,7 +54,7 @@ class StagingList:
             self.remove_download (download)
 
             for link in download.links:
-                d = downloaders.create_download (link)
+                d = downloaders.create_download (link, self.downman)
                 if d != None:
                     self.add_download (d)
         else:
@@ -63,3 +63,11 @@ class StagingList:
     def clear (self):
         while len (self.downloads):
             self.remove_download (self.downloads[0])
+
+    def get_all (self):
+        ds = []
+
+        for d in self.downloads:
+            ds.append (d)
+
+        return ds

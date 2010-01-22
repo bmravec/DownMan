@@ -26,8 +26,8 @@ from downloaders.timeout import Timeout
 from generichost import *
 
 class Rapidshare (GenericHost):
-    def __init__ (self, url):
-        GenericHost.__init__ (self, url)
+    def __init__ (self, url, downman):
+        GenericHost.__init__ (self, url, downman)
 
         self.case_handlers = [
             ('<form id="ff" action="([^"]*)" method="post">', self.handle_start_page),

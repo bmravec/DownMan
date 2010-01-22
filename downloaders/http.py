@@ -25,9 +25,10 @@ import pycurl
 from downloaders.download import *
 
 class HttpDownload (Download):
-    def __init__ (self, url):
+    def __init__ (self, url, downman):
         self.url = url
         self.name = re.search ('([^\/]*)$', self.url).group (1)
+        self.downman = downman
 
     def start_get_info (self, state_cb=None):
         Download.start_get_info (self, state_cb)
