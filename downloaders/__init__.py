@@ -20,10 +20,17 @@
 
 import hosters
 
+from http import HttpDownload
+
 def create_download (url):
     hoster = hosters.factory.create_host_object (url)
 
     if hoster != None:
         return hoster
+
+    if url.startswith ('http://'):
+        if url.endswith ('.html') or url.endswith ('.php') or url.endswith ('htm'):
+            return None
+        return HttpDownload (url)
 
     return None
