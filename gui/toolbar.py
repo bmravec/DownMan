@@ -25,8 +25,5 @@ class Toolbar:
     def set_start_enabled (self, val):
         print 'Toolbar.set_start_enabled (val): stub'
 
-    def set_pause_enabled (self, val):
-        print 'Toolbar.set_pause_enabled (val): stub'
-
     def set_stop_enabled (self, val):
         print 'Toolbar.set_stop_enabled (val): stub'

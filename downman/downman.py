@@ -19,9 +19,11 @@
 #       MA 02110-1301, USA.
 
 import re
+import time
+from threading import Thread
 
 import gui
-import hosters
+import downloaders
 
 from downloadlist import DownloadList
 from staginglist import StagingList
@@ -51,67 +53,8 @@ class DownMan:
         self.mainwindow.set_downloadview (self.downloadview)
         self.mainwindow.set_stagingview (self.stagingview)
 
-#        self.updater = TimeoutPing (1, self.update_all)
-#        self.updater.start ()
-
-    def create_downloads (self, text):
-        ds = []
-
-        if isinstance (text, str):
-            m = re.findall ('((https?|ftps?)://[^\s]*)', text)
-
-            for i in m:
-                hoster = hosters.download_factory.create_host_object (i[0], self)
-                if hoster != None:
-                    ds.append (hoster)
-                    continue
-
-                decryptor = hosters.decryptor_factory.create_host_object (i[0], self)
-                if decryptor != None:
-                    ds.append (decryptor)
-                    continue
-        else:
-            for i in text:
-                hoster = hosters.download_factory.create_host_object (i, self)
-                if hoster != None:
-                    ds.append (hoster)
-                    continue
-
-                decryptor = hosters.decryptor_factory.create_host_object (i, self)
-                if decryptor != None:
-                    ds.append (decryptor)
-                    continue
-
-        return ds
-
-    def parse_download (self, text):
-        m = re.findall ('((https?|ftps?)://[^\s]*)', text)
-        for i in m:
-            self.add_download (i[0])
-
-    def add_download (self, download, start=False):
-        if isinstance (download, str):
-            hoster = hosters.download_factory.create_host_object (download, self)
-
-            if hoster != None:
-                self.downloads.append (hoster)
-                self.app.add_download (hoster)
-
-                hoster.start ()
-                return
-
-            decryptor = hosters.decryptor_factory.create_host_object (download, self)
-
-            if decryptor != None:
-                self.decryptors.append (decryptor)
-
-                decryptor.start ()
-                return
-
-            print 'Cannot download from ', url
-        else:
-            self.downloads.append (download)
-            self.app.add_downloads (download)
+        self.updater = TimeoutPing (1, self.update_all)
+        self.updater.start ()
 
     def remove_download (self, download):
         self.app.remove_download (download)
@@ -120,11 +63,12 @@ class DownMan:
         download.close ()
 
     def update_download (self, download):
-        self.app.update_download (download)
+        self.staginglist.update_download (download)
+#        self.downloadlist.update_download (download)
 
     def update_all (self):
-        for d in self.downloads:
-            self.update_download (d)
+        self.staginglist.update_all ()
+#        self.downloadlist.update_all ()
 
     def update_queue (self):
         for d in self.downloads:
@@ -139,15 +83,9 @@ class DownMan:
         m = re.findall ('((https?|ftps?)://[^\s]*)', text)
 
         for i in m:
-            hoster = hosters.download_factory.create_host_object (i[0], self)
-            if hoster != None:
-                self.staginglist.add_download (hoster)
-                continue
-
-            decryptor = hosters.decryptor_factory.create_host_object (i[0], self)
-            if decryptor != None:
-                self.staginglist.add_download (decryptor)
-                continue
+            download = downloaders.create_download (i[0])
+            if download != None:
+                self.staginglist.add_download (download)
 
     def on_add_file (self):
         print 'DownMan.on_add_file (): stub'
@@ -160,3 +98,21 @@ class DownMan:
 
     def on_stop (self):
         print 'DownMan.on_stop (): stub'
+
+    def on_start_staging (self):
+        print 'DownMan.on_start_staging (): stub'
+
+    def on_clear_staging (self):
+        print 'DownMan.on_clear_staging (): stub'
+
+class TimeoutPing (Thread):
+    def __init__ (self, interval, callback):
+        Thread.__init__ (self)
+        self.interval = interval
+        self.callback = callback
+
+    def run (self):
+        while True:
+            time.sleep (self.interval)
+            if self.callback () != None:
+                break

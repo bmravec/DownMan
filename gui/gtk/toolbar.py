@@ -22,8 +22,6 @@ import gtk
 
 import gui.toolbar
 
-from addwindow import AddWindow
-
 class Toolbar (gtk.Toolbar, gui.toolbar.Toolbar):
     def __init__ (self, downman):
         gtk.Toolbar.__init__ (self)
@@ -57,6 +55,19 @@ class Toolbar (gtk.Toolbar, gui.toolbar.Toolbar):
         self.stop_button.connect ('clicked', self.stop_clicked)
         self.insert (self.stop_button, -1)
 
+        sep = gtk.SeparatorToolItem ()
+        self.insert (sep, -1)
+
+        self.start_staging_button = gtk.ToolButton (gtk.STOCK_MEDIA_NEXT)
+        self.start_staging_button.set_tooltip_text ('Start Staging Downloads')
+        self.start_staging_button.connect ('clicked', self.start_staging_clicked)
+        self.insert (self.start_staging_button, -1)
+
+        self.clear_staging_button = gtk.ToolButton (gtk.STOCK_CLEAR)
+        self.clear_staging_button.set_tooltip_text ('Clear Staging Area')
+        self.clear_staging_button.connect ('clicked', self.clear_staging_clicked)
+        self.insert (self.clear_staging_button, -1)
+
         self.show_all ()
 
     def add_url_clicked (self, item):
@@ -73,6 +84,12 @@ class Toolbar (gtk.Toolbar, gui.toolbar.Toolbar):
 
     def stop_clicked (self, item):
         self.downman.on_stop ()
+
+    def start_staging_clicked (self, item):
+        self.downman.on_start_staging ()
+
+    def clear_staging_clicked (self, item):
+        self.downman.on_clear_staging ()
 
     def set_start_enabled (self, val):
         self.start_button.set_sensitive (val)
