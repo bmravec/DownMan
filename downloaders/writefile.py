@@ -1,4 +1,4 @@
-#
+d#
 #       writefile.py
 #
 #       Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
@@ -20,6 +20,7 @@
 
 from threading import Thread
 import pycurl
+import re
 
 class WriteFile (Thread):
     completed_cb = None
@@ -28,7 +29,11 @@ class WriteFile (Thread):
     def __init__ (self, url, filename=None, post_data=None, referer=None):
         Thread.__init__ (self)
         self.url = url
-        self.filename = filename
+        if filename != None:
+            self.filename = filename
+        else:
+            self.filename = re.search ('([^\/]*)$', url).group (1)
+
         self.post_data = post_data
         self.referer = referer
 
