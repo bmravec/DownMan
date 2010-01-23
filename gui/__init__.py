@@ -7,6 +7,12 @@ if DEFAULT_GUI == 'gtk':
     from gtk.toolbar import Toolbar
     from gtk.downloadview import DownloadView
     from gtk.stagingview import StagingView
+elif DEFAULT_GUI == 'qt':
+    from qt.application import Application
+    from qt.mainwindow import MainWindow
+    from qt.toolbar import Toolbar
+    from qt.downloadview import DownloadView
+    from qt.stagingview import StagingView
 else:
     from application import Application
     from mainwindow import MainWindow

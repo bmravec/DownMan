@@ -19,6 +19,7 @@
 #       MA 02110-1301, USA.
 
 import gtk
+import sys
 
 import gui.application
 
@@ -34,6 +35,7 @@ class Application (gui.application.Application):
 
     def quit (self):
         gtk.main_quit ()
+        sys.exit ()
 
     def prompt_for_captcha (self, imagedata):
         code = None

@@ -1,6 +1,5 @@
-#!/usr/bin/python
 #
-#       downman.py
+#       stagingview.py
 #
 #       Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
 #
@@ -19,10 +18,24 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-import sys
-from downman.downman import DownMan
+import gui.stagingview
 
-if __name__ == '__main__':
-    dm = DownMan ()
+from downman.utils import *
 
-    dm.application.run ()
+class StagingView (gui.stagingview.StagingView):
+    def __init__ (self, staginglist):
+        gui.stagingview.StagingView.__init__ (self, staginglist)
+
+    def add_download (self, download):
+        pass
+
+    def update_download (self, download):
+        pass
+
+    def remove_download (self, download):
+        pass
+
+    def get_selected (self):
+        ds = []
+
+        return ds

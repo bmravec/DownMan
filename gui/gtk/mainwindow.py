@@ -32,6 +32,9 @@ class MainWindow (gtk.Window, gui.mainwindow.MainWindow):
         self.set_default_size (400, 300)
         self.connect ("destroy", self.destroy)
 
+        self.set_icon (gtk.gdk.pixbuf_new_from_file ('images/downman.svg'))
+        self.set_title ('DownMan')
+
         self.table = gtk.Table (4)
         self.add (self.table)
 

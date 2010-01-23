@@ -1,6 +1,5 @@
-#!/usr/bin/python
 #
-#       downman.py
+#       application.py
 #
 #       Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
 #
@@ -20,9 +19,31 @@
 #       MA 02110-1301, USA.
 
 import sys
-from downman.downman import DownMan
+from PyQt4 import QtGui
 
-if __name__ == '__main__':
-    dm = DownMan ()
+import gui.application
 
-    dm.application.run ()
+from mainwindow import MainWindow
+from downloadview import DownloadView
+from toolbar import Toolbar
+
+class Application (gui.application.Application):
+    def __init__ (self, downman):
+        gui.application.Application.__init__ (self, downman)
+        self.app = QtGui.QApplication (sys.argv)
+
+    def run (self):
+        sys.exit (self.app.exec_ ())
+
+    def quit (self):
+        sys.exit ()
+
+    def prompt_for_captcha (self, imagedata):
+        code = None
+
+        return code
+
+    def prompt_for_urls (self):
+        text = None
+
+        return text
