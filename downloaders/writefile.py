@@ -1,4 +1,4 @@
-d#
+#
 #       writefile.py
 #
 #       Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
