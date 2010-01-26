@@ -85,10 +85,10 @@ class Rapidshare (GenericHost):
         self.furl = m2.group (1)
 
         num = int (m.group (1))
-        self.timeout = Timeout (num, self.start_download, self.print_progress)
+        self.timeout = Timeout (num, self.handle_start_download, self.print_progress)
         self.set_state (STATE_WAITING)
 
-    def start_download (self):
+    def handle_start_download (self):
         m = re.search ('([^\/]*)$', self.furl)
         filename = m.group (1)
 

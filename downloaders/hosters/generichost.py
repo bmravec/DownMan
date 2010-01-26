@@ -36,7 +36,7 @@ class GenericHost (Download):
         self.downman = downman
 
     def start_get_info (self, state_cb=None):
-        Dowload.start_get_info (self, state_cb)
+        Download.start_get_info (self, state_cb)
 
         self.tfile = TempFile (self.url)
         self.tfile.completed_cb = self.stage_download_completed
