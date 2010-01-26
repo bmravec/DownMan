@@ -40,6 +40,8 @@ class DownMan:
     staginglist = None
 
     def __init__ (self):
+        self.config = gui.Config ()
+
         self.downloadlist = DownloadList (self)
         self.staginglist = StagingList (self)
 

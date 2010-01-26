@@ -33,7 +33,7 @@ class Application (gui.application.Application):
         self.app = QtGui.QApplication (sys.argv)
 
     def run (self):
-        sys.exit (self.app.exec_ ())
+        self.app.exec_ ()
 
     def quit (self):
         sys.exit ()

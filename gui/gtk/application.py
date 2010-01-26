@@ -35,7 +35,6 @@ class Application (gui.application.Application):
 
     def quit (self):
         gtk.main_quit ()
-        sys.exit ()
 
     def prompt_for_captcha (self, imagedata):
         code = None

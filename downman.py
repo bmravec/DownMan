@@ -26,3 +26,7 @@ if __name__ == '__main__':
     dm = DownMan ()
 
     dm.application.run ()
+
+    dm.config.save ()
+
+    sys.exit ()
