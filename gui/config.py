@@ -18,6 +18,9 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
+DEFAULT_DOWNLOAD_DIRECTORY = None
+DEFAULT_CONFIG_DIRECTORY = None
+
 class Config:
     '''Configuration and state handling class
 
@@ -35,10 +38,12 @@ class Config:
     MaxUploadSpeed - Global maximum upload speed of all transfers
     MaxDownloadSpeed - Global maxium download speed of all transfers
     DefaultDownloadDirectory - Default directory to download files to
-    ConfigurationDirectory - Directory to save configuration / download states to
     '''
     properties = {}
     notifiers = {}
+
+    def __init__ (self):
+        self.set_property ('DefaultDownloadDirectory', DEFAULT_DOWNLOAD_DIRECTORY)
 
     def get_property (self, key):
         return self.properties[key]
@@ -66,6 +71,12 @@ class Config:
             if cb == handler:
                 cbs.remove (handler)
                 break
+
+    def load_settings (self):
+        print 'Config.load_settings (): stub'
+
+    def load_downloads (self):
+        print 'Config.load_downloads (): stub'
 
     def save (self):
         print 'Config.save (): stub'
