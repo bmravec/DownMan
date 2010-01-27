@@ -1,0 +1,17 @@
+<downman>
+    <config>
+        <MaxUploadSpeed> </MaxUploadSpeed>
+        <MaxDownloadSpeed> </MaxDownloadSpeed>
+        <DefaultDownloadDirectory> </DefaultDownloadDirectory>
+    </config>
+    <download>
+        <match> </match>
+        <file> </file>
+        <downloaded> </downloaded>
+        <total> </total>
+        <modifytime> </modifytime>
+        <url> </url>
+        <name> </name>
+        <state> </state>
+    </download>
+</downman>

@@ -42,6 +42,8 @@ class DownMan:
     def __init__ (self):
         self.config = gui.Config ()
 
+        self.config.load_settings ()
+
         self.downloadlist = DownloadList (self)
         self.staginglist = StagingList (self)
 
@@ -57,6 +59,8 @@ class DownMan:
 
         self.updater = TimeoutPing (1, self.update_all)
         self.updater.start ()
+
+        self.config.load_downloads ()
 
     def remove_download (self, download):
         self.app.remove_download (download)

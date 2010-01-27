@@ -21,6 +21,66 @@
 DEFAULT_DOWNLOAD_DIRECTORY = None
 DEFAULT_CONFIG_DIRECTORY = None
 
+from xml.sax import make_parser, handler
+import os.path
+
+STATE_NULL = 0
+STATE_DOWNMAN = 1
+STATE_CONFIG = 2
+STATE_CONFIG_PROPERTY = 3
+STATE_DOWNLOAD = 4
+STATE_DOWNLOAD_PROPERTY = 5
+STATE_ERROR = 6
+
+class ConfigSaxHandler (handler.ContentHandler):
+    state = STATE_NULL
+    tdownload = None
+    key = ''
+    value = ''
+
+    def __init__ (self, config):
+        self.config = config
+
+    def startElement (self, name, attrs):
+        if self.state == STATE_NULL:
+            if name == 'downman':
+                self.state = STATE_DOWNMAN
+        elif self.state == STATE_DOWNMAN:
+            if name == 'config':
+                self.state = STATE_CONFIG
+            elif name == 'download':
+                self.state = STATE_DOWNLOAD
+                self.tdownload = {}
+        elif self.state == STATE_CONFIG:
+            self.key = name
+            self.state = STATE_CONFIG_PROPERTY
+        elif self.state == STATE_DOWNLOAD:
+            self.key = name
+            self.state = STATE_DOWNLOAD_PROPERTY
+
+    def endElement (self, name):
+        if self.state == STATE_DOWNMAN:
+            self.state = STATE_NULL
+        elif self.state == STATE_CONFIG:
+            self.state = STATE_DOWNMAN
+        elif self.state == STATE_CONFIG_PROPERTY:
+            self.state = STATE_CONFIG
+            if self.key == name:
+                self.config.set_property (self.key, self.value)
+            else:
+                self.state = STATE_ERROR
+                print 'Invalid Xml file'
+        elif self.state == STATE_DOWNLOAD:
+            self.state = STATE_DOWNMAN
+            self.config.tdownloads.append (self.tdownload)
+        elif self.state == STATE_DOWNLOAD_PROPERTY:
+            self.state = STATE_DOWNLOAD
+            self.tdownload[self.key] = self.value
+
+    def characters (self, content):
+        if self.state == STATE_DOWNLOAD_PROPERTY or self.state == STATE_CONFIG_PROPERTY:
+            self.value = content
+
 class Config:
     '''Configuration and state handling class
 
@@ -33,17 +93,20 @@ class Config:
     next load, all the configuration and downloads will be what they were when
     the application was last closed.
 
-    Here is a tentative list of all keys available and a short description of
-    their function:
+    Here is the list of all keys available for the config section
+    and a short description of their function:
     MaxUploadSpeed - Global maximum upload speed of all transfers
     MaxDownloadSpeed - Global maxium download speed of all transfers
     DefaultDownloadDirectory - Default directory to download files to
     '''
     properties = {}
     notifiers = {}
+    tdownloads = []
 
     def __init__ (self):
         self.set_property ('DefaultDownloadDirectory', DEFAULT_DOWNLOAD_DIRECTORY)
+        self.set_property ('MaxUploadSpeed', '0')
+        self.set_property ('MaxDownloadSpeed', '0')
 
     def get_property (self, key):
         return self.properties[key]
@@ -73,10 +136,18 @@ class Config:
                 break
 
     def load_settings (self):
-        print 'Config.load_settings (): stub'
+        filename = os.path.join (DEFAULT_CONFIG_DIRECTORY, 'config.xml')
+
+        if os.path.isfile (filename):
+            parser = make_parser ()
+            parser.setContentHandler (ConfigSaxHandler (self))
+            parser.parse (filename)
 
     def load_downloads (self):
         print 'Config.load_downloads (): stub'
 
     def save (self):
-        print 'Config.save (): stub'
+        if not os.path.exists (DEFAULT_CONFIG_DIRECTORY):
+            os.mkdir (DEFAULT_CONFIG_DIRECTORY)
+
+        filename = os.path.join (DEFAULT_CONFIG_DIRECTORY, 'config.xml')
