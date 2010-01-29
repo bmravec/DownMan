@@ -25,8 +25,8 @@ from downman.downman import DownMan
 if __name__ == '__main__':
     dm = DownMan ()
 
-    dm.application.run ()
-
-    dm.config.save ()
+    dm.setup ()
+    dm.run ()
+    dm.shutdown ()
 
     sys.exit ()

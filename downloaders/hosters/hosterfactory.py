@@ -21,8 +21,7 @@
 import re
 
 class HosterFactory:
-    def __init__ (self):
-        self.hosters = []
+    hosters = []
 
     def add_hoster (self, hoster, mstr):
         self.hosters.append ((hoster, mstr))
@@ -31,3 +30,8 @@ class HosterFactory:
         for hoster in self.hosters:
             if re.match (hoster[1], url) != None:
                 return hoster[0] (url, downman)
+
+    def load_host_object (self, match, downman):
+        for hoster in self.hosters:
+            if hoster[1] == match:
+                return hoster[0] (match, downman)

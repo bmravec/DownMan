@@ -37,6 +37,8 @@ class DownloadList:
 
         if len (self.downloads) == 1:
             download.start_download (self.handle_state_changed)
+        else:
+            download.set_state (STATE_QUEUED)
 
         #TODO: Handle Queue correctly
 
@@ -72,3 +74,13 @@ class DownloadList:
                 elif found == True:
                     d.start_download (self.handle_state_changed)
                     return
+
+    def shutdown (self):
+        dlist = []
+
+        for d in self.downloads:
+            ddict = d.shutdown ()
+            if ddict != None:
+                dlist.append (ddict)
+
+        return dlist

@@ -27,13 +27,23 @@ class Timeout (Thread):
         self.progress_cb = progress_cb
         self.done_cb = done_cb
         self.dur = dur
+        self.running = False
 
         self.start ()
 
     def run (self):
-        while self.dur > 0:
+        self.running = True
+
+        while self.dur > 0 and self.running:
             time.sleep (1)
             self.dur = self.dur - 1
-            if self.progress_cb != None:
+            if self.progress_cb != None and self.running:
                 self.progress_cb (self.dur)
-        self.done_cb ()
+
+        if self.running:
+            self.done_cb ()
+
+    def cancel (self):
+        if self.running:
+            self.running = False
+            self.join ()

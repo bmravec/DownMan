@@ -68,6 +68,35 @@ class HttpDownload (Download):
         self.status = 'Download Complete'
         self.set_state (STATE_COMPLETED)
 
+    def startup (self, data):
+        self.name = data['name']
+        self.url = data['url']
+        self.downloaded = int (data['downloaded'])
+        self.total = int (data['total'])
+        self.state = int (data['state'])
+
+    def shutdown (self):
+        data = {}
+
+        if self.state == STATE_DOWNLOADING:
+            self.tfile.close ()
+            self.state = STATE_QUEUED
+        elif self.state == STATE_WAITING:
+            self.timeout.cancel ()
+            self.state = STATE_QUEUED
+        elif self.state == STATE_INFO or self.state == STATE_INFO_COMPLETED:
+            self.tfile.close ()
+            return
+
+        data['name'] = self.name
+        data['url'] = self.url
+        data['downloaded'] = str (self.downloaded)
+        data['total'] = str (self.total)
+        data['state'] = str (self.state)
+        data['match'] = 'http'
+
+        return data
+
 class HttpNoBody (Thread):
     completed_cb = None
 

@@ -57,10 +57,24 @@ class DownMan:
         self.mainwindow.set_downloadview (self.downloadview)
         self.mainwindow.set_stagingview (self.stagingview)
 
+    def setup (self):
+        dlist = self.config.load_downloads ()
+
+        for d in dlist:
+            nd = downloaders.load_download (d, self)
+            if nd != None:
+                self.downloadlist.add_download (nd)
+
+    def run (self):
         self.updater = TimeoutPing (1, self.update_all)
         self.updater.start ()
 
-        self.config.load_downloads ()
+        self.application.run ()
+
+    def shutdown (self):
+        dlist = self.downloadlist.shutdown ()
+
+        self.config.save (dlist)
 
     def remove_download (self, download):
         self.app.remove_download (download)

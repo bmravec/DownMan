@@ -26,6 +26,9 @@ from downloaders.timeout import Timeout
 from generichost import *
 from downloaders.download import *
 
+MUDOWNLOAD_MATCH = 'http:\/\/(www\.)?megaupload\.com\/\?d='
+MUDECRYPTOR_MATCH = 'http:\/\/(www\.)?megaupload\.com\/\?f='
+
 class MUDownload (GenericHost):
     def __init__ (self, url, downman):
         GenericHost.__init__ (self, url, downman)
@@ -101,6 +104,40 @@ class MUDownload (GenericHost):
         self.status = 'Downloading...'
         self.set_state (STATE_DOWNLOADING)
 
+    def startup (self, data):
+        self.name = data['name'].encode ('utf-8')
+        self.url = data['url'].encode ('utf-8')
+        self.downloaded = int (data['downloaded'])
+        self.total = int (data['total'])
+        self.state = int (data['state'])
+
+        print 'Startup:', data
+
+    def shutdown (self):
+        data = {}
+
+        if self.state == STATE_CONNECTING:
+            self.tfile.close ()
+            self.state = STATE_QUEUED
+        elif self.state == STATE_DOWNLOADING:
+            self.tfile.close ()
+            self.state = STATE_QUEUED
+        elif self.state == STATE_WAITING:
+            self.timeout.cancel ()
+            self.state = STATE_QUEUED
+        elif self.state == STATE_INFO or self.state == STATE_INFO_COMPLETED:
+            self.tfile.close ()
+            return
+
+        data['name'] = self.name
+        data['url'] = self.url
+        data['downloaded'] = str (self.downloaded)
+        data['total'] = str (self.total)
+        data['state'] = str (self.state)
+        data['match'] = MUDOWNLOAD_MATCH
+
+        return data
+
 class MUDecryptor (GenericHost):
     status = 'Unchecked'
 
@@ -135,5 +172,5 @@ class MUDecryptor (GenericHost):
         self.set_state (STATE_COMPLETED)
 
 from downloaders.hosters import factory
-factory.add_hoster (MUDownload, 'http:\/\/(www\.)?megaupload\.com\/\?d=')
-factory.add_hoster (MUDecryptor, 'http:\/\/(www\.)?megaupload\.com\/\?f=')
+factory.add_hoster (MUDownload, MUDOWNLOAD_MATCH)
+factory.add_hoster (MUDecryptor, MUDECRYPTOR_MATCH)

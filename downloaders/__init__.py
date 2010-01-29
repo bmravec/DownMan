@@ -34,3 +34,20 @@ def create_download (url, downman):
         return HttpDownload (url, downman)
 
     return None
+
+def load_download (data, downman):
+    hoster = hosters.factory.load_host_object (data['match'], downman)
+
+    if hoster != None:
+        hoster.startup (data)
+        return hoster
+
+    if url.startswith ('http://'):
+        if url.endswith ('.html') or url.endswith ('.php') or url.endswith ('htm'):
+            return None
+
+        download = HttpDownload (url, downman)
+        download.startup (data)
+        return download
+
+    return None

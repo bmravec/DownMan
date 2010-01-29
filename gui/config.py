@@ -22,6 +22,7 @@ DEFAULT_DOWNLOAD_DIRECTORY = None
 DEFAULT_CONFIG_DIRECTORY = None
 
 from xml.sax import make_parser, handler
+from xml.sax.saxutils import escape
 import os.path
 
 STATE_NULL = 0
@@ -144,10 +145,30 @@ class Config:
             parser.parse (filename)
 
     def load_downloads (self):
-        print 'Config.load_downloads (): stub'
+        return self.tdownloads
 
-    def save (self):
+    def save (self, dlist):
         if not os.path.exists (DEFAULT_CONFIG_DIRECTORY):
             os.mkdir (DEFAULT_CONFIG_DIRECTORY)
 
         filename = os.path.join (DEFAULT_CONFIG_DIRECTORY, 'config.xml')
+
+        f = open (filename, 'w')
+        f.write ('<downman>\n')
+
+        f.write ('\t<config>\n')
+        f.write ('\t\t<MaxUploadSpeed>%s</MaxUploadSpeed>\n' % (escape (self.get_property ('MaxUploadSpeed'))))
+        f.write ('\t\t<MaxDownloadSpeed>%s</MaxDownloadSpeed>\n' % (escape (self.get_property ('MaxDownloadSpeed'))))
+        f.write ('\t\t<DefaultDownloadDirectory>%s</DefaultDownloadDirectory>\n' % (escape (self.get_property ('DefaultDownloadDirectory'))))
+        f.write ('\t</config>\n')
+
+        for d in dlist:
+            f.write ('\t<download>\n')
+
+            for k, v in d.items ():
+                f.write ('\t\t<%s>%s</%s>\n' % (k, escape (v), k))
+
+            f.write ('\t</download>\n')
+
+        f.write ('</downman>')
+        f.close ()

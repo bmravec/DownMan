@@ -57,3 +57,19 @@ class Download:
         self.state = state
         if self.state_cb != None:
             self.state_cb (self)
+
+    def startup (self, data):
+        '''Setup the download with stored data'''
+        pass
+
+    def shutdown (self):
+        '''Shuts down the transfer
+
+        Closes all connections and prepares the download to be stored so that it
+        can be loaded again at a later running of the application.  This
+        function then returns a dictionary of values to be stored in the
+        config.xml file.  If the download requires extra binary data, a file in
+        the config directory should be created and then linked into the
+        entry in the xml with a file entry.
+        '''
+        print 'Download.shutdown (): stub'
