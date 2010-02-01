@@ -76,7 +76,7 @@ class ConfigSaxHandler (handler.ContentHandler):
             self.config.tdownloads.append (self.tdownload)
         elif self.state == STATE_DOWNLOAD_PROPERTY:
             self.state = STATE_DOWNLOAD
-            self.tdownload[self.key] = self.value
+            self.tdownload[self.key.encode ('utf-8')] = self.value.encode ('utf-8')
 
     def characters (self, content):
         if self.state == STATE_DOWNLOAD_PROPERTY or self.state == STATE_CONFIG_PROPERTY:
