@@ -69,8 +69,12 @@ class DownloadView (gtk.TreeView, gui.downloadview.DownloadView):
                 d[2] = download.status
 
                 if download.total != -1:
-                    d[4] = 100.0 * download.downloaded / download.total
-                    d[3] = '%s / %s' % (size_to_string (download.downloaded), size_to_string (download.total))
+                    if download.total != 0:
+                        d[4] = 100.0 * download.downloaded / download.total
+                        d[3] = '%s / %s' % (size_to_string (download.downloaded), size_to_string (download.total))
+                    else:
+                        d[4] = 0.0
+                        d[3] = '%s' % (size_to_string (download.downloaded))
                 else:
                     d[5] = download.downloaded
                     d[3] = '%s' % (size_to_string (download.downloaded))
