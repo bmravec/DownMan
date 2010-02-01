@@ -116,8 +116,8 @@ class Rapidshare (GenericHost):
         self.set_state (STATE_DOWNLOADING)
 
     def startup (self, data):
-        self.name = data['name'].encode ('utf-8')
-        self.url = data['url'].encode ('utf-8')
+        self.name = data['name']
+        self.url = data['url']
         self.downloaded = float (data['downloaded'])
         self.total = float (data['total'])
         self.state = int (data['state'])
