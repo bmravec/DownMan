@@ -18,7 +18,7 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-import re
+import re, os
 
 from downloaders.tempfile import TempFile
 from downloaders.writefile import WriteFile
@@ -94,9 +94,25 @@ class MUDownload (GenericHost):
         self.set_state (STATE_WAITING)
 
     def handle_start_download (self):
-        filename = re.search ('([^\/]*)$', self.furl).group (1)
+        self.location = re.search ('([^\/]*)$', self.furl).group (1)
 
-        self.tfile = WriteFile (self.furl, filename, None, self.url)
+        rfrom = None
+
+        if os.path.exists (self.location):
+            s = os.stat (self.location)
+
+            print 'downloaded:', self.downloaded
+            print 'stat.st_size:', s.st_size
+
+            if s.st_size == self.total:
+                self.set_state (STATE_COMPLETED)
+                return
+            if s.st_size == self.downloaded:
+                rfrom = self.downloaded
+
+        print 'rfrom:', rfrom
+
+        self.tfile = WriteFile (self.furl, self.location, None, self.url, rfrom)
         self.tfile.completed_cb = self.download_completed
         self.tfile.progress_cb = self.download_progress
         self.tfile.start ()
@@ -107,11 +123,10 @@ class MUDownload (GenericHost):
     def startup (self, data):
         self.name = data['name'].encode ('utf-8')
         self.url = data['url'].encode ('utf-8')
-        self.downloaded = int (data['downloaded'])
-        self.total = int (data['total'])
+        self.downloaded = float (data['downloaded'])
+        self.total = float (data['total'])
         self.state = int (data['state'])
-
-        print 'Startup:', data
+        self.location = data['location']
 
     def shutdown (self):
         data = {}
@@ -135,6 +150,7 @@ class MUDownload (GenericHost):
         data['total'] = str (self.total)
         data['state'] = str (self.state)
         data['match'] = MUDOWNLOAD_MATCH
+        data['location'] = self.location
 
         return data
 

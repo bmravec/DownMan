@@ -25,8 +25,9 @@ import re
 class WriteFile (Thread):
     completed_cb = None
     progress_cb = None
+    drun = False
 
-    def __init__ (self, url, filename=None, post_data=None, referer=None):
+    def __init__ (self, url, filename, post_data=None, referer=None, rfrom=None):
         Thread.__init__ (self)
         self.url = url
         if filename != None:
@@ -36,12 +37,17 @@ class WriteFile (Thread):
 
         self.post_data = post_data
         self.referer = referer
+        self.rfrom = rfrom
 
     def run (self):
         self.c = pycurl.Curl ()
         self.c.setopt (pycurl.URL, self.url)
 
-        f = open (self.filename, 'wb')
+        if self.rfrom != None:
+            f = open (self.filename, 'ab')
+        else:
+            f = open (self.filename, 'wb')
+
         self.c.setopt (pycurl.WRITEFUNCTION, f.write)
 
         if self.post_data != None:
@@ -51,16 +57,33 @@ class WriteFile (Thread):
         if self.referer != None:
             self.c.setopt (pycurl.REFERER, self.referer)
 
-        if self.progress_cb != None:
-            self.c.setopt (pycurl.NOPROGRESS, 0)
-            self.c.setopt (pycurl.PROGRESSFUNCTION, self.progress_cb)
+        if self.rfrom != None:
+            self.c.setopt (pycurl.RESUME_FROM, int (self.rfrom))
 
-        self.c.perform ()
-        self.c.close ()
-        f.close ()
+        self.c.setopt (pycurl.NOPROGRESS, 0)
+        self.c.setopt (pycurl.PROGRESSFUNCTION, self.download_progress)
 
-        if self.completed_cb != None:
-            self.completed_cb (self)
+        self.drun = True
+
+        try:
+            self.c.perform ()
+            if self.completed_cb != None:
+                self.completed_cb (self)
+        finally:
+            self.c.close ()
+            f.close ()
+
+    def download_progress (self, dt, dd, ut, ud):
+        if self.rfrom:
+            dt = dt + self.rfrom
+            dd = dd + self.rfrom
+
+        if self.progress_cb:
+            self.progress_cb (dt, dd, ut, ud)
+        if not self.drun:
+            return 1
 
     def close (self):
+        self.drun = False
+        self.join ()
         self.c.close ()
