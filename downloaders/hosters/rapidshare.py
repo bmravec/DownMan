@@ -18,12 +18,16 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-import re
+from threading import Thread
+import re, os
+import pycurl
 
 from downloaders.tempfile import TempFile
 from downloaders.writefile import WriteFile
 from downloaders.timeout import Timeout
 from generichost import *
+
+RAPIDSHARE_MATCH = 'http:\/\/rapidshare\.com'
 
 class Rapidshare (GenericHost):
     def __init__ (self, url, downman):
@@ -81,7 +85,7 @@ class Rapidshare (GenericHost):
         m = re.search ('var c=(\d+)', self.tfile.contents)
 
         m2 = re.search ('<input checked type="radio" name="mirror" onclick="document\.dlf\.action=\\\\\'(.*?)\\\\\';" \/> (.*?)<br \/>', self.tfile.contents)
-        print 'Mirror %s: %s' % (m2.group (2), m2.group (1))
+#        print 'Mirror %s: %s' % (m2.group (2), m2.group (1))
         self.furl = m2.group (1)
 
         num = int (m.group (1))
@@ -89,10 +93,21 @@ class Rapidshare (GenericHost):
         self.set_state (STATE_WAITING)
 
     def handle_start_download (self):
-        m = re.search ('([^\/]*)$', self.furl)
-        filename = m.group (1)
+        self.location = re.search ('([^\/]*)$', self.furl).group (1)
 
-        self.tfile = WriteFile (self.furl, filename, None, self.url)
+        resume = None
+
+        if os.path.exists (self.location):
+            s = os.stat (self.location)
+
+            if s.st_size == self.total:
+                self.set_state (STATE_COMPLETED)
+                return
+            if s.st_size == self.downloaded:
+                self.furl = self.furl + '?start=' + str (int (self.downloaded))
+                resume = self.downloaded
+
+        self.tfile = RapidshareWriteFile (self.furl, self.location, self.url, resume)
         self.tfile.completed_cb = self.download_completed
         self.tfile.progress_cb = self.download_progress
         self.tfile.start ()
@@ -100,5 +115,96 @@ class Rapidshare (GenericHost):
         self.status = 'Downloading...'
         self.set_state (STATE_DOWNLOADING)
 
+    def startup (self, data):
+        self.name = data['name'].encode ('utf-8')
+        self.url = data['url'].encode ('utf-8')
+        self.downloaded = float (data['downloaded'])
+        self.total = float (data['total'])
+        self.state = int (data['state'])
+        self.location = data['location']
+
+    def shutdown (self):
+        data = {}
+
+        if self.state == STATE_CONNECTING:
+            self.tfile.close ()
+            self.state = STATE_QUEUED
+        elif self.state == STATE_DOWNLOADING:
+            self.tfile.close ()
+            self.state = STATE_QUEUED
+        elif self.state == STATE_WAITING:
+            self.timeout.cancel ()
+            self.state = STATE_QUEUED
+        elif self.state == STATE_INFO or self.state == STATE_INFO_COMPLETED:
+            self.tfile.close ()
+            return
+
+        data['name'] = self.name
+        data['url'] = self.url
+        data['downloaded'] = str (self.downloaded)
+        data['total'] = str (self.total)
+        data['state'] = str (self.state)
+        data['match'] = RAPIDSHARE_MATCH
+        data['location'] = self.location
+
+        return data
+
+class RapidshareWriteFile (Thread):
+    completed_cb = None
+    progress_cb = None
+    drun = False
+
+    def __init__ (self, url, filename, referer=None, resume=None):
+        Thread.__init__ (self)
+        self.url = url
+        self.filename = filename
+        self.referer = referer
+        self.resume = resume
+
+    def run (self):
+        self.c = pycurl.Curl ()
+        self.c.setopt (pycurl.URL, self.url)
+
+        if self.resume:
+            f = open (self.filename, 'ab')
+        else:
+            f = open (self.filename, 'wb')
+
+        self.c.setopt (pycurl.WRITEFUNCTION, f.write)
+
+        if self.referer != None:
+            self.c.setopt (pycurl.REFERER, self.referer)
+
+        self.c.setopt (pycurl.NOPROGRESS, 0)
+        self.c.setopt (pycurl.PROGRESSFUNCTION, self.download_progress)
+
+        self.drun = True
+
+        try:
+            try:
+                self.c.perform ()
+                if self.completed_cb != None:
+                    self.completed_cb (self)
+            except:
+                pass
+        finally:
+            self.c.close ()
+            f.close ()
+
+    def download_progress (self, dt, dd, ut, ud):
+        if self.resume:
+            dt = dt + self.resume
+            dd = dd + self.resume
+
+        if self.progress_cb:
+            self.progress_cb (dt, dd, ut, ud)
+        if not self.drun:
+            return 1
+
+    def close (self):
+        self.drun = False
+        self.join ()
+        self.c.close ()
+
 from downloaders.hosters import factory
-factory.add_hoster (Rapidshare, 'http:\/\/rapidshare\.com')
+factory.add_hoster (Rapidshare, RAPIDSHARE_MATCH)

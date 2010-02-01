@@ -101,16 +101,11 @@ class MUDownload (GenericHost):
         if os.path.exists (self.location):
             s = os.stat (self.location)
 
-            print 'downloaded:', self.downloaded
-            print 'stat.st_size:', s.st_size
-
             if s.st_size == self.total:
                 self.set_state (STATE_COMPLETED)
                 return
             if s.st_size == self.downloaded:
                 rfrom = self.downloaded
-
-        print 'rfrom:', rfrom
 
         self.tfile = WriteFile (self.furl, self.location, None, self.url, rfrom)
         self.tfile.completed_cb = self.download_completed
