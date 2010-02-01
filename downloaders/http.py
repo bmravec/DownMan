@@ -18,11 +18,12 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-import re
+import re, os
 from threading import Thread
 import pycurl
 
 from downloaders.download import *
+from downloaders.writefile import WriteFile
 
 class HttpDownload (Download):
     def __init__ (self, url, downman):
@@ -50,9 +51,20 @@ class HttpDownload (Download):
     def start_download (self, state_cb=None):
         Download.start_download (self, state_cb)
 
-        filename = re.search ('([^\/]*)$', self.url).group (1)
+        self.location = re.search ('([^\/]*)$', self.url).group (1)
 
-        self.tfile = WriteFile (self.url, filename)
+        rfrom = None
+
+        if os.path.exists (self.location):
+            s = os.stat (self.location)
+
+            if s.st_size == self.total:
+                self.set_state (STATE_COMPLETED)
+                return
+            if s.st_size == self.downloaded:
+                rfrom = self.downloaded
+
+        self.tfile = WriteFile (self.url, self.location, rfrom=rfrom)
         self.tfile.completed_cb = self.download_completed
         self.tfile.progress_cb = self.download_progress
         self.tfile.start ()
@@ -71,9 +83,10 @@ class HttpDownload (Download):
     def startup (self, data):
         self.name = data['name']
         self.url = data['url']
-        self.downloaded = int (data['downloaded'])
-        self.total = int (data['total'])
+        self.downloaded = float (data['downloaded'])
+        self.total = float (data['total'])
         self.state = int (data['state'])
+        self.location = data['location']
 
     def shutdown (self):
         data = {}
@@ -94,6 +107,7 @@ class HttpDownload (Download):
         data['total'] = str (self.total)
         data['state'] = str (self.state)
         data['match'] = 'http'
+        data['location'] = self.location
 
         return data
 

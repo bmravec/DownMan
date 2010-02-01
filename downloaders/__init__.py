@@ -42,11 +42,8 @@ def load_download (data, downman):
         hoster.startup (data)
         return hoster
 
-    if url.startswith ('http://'):
-        if url.endswith ('.html') or url.endswith ('.php') or url.endswith ('htm'):
-            return None
-
-        download = HttpDownload (url, downman)
+    if data['match'] == 'http':
+        download = HttpDownload ('', downman)
         download.startup (data)
         return download
 
