@@ -98,8 +98,10 @@ class Config:
     and a short description of their function:
     MaxUploadSpeed - Global maximum upload speed of all transfers
     MaxDownloadSpeed - Global maxium download speed of all transfers
+    MaxNumDownloads - Maximum number of concurrent downloads
     DefaultDownloadDirectory - Default directory to download files to
     '''
+
     properties = {}
     notifiers = {}
     tdownloads = []
@@ -108,6 +110,7 @@ class Config:
         self.set_property ('DefaultDownloadDirectory', DEFAULT_DOWNLOAD_DIRECTORY)
         self.set_property ('MaxUploadSpeed', '0')
         self.set_property ('MaxDownloadSpeed', '0')
+        self.set_property ('MaxNumDownloads', '1')
 
     def get_property (self, key):
         return self.properties[key]
@@ -159,6 +162,7 @@ class Config:
         f.write ('\t<config>\n')
         f.write ('\t\t<MaxUploadSpeed>%s</MaxUploadSpeed>\n' % (escape (self.get_property ('MaxUploadSpeed'))))
         f.write ('\t\t<MaxDownloadSpeed>%s</MaxDownloadSpeed>\n' % (escape (self.get_property ('MaxDownloadSpeed'))))
+        f.write ('\t\t<MaxNumDownloads>%s</MaxNumDownloads>\n' % (escape (self.get_property ('MaxNumDownloads'))))
         f.write ('\t\t<DefaultDownloadDirectory>%s</DefaultDownloadDirectory>\n' % (escape (self.get_property ('DefaultDownloadDirectory'))))
         f.write ('\t</config>\n')
 
