@@ -45,16 +45,20 @@ class Download:
 
     state_cb = None
 
-    def start_get_info (self, state_cb=None):
-        self.state = STATE_INFO
-        self.state_cb = state_cb
+    def start_get_info (self):
+        self.set_state (STATE_NOT_FOUND)
 
-    def start_download (self, state_cb=None):
-        self.state = STATE_CONNECTING
-        self.state_cb = state_cb
+    def start_download (self):
+        self.set_state (STATE_NOT_FOUND)
 
     def set_state (self, state):
         self.state = state
+        if self.state_cb != None:
+            self.state_cb (self)
+
+    def set_state_cb (self, state_cb):
+        self.state_cb = state_cb
+
         if self.state_cb != None:
             self.state_cb (self)
 

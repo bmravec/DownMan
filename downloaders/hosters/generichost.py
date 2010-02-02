@@ -35,18 +35,14 @@ class GenericHost (Download):
         self.name = url
         self.downman = downman
 
-    def start_get_info (self, state_cb=None):
-        Download.start_get_info (self, state_cb)
-
+    def start_get_info (self):
         self.tfile = TempFile (self.url)
         self.tfile.completed_cb = self.stage_download_completed
         self.tfile.start ()
 
         self.set_state (STATE_INFO)
 
-    def start_download (self, state_cb=None):
-        Download.start_download (self, state_cb)
-
+    def start_download (self):
         self.tfile = TempFile (self.url)
         self.tfile.completed_cb = self.stage_download_completed
         self.tfile.start ()
@@ -70,7 +66,6 @@ class GenericHost (Download):
 
     def print_progress (self, num):
         self.status = 'Starting in %d seconds' % (num)
-        self.set_state (STATE_WAITING)
 
     def close (self):
         if self.tfile:

@@ -33,13 +33,17 @@ class StagingList:
         if self.view != None:
             self.view.add_download (download)
 
-        download.start_get_info (self.on_info_cb)
+        download.set_state_cb (self.on_info_cb)
+
+        download.start_get_info ()
 
     def remove_download (self, download):
         self.downloads.remove (download)
 
         if self.view != None:
             self.view.remove_download (download)
+
+        download.set_state_cb (None)
 
     def update_download (self, download):
         if self.view != None:

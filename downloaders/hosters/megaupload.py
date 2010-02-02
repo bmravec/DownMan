@@ -38,9 +38,7 @@ class MUDownload (GenericHost):
             ('count=(\d+);', self.handle_correct_captcha),
         ]
 
-    def start_get_info (self, state_cb=None):
-        Download.start_get_info (self, state_cb)
-
+    def start_get_info (self):
         fileid = re.search ('\?d=([A-Za-z0-9]+)', self.url).group (1)
         postdata = 'id0=%s' % (fileid)
 
@@ -159,9 +157,7 @@ class MUDecryptor (GenericHost):
 
         self.folderid = re.search ('\?f=([A-Za-z0-9]+)', self.url).group (1)
 
-    def start_get_info (self, state_cb=None):
-        Download.start_get_info (self, state_cb)
-
+    def start_get_info (self):
         self.tfile = TempFile ('http://megaupload.com/xml/folderfiles.php?folderid=%s' % (self.folderid))
         self.tfile.completed_cb = self.handle_tfile_done
         self.tfile.start ()
@@ -176,11 +172,6 @@ class MUDecryptor (GenericHost):
             self.links.append (re.search ('url="([^"]*)"', row).group (1))
 
         self.set_state (STATE_INFO_COMPLETED)
-
-    def start_download (self, state_cb=None):
-        Download.start_download (self, state_cb)
-
-        self.set_state (STATE_COMPLETED)
 
 from downloaders.hosters import factory
 factory.add_hoster (MUDownload, MUDOWNLOAD_MATCH)

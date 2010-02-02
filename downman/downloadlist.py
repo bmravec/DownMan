@@ -20,14 +20,20 @@
 
 from downloaders.download import *
 
+astates = [ STATE_CONNECTING, STATE_DOWNLOADING, STATE_WAITING ]
+istates = [ STATE_NULL, STATE_PAUSED, STATE_HOLDING, STATE_DISABLED, STATE_COMPLETED, STATE_NOT_FOUND ]
+
 class DownloadList:
     downloads = []
     view = None
 
-    downloading = None
+    downloading = []
 
     def __init__ (self, downman):
         self.downman = downman
+
+        self.maxnumdownloads = int (downman.config.get_property ('MaxNumDownloads'))
+        downman.config.register_notifier ('MaxNumDownloads', self.on_key_change)
 
     def add_download (self, download):
         self.downloads.append (download)
@@ -35,15 +41,16 @@ class DownloadList:
         if self.view != None:
             self.view.add_download (download)
 
-        if len (self.downloads) == 1:
-            download.start_download (self.handle_state_changed)
-        else:
-            download.set_state (STATE_QUEUED)
-
-        #TODO: Handle Queue correctly
+        # Sets up the callback, this will call it once
+        # so we can setup the queue in the callback
+        download.set_state_cb (self.handle_state_changed)
 
     def remove_download (self, download):
         self.downloads.remove (download)
+
+        if download in self.downloading:
+            self.downloading.remove (download)
+            download.close ()
 
         if self.view != None:
             self.view.remove_download (download)
@@ -63,17 +70,30 @@ class DownloadList:
     def handle_state_changed (self, download):
         self.update_download (download)
 
-        if download != self.downloading:
+        if download.state in istates and download in self.downloading:
+            self.downloading.remove (download)
+
+        self.refresh_queue ()
+
+    def refresh_queue (self):
+        slots = self.maxnumdownloads - len (self.downloading)
+
+        if slots <= 0:
             return
 
-        if download.state == STATE_COMPLETED or download.state == STATE_HOLDING or download.state == STATE_DISABLED or download.state == STATE_NOT_FOUND or download.state == STATE_PAUSED:
-            found = False
-            for d in self.downloads:
-                if d == self.downloading:
-                    found = True
-                elif found == True:
-                    d.start_download (self.handle_state_changed)
+        for d in self.downloads:
+            if not d in self.downloading and d.state == STATE_QUEUED:
+                self.downloading.append (d)
+                d.start_download ()
+
+                slots -= 1
+                if slots <= 0:
                     return
+
+    def on_key_change (self, key, value):
+        if key == 'MaxNumDownloads':
+            self.maxnumdownloads = int (value)
+            self.refresh_queue ()
 
     def shutdown (self):
         dlist = []

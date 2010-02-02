@@ -49,11 +49,11 @@ class Rapidshare (GenericHost):
 
         self.total = int (m.group (1))
         if m.group (2) == 'KB':
-            self.total = self.total * 1024
+            self.total = self.total * 1000
         if m.group (2) == 'MB':
-            self.total = self.total * 1024 * 1024
+            self.total = self.total * 1000000
         if m.group (2) == 'GB':
-            self.total = self.total * 1024 * 1024 * 1024
+            self.total = self.total * 1000000000
 
         self.name = re.search ('([^\/]*)$', self.url).group (1)
 
@@ -121,7 +121,8 @@ class Rapidshare (GenericHost):
         self.downloaded = float (data['downloaded'])
         self.total = float (data['total'])
         self.state = int (data['state'])
-        self.location = data['location']
+        if data.has_key ('location'):
+            self.location = data['location']
 
     def shutdown (self):
         data = {}
@@ -145,7 +146,8 @@ class Rapidshare (GenericHost):
         data['total'] = str (self.total)
         data['state'] = str (self.state)
         data['match'] = RAPIDSHARE_MATCH
-        data['location'] = self.location
+        if hasattr (self, 'location'):
+            data['location'] = self.location
 
         return data
 
@@ -193,8 +195,7 @@ class RapidshareWriteFile (Thread):
 
     def download_progress (self, dt, dd, ut, ud):
         if self.resume:
-            dt = dt + self.resume
-            dd = dd + self.resume
+            dd += self.resume
 
         if self.progress_cb:
             self.progress_cb (dt, dd, ut, ud)

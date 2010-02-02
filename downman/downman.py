@@ -27,6 +27,7 @@ import downloaders
 
 from downloadlist import DownloadList
 from staginglist import StagingList
+import downloaders.download
 
 class DownMan:
     application = None
@@ -124,6 +125,10 @@ class DownMan:
 
         for d in sds:
             self.staginglist.remove_download (d)
+
+            #TODO: Do check to see if download should be queued or paused
+            d.set_state (downloaders.download.STATE_QUEUED)
+
             self.downloadlist.add_download (d)
 
     def on_clear_staging (self):
