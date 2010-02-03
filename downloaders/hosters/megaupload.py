@@ -30,6 +30,8 @@ MUDOWNLOAD_MATCH = 'http:\/\/(www\.)?megaupload\.com\/\?d='
 MUDECRYPTOR_MATCH = 'http:\/\/(www\.)?megaupload\.com\/\?f='
 
 class MUDownload (GenericHost):
+    location = None
+
     def __init__ (self, url, downman):
         GenericHost.__init__ (self, url, downman)
 
@@ -119,7 +121,8 @@ class MUDownload (GenericHost):
         self.downloaded = float (data['downloaded'])
         self.total = float (data['total'])
         self.state = int (data['state'])
-        self.location = data['location']
+        if data.has_key ('location'):
+            self.location = data['location']
 
     def shutdown (self):
         data = {}
@@ -143,7 +146,8 @@ class MUDownload (GenericHost):
         data['total'] = str (self.total)
         data['state'] = str (self.state)
         data['match'] = MUDOWNLOAD_MATCH
-        data['location'] = self.location
+        if self.location != None:
+            data['location'] = self.location
 
         return data
 

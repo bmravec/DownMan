@@ -33,8 +33,6 @@ class Rapidshare (GenericHost):
     def __init__ (self, url, downman):
         GenericHost.__init__ (self, url, downman)
 
-        self.ourl = url
-
         self.case_handlers = [
             ('<form id="ff" action="([^"]*)" method="post">', self.handle_start_page),
             ('You have reached the download limit for free\-users', self.handle_download_limit),
