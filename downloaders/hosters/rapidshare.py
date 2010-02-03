@@ -33,6 +33,8 @@ class Rapidshare (GenericHost):
     def __init__ (self, url, downman):
         GenericHost.__init__ (self, url, downman)
 
+        self.ourl = url
+
         self.case_handlers = [
             ('<form id="ff" action="([^"]*)" method="post">', self.handle_start_page),
             ('You have reached the download limit for free\-users', self.handle_download_limit),
@@ -95,6 +97,7 @@ class Rapidshare (GenericHost):
     def handle_start_download (self):
         self.location = re.search ('([^\/]*)$', self.furl).group (1)
 
+        """
         resume = None
 
         if os.path.exists (self.location):
@@ -106,8 +109,9 @@ class Rapidshare (GenericHost):
             if s.st_size == self.downloaded:
                 self.furl = self.furl + '?start=' + str (int (self.downloaded))
                 resume = self.downloaded
+        """
 
-        self.tfile = RapidshareWriteFile (self.furl, self.location, self.url, resume)
+        self.tfile = RapidshareWriteFile (self.furl, self.location, self.url)
         self.tfile.completed_cb = self.download_completed
         self.tfile.progress_cb = self.download_progress
         self.tfile.start ()
@@ -166,8 +170,9 @@ class RapidshareWriteFile (Thread):
     def run (self):
         self.c = pycurl.Curl ()
         self.c.setopt (pycurl.URL, self.url)
+        self.c.setopt (pycurl.VERBOSE, 1)
 
-        if self.resume:
+        if self.resume != None:
             f = open (self.filename, 'ab')
         else:
             f = open (self.filename, 'wb')
