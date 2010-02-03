@@ -4,6 +4,7 @@
         <MaxDownloadSpeed> </MaxDownloadSpeed>
         <DefaultDownloadDirectory> </DefaultDownloadDirectory>
     </config>
+    <!-- Example download
     <download>
         <match> </match>
         <file> </file>
@@ -14,4 +15,5 @@
         <name> </name>
         <state> </state>
     </download>
+    -->
 </downman>
