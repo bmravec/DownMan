@@ -52,9 +52,18 @@ class DownloadView (gtk.TreeView, gui.downloadview.DownloadView):
 
     def add_download (self, download):
         if download.total != -1:
-            text = '%s / %s' % (size_to_string (download.downloaded), size_to_string (download.total))
             pulse = -1
-            value = 100.0 * download.downloaded / download.total
+
+            if download.total != 0:
+                if download.downloaded >= download.total:
+                    value = 100.0
+                else:
+                    value = 100.0 * download.downloaded / download.total
+
+                text = '%s / %s' % (size_to_string (download.downloaded), size_to_string (download.total))
+            else:
+                value = 0.0
+                text = '%s' % (size_to_string (download.downloaded))
         else:
             text = '%d' % (size_to_string (download.downloaded))
             pulse = download.downloaded
@@ -70,7 +79,11 @@ class DownloadView (gtk.TreeView, gui.downloadview.DownloadView):
 
                 if download.total != -1:
                     if download.total != 0:
-                        d[4] = 100.0 * download.downloaded / download.total
+                        if download.downloaded >= download.total:
+                            d[4] = 100.0
+                        else:
+                            d[4] = 100.0 * download.downloaded / download.total
+
                         d[3] = '%s / %s' % (size_to_string (download.downloaded), size_to_string (download.total))
                     else:
                         d[4] = 0.0
