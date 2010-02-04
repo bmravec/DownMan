@@ -29,11 +29,13 @@ from downloaders.timeout import Timeout
 class GenericHost (Download):
     proto = 'http'
     case_handlers = []
+    pdtotal = 0
 
     def __init__ (self, url, downman):
         self.url = url
         self.name = url
         self.downman = downman
+        self.speed = downman.speedlimit.create_download ()
 
     def start_get_info (self):
         self.tfile = TempFile (self.url)
@@ -63,6 +65,11 @@ class GenericHost (Download):
         self.downloaded = dd
         if dt != 0:
             self.total = dt
+
+        diff = dd - self.pdtotal
+        self.pdtotal = dd
+        val = self.speed.update_downloaded (diff)
+        self.speed.wait (val)
 
     def print_progress (self, num):
         self.status = 'Starting in %d seconds' % (num)

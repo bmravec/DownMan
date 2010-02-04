@@ -27,7 +27,7 @@ import downloaders
 
 from downloadlist import DownloadList
 from staginglist import StagingList
-import downloaders.download
+from speedlimit import SpeedLimit
 
 class DownMan:
     application = None
@@ -39,10 +39,10 @@ class DownMan:
 
     downloadlist = None
     staginglist = None
+    speedlimit = None
 
     def __init__ (self):
         self.config = gui.Config ()
-
         self.config.load_settings ()
 
         self.downloadlist = DownloadList (self)
@@ -58,6 +58,8 @@ class DownMan:
         self.mainwindow.set_downloadview (self.downloadview)
         self.mainwindow.set_stagingview (self.stagingview)
 
+        self.speedlimit = SpeedLimit (self.update_all)
+
     def setup (self):
         dlist = self.config.load_downloads ()
 
@@ -67,9 +69,7 @@ class DownMan:
                 self.downloadlist.add_download (nd)
 
     def run (self):
-        self.updater = TimeoutPing (1, self.update_all)
-        self.updater.start ()
-
+        self.speedlimit.start ()
         self.application.run ()
 
     def shutdown (self):
@@ -133,15 +133,3 @@ class DownMan:
 
     def on_clear_staging (self):
         self.staginglist.clear ()
-
-class TimeoutPing (Thread):
-    def __init__ (self, interval, callback):
-        Thread.__init__ (self)
-        self.interval = interval
-        self.callback = callback
-
-    def run (self):
-        while True:
-            time.sleep (self.interval)
-            if self.callback () != None:
-                break

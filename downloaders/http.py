@@ -26,10 +26,13 @@ from downloaders.download import *
 from downloaders.writefile import WriteFile
 
 class HttpDownload (Download):
+    pdtotal = -1
+
     def __init__ (self, url, downman):
         self.url = url
         self.name = re.search ('([^\/]*)$', self.url).group (1)
         self.downman = downman
+        self.speed = downman.speedlimit.create_download ()
 
     def start_get_info (self):
         self.tfile = HttpNoBody (self.url)
@@ -73,6 +76,11 @@ class HttpDownload (Download):
     def download_progress (self, dt, dd, ut, ud):
         self.downloaded = dd
         self.total = dt
+
+        diff = dd - self.pdtotal
+        self.pdtotal = dd
+        val = self.speed.update_downloaded (diff)
+        self.speed.wait (val)
 
     def download_completed (self, wfile):
         self.status = 'Download Complete'
