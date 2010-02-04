@@ -66,9 +66,12 @@ class WriteFile (Thread):
         self.drun = True
 
         try:
-            self.c.perform ()
-            if self.completed_cb != None:
-                self.completed_cb (self)
+            try:
+                self.c.perform ()
+                if self.completed_cb != None:
+                    self.completed_cb (self)
+            except:
+                pass
         finally:
             self.c.close ()
             f.close ()
