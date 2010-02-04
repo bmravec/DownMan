@@ -24,6 +24,8 @@ import gui.downloadview
 
 from downman.utils import *
 
+from downloaders.download import STATE_DOWNLOADING
+
 class DownloadView (gtk.TreeView, gui.downloadview.DownloadView):
     def __init__ (self, downloadlist):
         gtk.TreeView.__init__ (self)
@@ -75,7 +77,25 @@ class DownloadView (gtk.TreeView, gui.downloadview.DownloadView):
         for d in self.store:
             if d[0] == download:
                 d[1] = download.name
-                d[2] = download.status
+
+                if download.state == STATE_DOWNLOADING:
+                    dtext = None
+                    utext = None
+
+                    if download.speed.putotal != 0:
+                        utext = 'U: %s' % (size_to_string (download.speed.putotal))
+
+                    if download.speed.pdtotal != 0:
+                        dtext = 'D: %s' % (size_to_string (download.speed.pdtotal))
+
+                    if dtext and utext:
+                        d[2] = '%sps, %sps' % (utext, dtext)
+                    elif utext:
+                        d[2] = '%sps' % (utext)
+                    elif dtext:
+                        d[2] = '%sps' % (dtext)
+                else:
+                    d[2] = download.status
 
                 if download.total != -1:
                     if download.total != 0:
