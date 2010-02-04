@@ -23,6 +23,7 @@ import pycurl
 
 class TempFile (Thread):
     completed_cb = None
+    drun = False
 
     def __init__ (self, url, post_data=None, referer=None, headers=None):
         Thread.__init__ (self)
@@ -47,14 +48,25 @@ class TempFile (Thread):
         if self.headers != None:
             self.c.setopt (pycurl.HTTPHEADER, self.headers)
 
-        self.c.perform ()
-        self.c.close ()
+        self.drun = True
 
-        if self.completed_cb != None:
-            self.completed_cb (self)
+        try:
+            try:
+                self.c.perform ()
+                if self.completed_cb != None:
+                    self.completed_cb (self)
+            except:
+                pass
+        finally:
+            self.c.close ()
 
     def write_cb (self, buf):
         self.contents = self.contents + buf
 
+        if not self.drun:
+            return 0
+
     def close (self):
+        self.drun = False
+        self.join ()
         self.c.close ()
