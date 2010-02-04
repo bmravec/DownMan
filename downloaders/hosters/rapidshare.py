@@ -19,7 +19,7 @@
 #       MA 02110-1301, USA.
 
 from threading import Thread
-import re, os
+import re, os, os.path
 import pycurl
 
 from downloaders.tempfile import TempFile
@@ -93,7 +93,9 @@ class Rapidshare (GenericHost):
         self.set_state (STATE_WAITING)
 
     def handle_start_download (self):
-        self.location = re.search ('([^\/]*)$', self.furl).group (1)
+        dpath = self.downman.config.get_property ('DefaultDownloadDirectory')
+
+        self.location = os.path.join (dpath, re.search ('([^\/]*)$', self.furl).group (1))
 
         """
         resume = None

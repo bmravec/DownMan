@@ -18,7 +18,7 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-import re, os
+import re, os, os.path
 from threading import Thread
 import pycurl
 
@@ -31,9 +31,7 @@ class HttpDownload (Download):
         self.name = re.search ('([^\/]*)$', self.url).group (1)
         self.downman = downman
 
-    def start_get_info (self, state_cb=None):
-        Download.start_get_info (self, state_cb)
-
+    def start_get_info (self):
         self.tfile = HttpNoBody (self.url)
         self.tfile.completed_cb = self.handle_info_completed
         self.tfile.start ()
@@ -48,10 +46,10 @@ class HttpDownload (Download):
             self.status = 'Offline'
             self.set_state (STATE_NOT_FOUND)
 
-    def start_download (self, state_cb=None):
-        Download.start_download (self, state_cb)
+    def start_download (self):
+        dpath = self.downman.config.get_property ('DefaultDownloadDirectory')
 
-        self.location = re.search ('([^\/]*)$', self.url).group (1)
+        self.location = os.path.join (dpath, re.search ('([^\/]*)$', self.url).group (1))
 
         rfrom = None
 
