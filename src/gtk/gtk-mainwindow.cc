@@ -19,6 +19,8 @@
  *      MA 02110-1301, USA.
  */
 
+#include "../config.h"
+
 #include <stdio.h>
 
 #include "downman.h"
@@ -27,6 +29,14 @@
 GtkMainWindow::GtkMainWindow (DownMan *downman) : MainWindow (downman)
 {
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+
+    gchar *str = g_strdup_printf ("%s v%s", PACKAGE_NAME, PACKAGE_VERSION);
+    gtk_window_set_title (GTK_WINDOW (window), str);
+    g_free (str);
+
+    gchar *path = g_strdup_printf ("%s/imgs/downman.svg", SHARE_DIR);
+    gtk_window_set_icon_from_file (GTK_WINDOW (window), path, NULL);
+    g_free (path);
 
     g_signal_connect (window, "destroy", G_CALLBACK (destroy_cb), this);
 

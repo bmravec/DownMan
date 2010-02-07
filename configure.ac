@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT([downman],[0.1])
+AC_INIT([DownMan],[0.1])
 AC_CONFIG_SRCDIR([src/downman.cc])
 AM_INIT_AUTOMAKE([dist-bzip2])
 
@@ -17,4 +17,5 @@ AM_PATH_GTK_2_0()
 AC_OUTPUT(
 Makefile
 src/Makefile
+images/Makefile
 )

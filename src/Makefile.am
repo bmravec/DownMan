@@ -1,4 +1,4 @@
-INCLUDES = $(GTK_CFLAGS) $(GLIB_CFLAGS)
+INCLUDES = $(GTK_CFLAGS) $(GLIB_CFLAGS) -DSHARE_DIR=\"$(pkgdatadir)\"
 
 gtksources = \
     gtk/gtk-application.cc gtk/gtk-application.h \
