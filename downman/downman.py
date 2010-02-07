@@ -58,7 +58,7 @@ class DownMan:
         self.mainwindow.set_downloadview (self.downloadview)
         self.mainwindow.set_stagingview (self.stagingview)
 
-        self.speedlimit = SpeedLimit (self.update_all)
+        self.speedlimit = SpeedLimit (self, self.update_all)
 
     def setup (self):
         dlist = self.config.load_downloads ()

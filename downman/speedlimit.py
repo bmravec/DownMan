@@ -64,7 +64,7 @@ class DownloadLimit:
         self.dtotal = 0
 
     def wait (self, val):
-        if val != None:
+        if val != None and val > 0:
             time.sleep (val)
 
 class SpeedLimit (Thread):
@@ -83,10 +83,17 @@ class SpeedLimit (Thread):
 
     update_cb = None
 
-    def __init__ (self, update_cb=None):
+    def __init__ (self, downman, update_cb=None):
         Thread.__init__ (self)
 
+        self.downman = downman
         self.update_cb = update_cb
+
+        self.ulimit = int (self.downman.config.get_property ('MaxUploadSpeed'))
+        self.dlimit = int (self.downman.config.get_property ('MaxDownloadSpeed'))
+
+        self.downman.config.register_notifier ('MaxUploadSpeed', self.update_settings)
+        self.downman.config.register_notifier ('MaxDownloadSpeed', self.update_settings)
 
     def run (self):
         self.last_time = time.time ()
@@ -125,7 +132,7 @@ class SpeedLimit (Thread):
 
         if self.dlimit != -1:
             if self.dtotal >= self.dlimit:
-                diff = 1.0 - time.time () - self.last_time
+                diff = 1.0 - time.time () + self.last_time
                 return diff
 
     def update_uploaded (self, uploaded):
@@ -133,5 +140,11 @@ class SpeedLimit (Thread):
 
         if self.ulimit != -1:
             if self.utotal >= self.ulimit:
-                diff = 1.0 - time.time () - self.last_time
+                diff = 1.0 - time.time () + self.last_time
                 return diff
+
+    def update_settings (self, key, val):
+        if key == 'MaxUploadSpeed':
+            self.ulimit = int (self.downman.config.get_property ('MaxUploadSpeed'))
+        elif key == 'MaxDownloadSpeed':
+            self.dlimit = int (self.downman.config.get_property ('MaxDownloadSpeed'))
