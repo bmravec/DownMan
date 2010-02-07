@@ -22,12 +22,12 @@ import gtk
 import time
 import gobject
 
-import gui.mainwindow
+from .. import mainwindow
 
-class MainWindow (gtk.Window, gui.mainwindow.MainWindow):
+class MainWindow (gtk.Window, mainwindow.MainWindow):
     def __init__ (self, downman):
         gtk.Window.__init__ (self, gtk.WINDOW_TOPLEVEL)
-        gui.mainwindow.MainWindow.__init__ (self, downman)
+        mainwindow.MainWindow.__init__ (self, downman)
 
         self.set_default_size (400, 300)
         self.connect ("destroy", self.destroy)

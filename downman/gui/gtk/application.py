@@ -21,7 +21,7 @@
 import gtk
 import sys
 
-import gui.application
+from .. import application
 
 from mainwindow import MainWindow
 from downloadview import DownloadView
@@ -29,7 +29,7 @@ from toolbar import Toolbar
 
 gtk.gdk.threads_init ()
 
-class Application (gui.application.Application):
+class Application (application.Application):
     def run (self):
         gtk.main ()
 

@@ -20,12 +20,12 @@
 
 import gtk
 
-import gui.toolbar
+from .. import toolbar
 
-class Toolbar (gtk.Toolbar, gui.toolbar.Toolbar):
+class Toolbar (gtk.Toolbar, toolbar.Toolbar):
     def __init__ (self, downman):
         gtk.Toolbar.__init__ (self)
-        gui.toolbar.Toolbar.__init__ (self, downman)
+        toolbar.Toolbar.__init__ (self, downman)
 
         self.add_url_button = gtk.ToolButton (gtk.STOCK_NETWORK)
         self.add_url_button.set_tooltip_text ('Add URL')

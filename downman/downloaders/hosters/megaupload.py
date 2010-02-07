@@ -20,11 +20,11 @@
 
 import re, os, os.path
 
-from downloaders.tempfile import TempFile
-from downloaders.writefile import WriteFile
-from downloaders.timeout import Timeout
+from downman.downloaders.tempfile import TempFile
+from downman.downloaders.writefile import WriteFile
+from downman.downloaders.timeout import Timeout
+from downman.downloaders.download import *
 from generichost import *
-from downloaders.download import *
 
 MUDOWNLOAD_MATCH = 'http:\/\/(www\.)?megaupload\.com\/\?d='
 MUDECRYPTOR_MATCH = 'http:\/\/(www\.)?megaupload\.com\/\?f='
@@ -179,6 +179,6 @@ class MUDecryptor (GenericHost):
 
         self.set_state (STATE_INFO_COMPLETED)
 
-from downloaders.hosters import factory
+from downman.downloaders.hosters import factory
 factory.add_hoster (MUDownload, MUDOWNLOAD_MATCH)
 factory.add_hoster (MUDecryptor, MUDECRYPTOR_MATCH)

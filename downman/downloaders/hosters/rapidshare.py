@@ -22,9 +22,9 @@ from threading import Thread
 import re, os, os.path
 import pycurl
 
-from downloaders.tempfile import TempFile
-from downloaders.writefile import WriteFile
-from downloaders.timeout import Timeout
+from downman.downloaders.tempfile import TempFile
+from downman.downloaders.writefile import WriteFile
+from downman.downloaders.timeout import Timeout
 from generichost import *
 
 RAPIDSHARE_MATCH = 'http:\/\/rapidshare\.com'
@@ -212,5 +212,5 @@ class RapidshareWriteFile (Thread):
         self.join ()
         self.c.close ()
 
-from downloaders.hosters import factory
+from downman.downloaders.hosters import factory
 factory.add_hoster (Rapidshare, RAPIDSHARE_MATCH)

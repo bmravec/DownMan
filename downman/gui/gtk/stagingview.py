@@ -20,14 +20,14 @@
 
 import gtk
 
-import gui.stagingview
+from .. import stagingview
 
 from downman.utils import *
 
-class StagingView (gtk.TreeView, gui.stagingview.StagingView):
+class StagingView (gtk.TreeView, stagingview.StagingView):
     def __init__ (self, staginglist):
         gtk.TreeView.__init__ (self)
-        gui.stagingview.StagingView.__init__ (self, staginglist)
+        stagingview.StagingView.__init__ (self, staginglist)
 
         self.store = gtk.TreeStore (object, str, str, str)
         self.set_model (self.store)

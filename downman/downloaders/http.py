@@ -22,8 +22,8 @@ import re, os, os.path
 from threading import Thread
 import pycurl
 
-from downloaders.download import *
-from downloaders.writefile import WriteFile
+from download import *
+from writefile import WriteFile
 
 class HttpDownload (Download):
     pdtotal = -1

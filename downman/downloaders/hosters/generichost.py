@@ -20,11 +20,11 @@
 
 import re
 
-from downloaders.download import *
+from downman.downloaders.download import *
 
-from downloaders.tempfile import TempFile
-from downloaders.writefile import WriteFile
-from downloaders.timeout import Timeout
+from downman.downloaders.tempfile import TempFile
+from downman.downloaders.writefile import WriteFile
+from downman.downloaders.timeout import Timeout
 
 class GenericHost (Download):
     proto = 'http'

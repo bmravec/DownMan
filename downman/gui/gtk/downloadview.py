@@ -20,16 +20,16 @@
 
 import gtk
 
-import gui.downloadview
+from .. import downloadview
 
 from downman.utils import *
 
-from downloaders.download import STATE_DOWNLOADING
+from downman.downloaders.download import STATE_DOWNLOADING
 
-class DownloadView (gtk.TreeView, gui.downloadview.DownloadView):
+class DownloadView (gtk.TreeView, downloadview.DownloadView):
     def __init__ (self, downloadlist):
         gtk.TreeView.__init__ (self)
-        gui.downloadview.DownloadView.__init__ (self, downloadlist)
+        downloadview.DownloadView.__init__ (self, downloadlist)
 
         self.store = gtk.TreeStore (object, str, str, str, float, int)
         self.set_model (self.store)
