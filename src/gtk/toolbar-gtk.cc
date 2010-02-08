@@ -97,7 +97,7 @@ ToolbarGtk::get_widget ()
 void
 ToolbarGtk::add_url_cb (GtkWidget *widget, ToolbarGtk *tb)
 {
-    printf ("ToolbarGtk::add_url_cb (): stub\n");
+    tb->downman->prompt_for_urls ();
 }
 
 void

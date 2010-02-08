@@ -69,6 +69,20 @@ DownMan::quit ()
     application->quit ();
 }
 
+void
+DownMan::prompt_for_urls ()
+{
+    char *urls = application->prompt_for_urls ();
+
+    if (urls) {
+        printf ("URLS: %s\n", urls);
+
+        delete urls;
+    } else {
+        printf ("No URLS Entered\n");
+    }
+}
+
 int
 main (int argc, char *argv[])
 {

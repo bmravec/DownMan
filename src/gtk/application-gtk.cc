@@ -67,9 +67,49 @@ ApplicationGtk::prompt_for_captcha (char *img_data)
 char*
 ApplicationGtk::prompt_for_urls ()
 {
-    printf ("ApplicationGtk::prompt_for_urls (): stub\n");
+    char *text = NULL;
 
-    return NULL;
+    GtkWidget *tv = gtk_text_view_new ();
+
+    GtkWidget *dialog = gtk_dialog_new_with_buttons ("Add URLs...", NULL,
+        GTK_DIALOG_MODAL, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
+        GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+
+    GtkWidget *vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+
+    gtk_box_pack_start (GTK_BOX (vbox), gtk_label_new ("Enter URLs below:"), FALSE, FALSE, 0);
+
+    GtkWidget *sw = gtk_scrolled_window_new (NULL, NULL);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
+        GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_container_add (GTK_CONTAINER (sw), tv);
+
+    gtk_box_pack_start (GTK_BOX (vbox), sw, TRUE, TRUE, 0);
+
+    gtk_widget_show_all (vbox);
+
+    if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK) {
+        GtkTextIter start, end;
+
+        GtkTextBuffer *buff = gtk_text_view_get_buffer (GTK_TEXT_VIEW (tv));
+
+        gtk_text_buffer_get_start_iter (buff, &start);
+        gtk_text_buffer_get_end_iter (buff, &end);
+
+        gchar *gtext = gtk_text_buffer_get_text (buff, &start, &end, TRUE);
+
+        int len;
+        for (len = 0; gtext[len]; len++);
+
+        text = new char[len];
+        for (int i = 0; i < len; i++) text[i] = gtext[i];
+
+        g_free (gtext);
+    }
+
+    gtk_widget_destroy (dialog);
+
+    return text;
 }
 
 char*

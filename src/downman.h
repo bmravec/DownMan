@@ -45,6 +45,8 @@ class DownMan {
         void run ();
         void shutdown ();
         void quit ();
+
+        void prompt_for_urls ();
     private:
         GuiFactory *guifactory;
 
