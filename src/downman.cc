@@ -34,8 +34,10 @@ DownMan::DownMan ()
     application = guifactory->create_application ();
     mainwindow = guifactory->create_mainwindow ();
     downloadview = guifactory->create_downloadview (NULL);
+    toolbar = guifactory->create_toolbar ();
 
     mainwindow->set_downloadview (downloadview);
+    mainwindow->set_toolbar (toolbar);
 }
 
 DownMan::~DownMan ()

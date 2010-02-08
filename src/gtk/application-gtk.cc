@@ -1,5 +1,5 @@
 /*
- *      gtk-downloadview.cc
+ *      application-gtk.cc
  *
  *      Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
  *
@@ -21,47 +21,61 @@
 
 #include <stdio.h>
 
-#include "gtk-downloadview.h"
+#include <gtk/gtk.h>
 
-GtkDownloadView::GtkDownloadView (DownMan *downman, DownloadList *downloadlist) :
-    DownloadView (downman, downloadlist)
+#include "application-gtk.h"
+#include "downman.h"
+
+ApplicationGtk::ApplicationGtk (DownMan *downman) : Application (downman)
 {
-    widget = gtk_tree_view_new ();
+    g_type_init ();
+
+    g_thread_init (NULL);
+    gdk_threads_init ();
+
+    gint argc = 0;
+    gtk_init (&argc, NULL);
 }
 
-GtkDownloadView::~GtkDownloadView ()
+ApplicationGtk::~ApplicationGtk ()
 {
 
-}
-
-void
-GtkDownloadView::add_download (Download *download)
-{
-    printf ("GtkDownloadView::add_download (download): stub\n");
-}
-
-void
-GtkDownloadView::update_download (Download *download)
-{
-    printf ("GtkDownloadView::update_download (download): stub\n");
 }
 
 void
-GtkDownloadView::remove_download (Download *download)
+ApplicationGtk::run ()
 {
-    printf ("GtkDownloadView::remove_download (download): stub\n");
+    gdk_threads_enter ();
+    gtk_main ();
+    gdk_threads_leave ();
 }
 
-Download**
-GtkDownloadView::get_selected ()
+void
+ApplicationGtk::quit ()
 {
-    printf ("GtkDownloadView::get_selected (download): stub\n");
+    gtk_main_quit ();
+}
+
+char*
+ApplicationGtk::prompt_for_captcha (char *img_data)
+{
+    printf ("ApplicationGtk::prompt_for_captcha (): stub\n");
 
     return NULL;
 }
 
-GtkWidget*
-GtkDownloadView::get_widget ()
+char*
+ApplicationGtk::prompt_for_urls ()
 {
-    return widget;
+    printf ("ApplicationGtk::prompt_for_urls (): stub\n");
+
+    return NULL;
+}
+
+char*
+ApplicationGtk::prompt_for_files ()
+{
+    printf ("ApplicationGtk::prompt_for_files (): stub\n");
+
+    return NULL;
 }

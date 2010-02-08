@@ -1,9 +1,10 @@
 INCLUDES = $(GTK_CFLAGS) $(GLIB_CFLAGS) -DSHARE_DIR=\"$(pkgdatadir)\"
 
 gtksources = \
-    gtk/gtk-application.cc gtk/gtk-application.h   \
-    gtk/gtk-mainwindow.cc gtk/gtk-mainwindow.h     \
-    gtk/gtk-downloadview.cc gtk/gtk-downloadview.h 
+    gtk/application-gtk.cc gtk/application-gtk.h   \
+    gtk/mainwindow-gtk.cc gtk/mainwindow-gtk.h     \
+    gtk/downloadview-gtk.cc gtk/downloadview-gtk.h \
+    gtk/toolbar-gtk.cc gtk/toolbar-gtk.h
 
 bin_PROGRAMS = downman
 
@@ -14,6 +15,7 @@ downman_SOURCES =                  \
     application.cc application.h   \
     mainwindow.cc mainwindow.h     \
     downloadview.cc downloadview.h \
+    toolbar.cc toolbar.h           \
     gui-factory.cc gui-factory.h   \
     $(gtksources)
 

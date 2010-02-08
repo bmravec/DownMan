@@ -24,10 +24,18 @@ class Toolbar;
 #ifndef __TOOLBAR_H__
 #define __TOOLBAR_H__
 
+#include "downman.h"
+
 class Toolbar {
     public:
-        Toolbar ();
+        Toolbar (DownMan *downman);
         ~Toolbar ();
+
+        virtual void set_start_enabled (bool enabled);
+        virtual void set_stop_enabled (bool enabled);
+
+    protected:
+        DownMan *downman;
 
     private:
 };

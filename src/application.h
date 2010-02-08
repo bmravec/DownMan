@@ -37,6 +37,7 @@ class Application {
         virtual char *prompt_for_captcha (char *img_data);
         virtual char *prompt_for_urls ();
         virtual char *prompt_for_files ();
+
     protected:
         DownMan *downman;
 };

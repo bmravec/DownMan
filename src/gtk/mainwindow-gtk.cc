@@ -1,5 +1,5 @@
 /*
- *      gtk-mainwindow.cc
+ *      mainwindow-gtk.cc
  *
  *      Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
  *
@@ -24,10 +24,10 @@
 #include <stdio.h>
 
 #include "downman.h"
-#include "gtk-mainwindow.h"
-#include "gtk-downloadview.h"
+#include "mainwindow-gtk.h"
+#include "downloadview-gtk.h"
 
-GtkMainWindow::GtkMainWindow (DownMan *downman) : MainWindow (downman)
+MainWindowGtk::MainWindowGtk (DownMan *downman) : MainWindow (downman)
 {
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
@@ -64,40 +64,44 @@ GtkMainWindow::GtkMainWindow (DownMan *downman) : MainWindow (downman)
     gtk_widget_show_all (window);
 }
 
-GtkMainWindow::~GtkMainWindow ()
+MainWindowGtk::~MainWindowGtk ()
 {
 
 }
 
 void
-GtkMainWindow::set_menubar (Menubar *menubar)
+MainWindowGtk::set_menubar (Menubar *menubar)
 {
-    printf ("GtkMainWindow::set_menubar (menubar): stub\n");
+    printf ("MainWindowGtk::set_menubar (menubar): stub\n");
 }
 
 void
-GtkMainWindow::set_toolbar (Toolbar *toolbar)
+MainWindowGtk::set_toolbar (Toolbar *toolbar)
 {
-    printf ("GtkMainWindow::set_toolbar (toolbar): stub\n");
+    printf ("MainWindowGtk::set_toolbar (toolbar): stub\n");
+    this->toolbar = (ToolbarGtk*) toolbar;
+
+    gtk_table_attach (GTK_TABLE (table), this->toolbar->get_widget (),
+        0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
 }
 
 void
-GtkMainWindow::set_downloadview (DownloadView *downloadview)
+MainWindowGtk::set_downloadview (DownloadView *downloadview)
 {
-    this->downloadview = (GtkDownloadView*) downloadview;
+    this->downloadview = (DownloadViewGtk*) downloadview;
 
     gtk_container_add (GTK_CONTAINER (downloadview_sw), this->downloadview->get_widget ());
     gtk_widget_show_all (downloadview_sw);
 }
 
 void
-GtkMainWindow::set_stagingview (StagingView *stagingview)
+MainWindowGtk::set_stagingview (StagingView *stagingview)
 {
-    printf ("GtkMainWindow::set_stagingview (stagingview): stub\n");
+    printf ("MainWindowGtk::set_stagingview (stagingview): stub\n");
 }
 
 void
-GtkMainWindow::destroy_cb (GtkWidget *widget, GtkMainWindow *mw)
+MainWindowGtk::destroy_cb (GtkWidget *widget, MainWindowGtk *mw)
 {
     mw->downman->quit ();
 }

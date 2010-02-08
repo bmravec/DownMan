@@ -23,13 +23,10 @@
 
 #include "gui-factory.h"
 
-#include "application.h"
-#include "mainwindow.h"
-#include "downloadview.h"
-
-#include "gtk/gtk-application.h"
-#include "gtk/gtk-mainwindow.h"
-#include "gtk/gtk-downloadview.h"
+#include "gtk/application-gtk.h"
+#include "gtk/mainwindow-gtk.h"
+#include "gtk/downloadview-gtk.h"
+#include "gtk/toolbar-gtk.h"
 
 GuiFactory::GuiFactory (DownMan *downman)
 {
@@ -44,13 +41,13 @@ GuiFactory::~GuiFactory ()
 Application*
 GuiFactory::create_application ()
 {
-    return (Application*) new GtkApplication (downman);
+    return (Application*) new ApplicationGtk (downman);
 }
 
 DownloadView *
 GuiFactory::create_downloadview (DownloadList *downloadlist)
 {
-    return (DownloadView*) new GtkDownloadView (downman, downloadlist);
+    return (DownloadView*) new DownloadViewGtk (downman, downloadlist);
 }
 
 StagingView *
@@ -64,15 +61,13 @@ GuiFactory::create_stagingview ()
 MainWindow *
 GuiFactory::create_mainwindow ()
 {
-    return (MainWindow*) new GtkMainWindow (this->downman);
+    return (MainWindow*) new MainWindowGtk (downman);
 }
 
 Toolbar *
 GuiFactory::create_toolbar ()
 {
-    printf ("GuiFactory::create_toolbar (): stub\n");
-
-    return NULL;
+    return (Toolbar*) new ToolbarGtk (downman);
 }
 
 Menubar *

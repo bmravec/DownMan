@@ -1,5 +1,5 @@
 /*
- *      gtk-application.c
+ *      downloadview-gtk.h
  *
  *      Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
  *
@@ -19,27 +19,36 @@
  *      MA 02110-1301, USA.
  */
 
-class GtkApplication;
+class DownloadViewGtk;
 
-#ifndef __GTK_APPLICATION_H__
-#define __GTK_APPLICATION_H__
+#ifndef __DOWNLOAD_VIEW_GTK_H__
+#define __DOWNLOAD_VIEW_GTK_H__
 
-#include "application.h"
+#include <gtk/gtk.h>
+
+#include "download.h"
+#include "downloadlist.h"
+#include "downloadview.h"
 #include "downman.h"
 
-class GtkApplication : public Application {
+class DownloadViewGtk : public DownloadView {
     public:
-        GtkApplication (DownMan *downman);
-        ~GtkApplication ();
+        DownloadViewGtk (DownMan *downman, DownloadList *downloadlist);
+        ~DownloadViewGtk ();
 
-        void run ();
-        void quit ();
+        void add_download (Download *download);
+        void update_download (Download *download);
+        void remove_download (Download *download);
+        Download **get_selected ();
 
-        char *prompt_for_captcha (char *img_data);
-        char *prompt_for_urls ();
-        char *prompt_for_files ();
+        GtkWidget *get_widget ();
+
     protected:
+        DownloadList *downloadlist;
         DownMan *downman;
+
+        GtkWidget *widget;
+        GtkListStore *store;
 };
 
-#endif /* __GTK_APPLICATION_H__ */
+#endif /* __DOWNLOAD_VIEW_GTK_H__ */

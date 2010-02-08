@@ -1,5 +1,5 @@
 /*
- *      gtk-downloadview.h
+ *      mainwindow-gtk.h
  *
  *      Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
  *
@@ -19,36 +19,43 @@
  *      MA 02110-1301, USA.
  */
 
-class GtkDownloadView;
+class MainWindowGtk;
 
-#ifndef __GTK_DOWNLOADVIEW_H__
-#define __GTK_DOWNLOADVIEW_H__
+#ifndef __MAIN_WINDOW_GTK_H__
+#define __MAIN_WINDOW_GTK_H__
 
 #include <gtk/gtk.h>
 
 #include "downloadview.h"
+#include "downloadview-gtk.h"
 #include "downman.h"
-#include "downloadlist.h"
-#include "download.h"
+#include "mainwindow.h"
+#include "menubar.h"
+#include "stagingview.h"
+#include "toolbar.h"
+#include "toolbar-gtk.h"
 
-class GtkDownloadView : public DownloadView {
+class MainWindowGtk : public MainWindow {
     public:
-        GtkDownloadView (DownMan *downman, DownloadList *downloadlist);
-        ~GtkDownloadView ();
+        MainWindowGtk (DownMan *downman);
+        ~MainWindowGtk ();
 
-        void add_download (Download *download);
-        void update_download (Download *download);
-        void remove_download (Download *download);
-        Download **get_selected ();
+        void set_menubar (Menubar *menubar);
+        void set_toolbar (Toolbar *toolbar);
+        void set_downloadview (DownloadView *downloadview);
+        void set_stagingview (StagingView *stagingview);
 
-        GtkWidget *get_widget ();
+        static void destroy_cb (GtkWidget *widget, MainWindowGtk *mw);
 
-    protected:
-        DownloadList *downloadlist;
-        DownMan *downman;
+    private:
+        GtkWidget *window;
+        GtkWidget *table;
+        GtkWidget *notebook;
 
-        GtkWidget *widget;
-        GtkListStore *store;
+        GtkWidget *downloadview_sw, *stagingview_sw;
+
+        DownloadViewGtk *downloadview;
+        ToolbarGtk *toolbar;
 };
 
-#endif /* __GTK_DOWNLOADVIEW_H__ */
+#endif /* __MAIN_WINDOW_GTK_H__ */

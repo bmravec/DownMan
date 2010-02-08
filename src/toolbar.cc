@@ -1,5 +1,5 @@
 /*
- *      gtk-application.cc
+ *      toolbar.cc
  *
  *      Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
  *
@@ -21,61 +21,26 @@
 
 #include <stdio.h>
 
-#include <gtk/gtk.h>
+#include "toolbar.h"
 
-#include "gtk-application.h"
-#include "downman.h"
-
-GtkApplication::GtkApplication (DownMan *downman) : Application (downman)
+Toolbar::Toolbar (DownMan *downman) : downman (downman)
 {
-    g_type_init ();
 
-    g_thread_init (NULL);
-    gdk_threads_init ();
-
-    gint argc = 0;
-    gtk_init (&argc, NULL);
 }
 
-GtkApplication::~GtkApplication ()
+Toolbar::~Toolbar ()
 {
 
 }
 
 void
-GtkApplication::run ()
+Toolbar::set_start_enabled (bool enabled)
 {
-    gdk_threads_enter ();
-    gtk_main ();
-    gdk_threads_leave ();
+    printf ("Toolbar::set_start_enabled (enabled): stub\n");
 }
 
 void
-GtkApplication::quit ()
+Toolbar::set_stop_enabled (bool enabled)
 {
-    gtk_main_quit ();
-}
-
-char*
-GtkApplication::prompt_for_captcha (char *img_data)
-{
-    printf ("GtkApplication::prompt_for_captcha (): stub\n");
-
-    return NULL;
-}
-
-char*
-GtkApplication::prompt_for_urls ()
-{
-    printf ("GtkApplication::prompt_for_urls (): stub\n");
-
-    return NULL;
-}
-
-char*
-GtkApplication::prompt_for_files ()
-{
-    printf ("GtkApplication::prompt_for_files (): stub\n");
-
-    return NULL;
+    printf ("Toolbar::set_stop_enabled (enabled): stub\n");
 }

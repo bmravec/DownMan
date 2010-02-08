@@ -1,5 +1,5 @@
 /*
- *      gtk-mainwindow.h
+ *      application-gtk.c
  *
  *      Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
  *
@@ -19,40 +19,27 @@
  *      MA 02110-1301, USA.
  */
 
-class GtkMainWindow;
+class ApplicationGtk;
 
-#ifndef __GTK_MAINWINDOW_H__
-#define __GTK_MAINWINDOW_H__
+#ifndef __APPLICATION_GTK_H__
+#define __APPLICATION_GTK_H__
 
-#include <gtk/gtk.h>
-
-#include "downloadview.h"
+#include "application.h"
 #include "downman.h"
-#include "gtk-downloadview.h"
-#include "mainwindow.h"
-#include "menubar.h"
-#include "stagingview.h"
-#include "toolbar.h"
 
-class GtkMainWindow : public MainWindow {
+class ApplicationGtk : public Application {
     public:
-        GtkMainWindow (DownMan *downman);
-        ~GtkMainWindow ();
+        ApplicationGtk (DownMan *downman);
+        ~ApplicationGtk ();
 
-        void set_menubar (Menubar *menubar);
-        void set_toolbar (Toolbar *toolbar);
-        void set_downloadview (DownloadView *downloadview);
-        void set_stagingview (StagingView *stagingview);
+        void run ();
+        void quit ();
 
-        static void destroy_cb (GtkWidget *widget, GtkMainWindow *mw);
-    private:
-        GtkWidget *window;
-        GtkWidget *table;
-        GtkWidget *notebook;
-
-        GtkWidget *downloadview_sw, *stagingview_sw;
-
-        GtkDownloadView *downloadview;
+        char *prompt_for_captcha (char *img_data);
+        char *prompt_for_urls ();
+        char *prompt_for_files ();
+    protected:
+        DownMan *downman;
 };
 
-#endif /* __GTK_MAINWINDOW_H__ */
+#endif /* __APPLICATION_GTK_H__ */
