@@ -1,5 +1,5 @@
 /*
- *      mainwindow.h
+ *      downloadview.cc
  *
  *      Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
  *
@@ -19,29 +19,44 @@
  *      MA 02110-1301, USA.
  */
 
-class MainWindow;
+#include <stdio.h>
 
-#ifndef __MAIN_WINDOW_H__
-#define __MAIN_WINDOW_H__
-
-#include "downman.h"
-#include "menubar.h"
-#include "toolbar.h"
 #include "downloadview.h"
-#include "stagingview.h"
 
-class MainWindow {
-    public:
-        MainWindow (DownMan *downman);
-        ~MainWindow ();
+DownloadView::DownloadView (DownMan *downman, DownloadList *downloadlist) :
+    downloadlist (downloadlist),
+    downman (downman)
+{
 
-        virtual void set_menubar (Menubar *menubar);
-        virtual void set_toolbar (Toolbar *toolbar);
-        virtual void set_downloadview (DownloadView *downloadview);
-        virtual void set_stagingview (StagingView *stagingview);
+}
 
-    protected:
-        DownMan *downman;
-};
+DownloadView::~DownloadView ()
+{
 
-#endif /* __MAIN_WINDOW_H__ */
+}
+
+void
+DownloadView::add_download (Download *download)
+{
+    printf ("DownloadView::add_download (download): stub\n");
+}
+
+void
+DownloadView::update_download (Download *download)
+{
+    printf ("DownloadView::update_download (download): stub\n");
+}
+
+void
+DownloadView::remove_download (Download *download)
+{
+    printf ("DownloadView::remove_download (download): stub\n");
+}
+
+Download**
+DownloadView::get_selected ()
+{
+    printf ("DownloadView::get_selected (download): stub\n");
+
+    return NULL;
+}

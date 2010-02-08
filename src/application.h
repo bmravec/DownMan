@@ -19,10 +19,12 @@
  *      MA 02110-1301, USA.
  */
 
+class Application;
+
 #ifndef __APPLICATION_H__
 #define __APPLICATION_H__
 
-class DownMan;
+#include "downman.h"
 
 class Application {
     public:

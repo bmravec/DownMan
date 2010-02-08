@@ -19,16 +19,22 @@
  *      MA 02110-1301, USA.
  */
 
+class GuiFactory;
+
 #ifndef __GUI_FACTORY_H__
 #define __GUI_FACTORY_H__
 
-class DownMan;
-class Application;
-class DownloadView;
-class StagingView;
-class MainWindow;
-class Toolbar;
-class Menubar;
+#include "downman.h"
+#include "application.h"
+#include "downloadview.h"
+#include "stagingview.h"
+#include "mainwindow.h"
+#include "toolbar.h"
+#include "menubar.h"
+
+#include "downloadlist.h"
+#include "staginglist.h"
+
 
 class GuiFactory {
     public:
@@ -36,7 +42,7 @@ class GuiFactory {
         ~GuiFactory ();
 
         Application *create_application ();
-        DownloadView *create_downloadview ();
+        DownloadView *create_downloadview (DownloadList* downloadlist);
         StagingView *create_stagingview ();
         MainWindow *create_mainwindow ();
         Toolbar *create_toolbar ();

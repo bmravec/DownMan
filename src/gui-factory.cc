@@ -25,9 +25,11 @@
 
 #include "application.h"
 #include "mainwindow.h"
+#include "downloadview.h"
 
 #include "gtk/gtk-application.h"
 #include "gtk/gtk-mainwindow.h"
+#include "gtk/gtk-downloadview.h"
 
 GuiFactory::GuiFactory (DownMan *downman)
 {
@@ -42,15 +44,13 @@ GuiFactory::~GuiFactory ()
 Application*
 GuiFactory::create_application ()
 {
-    return (Application*) new GtkApplication (this->downman);
+    return (Application*) new GtkApplication (downman);
 }
 
 DownloadView *
-GuiFactory::create_downloadview ()
+GuiFactory::create_downloadview (DownloadList *downloadlist)
 {
-    printf ("GuiFactory::create_download_view (): stub\n");
-
-    return NULL;
+    return (DownloadView*) new GtkDownloadView (downman, downloadlist);
 }
 
 StagingView *

@@ -19,12 +19,13 @@
  *      MA 02110-1301, USA.
  */
 
+class GtkApplication;
+
 #ifndef __GTK_APPLICATION_H__
 #define __GTK_APPLICATION_H__
 
 #include "application.h"
-
-class DownMan;
+#include "downman.h"
 
 class GtkApplication : public Application {
     public:

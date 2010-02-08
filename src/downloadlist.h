@@ -1,5 +1,5 @@
 /*
- *      mainwindow.h
+ *      downloadlist.h
  *
  *      Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
  *
@@ -19,29 +19,17 @@
  *      MA 02110-1301, USA.
  */
 
-class MainWindow;
+class DownloadList;
 
-#ifndef __MAIN_WINDOW_H__
-#define __MAIN_WINDOW_H__
+#ifndef __DOWNLOAD_LIST_H__
+#define __DOWNLOAD_LIST_H__
 
-#include "downman.h"
-#include "menubar.h"
-#include "toolbar.h"
-#include "downloadview.h"
-#include "stagingview.h"
-
-class MainWindow {
+class DownloadList {
     public:
-        MainWindow (DownMan *downman);
-        ~MainWindow ();
+        DownloadList ();
+        ~DownloadList ();
 
-        virtual void set_menubar (Menubar *menubar);
-        virtual void set_toolbar (Toolbar *toolbar);
-        virtual void set_downloadview (DownloadView *downloadview);
-        virtual void set_stagingview (StagingView *stagingview);
-
-    protected:
-        DownMan *downman;
+    private:
 };
 
-#endif /* __MAIN_WINDOW_H__ */
+#endif /* __DOWNLOAD_LIST_H__ */

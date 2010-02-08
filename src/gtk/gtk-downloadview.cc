@@ -1,5 +1,5 @@
 /*
- *      downman.cc
+ *      gtk-downloadview.cc
  *
  *      Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
  *
@@ -21,58 +21,47 @@
 
 #include <stdio.h>
 
-#include "downman.h"
+#include "gtk-downloadview.h"
 
-#include "application.h"
-#include "mainwindow.h"
-#include "gui-factory.h"
-
-DownMan::DownMan ()
+GtkDownloadView::GtkDownloadView (DownMan *downman, DownloadList *downloadlist) :
+    DownloadView (downman, downloadlist)
 {
-    guifactory = new GuiFactory (this);
-
-    application = guifactory->create_application ();
-    mainwindow = guifactory->create_mainwindow ();
-    downloadview = guifactory->create_downloadview (NULL);
-
-    mainwindow->set_downloadview (downloadview);
+    widget = gtk_tree_view_new ();
 }
 
-DownMan::~DownMan ()
+GtkDownloadView::~GtkDownloadView ()
 {
 
 }
 
 void
-DownMan::setup ()
+GtkDownloadView::add_download (Download *download)
 {
-    printf ("DownMan::setup (): stub\n");
+    printf ("GtkDownloadView::add_download (download): stub\n");
 }
 
 void
-DownMan::run ()
+GtkDownloadView::update_download (Download *download)
 {
-    application->run ();
+    printf ("GtkDownloadView::update_download (download): stub\n");
 }
 
 void
-DownMan::shutdown ()
+GtkDownloadView::remove_download (Download *download)
 {
-    printf ("DownMan::shutdown (): stub\n");
+    printf ("GtkDownloadView::remove_download (download): stub\n");
 }
 
-void
-DownMan::quit ()
+Download**
+GtkDownloadView::get_selected ()
 {
-    application->quit ();
+    printf ("GtkDownloadView::get_selected (download): stub\n");
+
+    return NULL;
 }
 
-int
-main (int argc, char *argv[])
+GtkWidget*
+GtkDownloadView::get_widget ()
 {
-    DownMan *dm = new DownMan ();
-
-    dm->setup ();
-    dm->run ();
-    dm->shutdown ();
+    return widget;
 }

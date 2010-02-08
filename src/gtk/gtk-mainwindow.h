@@ -19,18 +19,20 @@
  *      MA 02110-1301, USA.
  */
 
+class GtkMainWindow;
+
 #ifndef __GTK_MAINWINDOW_H__
 #define __GTK_MAINWINDOW_H__
 
-class DownMan;
-class Menubar;
-class Toolbar;
-class DownloadView;
-class StagingView;
-
-#include "mainwindow.h"
-
 #include <gtk/gtk.h>
+
+#include "downloadview.h"
+#include "downman.h"
+#include "gtk-downloadview.h"
+#include "mainwindow.h"
+#include "menubar.h"
+#include "stagingview.h"
+#include "toolbar.h"
 
 class GtkMainWindow : public MainWindow {
     public:
@@ -45,6 +47,12 @@ class GtkMainWindow : public MainWindow {
         static void destroy_cb (GtkWidget *widget, GtkMainWindow *mw);
     private:
         GtkWidget *window;
+        GtkWidget *table;
+        GtkWidget *notebook;
+
+        GtkWidget *downloadview_sw, *stagingview_sw;
+
+        GtkDownloadView *downloadview;
 };
 
 #endif /* __GTK_MAINWINDOW_H__ */

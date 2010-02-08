@@ -19,19 +19,22 @@
  *      MA 02110-1301, USA.
  */
 
+class DownMan;
+
 #ifndef __DOWNMAN_H__
 #define __DOWNMAN_H__
 
-class GuiFactory;
-class Application;
-class DownloadView;
-class StagingView;
-class MainWindow;
-class Toolbar;
-class Menubar;
-class DownloadList;
-class StagingList;
-class SpeedLimit;
+#include "gui-factory.h"
+#include "application.h"
+#include "downloadview.h"
+#include "stagingview.h"
+#include "mainwindow.h"
+#include "toolbar.h"
+#include "menubar.h"
+
+#include "downloadlist.h"
+#include "staginglist.h"
+#include "speedlimit.h"
 
 class DownMan {
     public:
