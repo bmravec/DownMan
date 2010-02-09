@@ -56,18 +56,20 @@ ApplicationGtk::quit ()
     gtk_main_quit ();
 }
 
-char*
+std::string
 ApplicationGtk::prompt_for_captcha (char *img_data)
 {
+    std::string text;
+
     printf ("ApplicationGtk::prompt_for_captcha (): stub\n");
 
-    return NULL;
+    return text;
 }
 
-char*
+std::string
 ApplicationGtk::prompt_for_urls ()
 {
-    char *text = NULL;
+    std::string text;
 
     GtkWidget *tv = gtk_text_view_new ();
 
@@ -98,11 +100,7 @@ ApplicationGtk::prompt_for_urls ()
 
         gchar *gtext = gtk_text_buffer_get_text (buff, &start, &end, TRUE);
 
-        int len;
-        for (len = 0; gtext[len]; len++);
-
-        text = new char[len];
-        for (int i = 0; i < len; i++) text[i] = gtext[i];
+        text.append (gtext);
 
         g_free (gtext);
     }
@@ -112,10 +110,12 @@ ApplicationGtk::prompt_for_urls ()
     return text;
 }
 
-char*
+std::string
 ApplicationGtk::prompt_for_files ()
 {
+    std::string text;
+
     printf ("ApplicationGtk::prompt_for_files (): stub\n");
 
-    return NULL;
+    return text;
 }

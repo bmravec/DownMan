@@ -46,7 +46,7 @@ Application::quit ()
     printf ("Application::quit (): stub\n");
 }
 
-char*
+std::string
 Application::prompt_for_captcha (char *img_data)
 {
     printf ("Application::prompt_for_captcha (): stub\n");
@@ -54,7 +54,7 @@ Application::prompt_for_captcha (char *img_data)
     return NULL;
 }
 
-char*
+std::string
 Application::prompt_for_urls ()
 {
     printf ("Application::prompt_for_urls (): stub\n");
@@ -62,7 +62,7 @@ Application::prompt_for_urls ()
     return NULL;
 }
 
-char*
+std::string
 Application::prompt_for_files ()
 {
     printf ("Application::prompt_for_files (): stub\n");

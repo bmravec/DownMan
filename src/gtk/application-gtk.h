@@ -24,6 +24,8 @@ class ApplicationGtk;
 #ifndef __APPLICATION_GTK_H__
 #define __APPLICATION_GTK_H__
 
+#include <string>
+
 #include "application.h"
 #include "downman.h"
 
@@ -35,9 +37,9 @@ class ApplicationGtk : public Application {
         void run ();
         void quit ();
 
-        char *prompt_for_captcha (char *img_data);
-        char *prompt_for_urls ();
-        char *prompt_for_files ();
+        std::string prompt_for_captcha (char *img_data);
+        std::string prompt_for_urls ();
+        std::string prompt_for_files ();
     protected:
         DownMan *downman;
 };

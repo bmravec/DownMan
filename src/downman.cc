@@ -20,6 +20,7 @@
  */
 
 #include <stdio.h>
+#include <iostream>
 
 #include "downman.h"
 
@@ -72,14 +73,12 @@ DownMan::quit ()
 void
 DownMan::prompt_for_urls ()
 {
-    char *urls = application->prompt_for_urls ();
+    std::string urls = application->prompt_for_urls ();
 
-    if (urls) {
-        printf ("URLS: %s\n", urls);
-
-        delete urls;
+    if (urls.length () > 0) {
+        std::cout << "URLs: " << urls << std::endl;
     } else {
-        printf ("No URLS Entered\n");
+        std::cout << "No URLs Entered\n";
     }
 }
 

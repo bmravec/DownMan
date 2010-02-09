@@ -24,6 +24,8 @@ class Application;
 #ifndef __APPLICATION_H__
 #define __APPLICATION_H__
 
+#include <string>
+
 #include "downman.h"
 
 class Application {
@@ -34,9 +36,9 @@ class Application {
         virtual void run ();
         virtual void quit ();
 
-        virtual char *prompt_for_captcha (char *img_data);
-        virtual char *prompt_for_urls ();
-        virtual char *prompt_for_files ();
+        virtual std::string prompt_for_captcha (char *img_data);
+        virtual std::string prompt_for_urls ();
+        virtual std::string prompt_for_files ();
 
     protected:
         DownMan *downman;
