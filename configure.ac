@@ -14,6 +14,10 @@ AC_PROG_LIBTOOL
 AM_PATH_GLIB_2_0(,,,gthread gobject gio)
 AM_PATH_GTK_2_0()
 
+PKG_CHECK_MODULES(SIGC, sigc++-2.0)
+AC_SUBST(SIGC_CFLAGS)
+AC_SUBST(SIGC_LIBS)
+
 AC_OUTPUT(
 Makefile
 src/Makefile

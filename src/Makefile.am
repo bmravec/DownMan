@@ -1,4 +1,5 @@
-INCLUDES = $(GTK_CFLAGS) $(GLIB_CFLAGS) -DSHARE_DIR=\"$(pkgdatadir)\"
+INCLUDES = $(GTK_CFLAGS) $(GLIB_CFLAGS) $(SIGC_CFLAGS) \
+    -DSHARE_DIR=\"$(pkgdatadir)\"
 
 gtksources = \
     gtk/application-gtk.cc gtk/application-gtk.h   \
@@ -8,7 +9,7 @@ gtksources = \
 
 bin_PROGRAMS = downman
 
-downman_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
+downman_LDADD = $(GTK_LIBS) $(GLIB_LIBS) $(SIGC_LIBS)
 
 downman_SOURCES =                  \
     downman.cc downman.h           \
