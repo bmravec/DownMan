@@ -19,54 +19,59 @@
  *      MA 02110-1301, USA.
  */
 
-#include <stdio.h>
+#include <iostream>
 
-#include "downman.h"
-#include "toolbar.h"
 #include "toolbar-gtk.h"
 
-ToolbarGtk::ToolbarGtk (DownMan *downman) : Toolbar (downman)
+ToolbarGtk::ToolbarGtk () : Toolbar ()
 {
     widget = gtk_toolbar_new ();
 
-    add_url = gtk_tool_button_new_from_stock (GTK_STOCK_NETWORK);
-    gtk_tool_item_set_tooltip_text (add_url, "Add URL");
-    g_signal_connect (add_url, "clicked", G_CALLBACK (ToolbarGtk::add_url_cb), this);
-    gtk_toolbar_insert (GTK_TOOLBAR (widget), add_url, -1);
+    add_url_item = gtk_tool_button_new_from_stock (GTK_STOCK_NETWORK);
+    gtk_tool_item_set_tooltip_text (add_url_item, "Add URL");
+    g_signal_connect (add_url_item, "clicked",
+        G_CALLBACK (ToolbarGtk::add_url_cb), this);
+    gtk_toolbar_insert (GTK_TOOLBAR (widget), add_url_item, -1);
 
-    add_file = gtk_tool_button_new_from_stock (GTK_STOCK_OPEN);
-    gtk_tool_item_set_tooltip_text (add_file, "Add File");
-    g_signal_connect (add_file, "clicked", G_CALLBACK (ToolbarGtk::add_file_cb), this);
-    gtk_toolbar_insert (GTK_TOOLBAR (widget), add_file, -1);
+    add_file_item = gtk_tool_button_new_from_stock (GTK_STOCK_OPEN);
+    gtk_tool_item_set_tooltip_text (add_file_item, "Add File");
+    g_signal_connect (add_file_item, "clicked",
+        G_CALLBACK (ToolbarGtk::add_file_cb), this);
+    gtk_toolbar_insert (GTK_TOOLBAR (widget), add_file_item, -1);
 
-    remove = gtk_tool_button_new_from_stock (GTK_STOCK_REMOVE);
-    gtk_tool_item_set_tooltip_text (remove, "Remove Selected");
-    g_signal_connect (remove, "clicked", G_CALLBACK (ToolbarGtk::remove_cb), this);
-    gtk_toolbar_insert (GTK_TOOLBAR (widget), remove, -1);
-
-    gtk_toolbar_insert (GTK_TOOLBAR (widget), gtk_separator_tool_item_new (), -1);
-
-    start = gtk_tool_button_new_from_stock (GTK_STOCK_MEDIA_PLAY);
-    gtk_tool_item_set_tooltip_text (start, "Start");
-    g_signal_connect (start, "clicked", G_CALLBACK (ToolbarGtk::start_cb), this);
-    gtk_toolbar_insert (GTK_TOOLBAR (widget), start, -1);
-
-    stop = gtk_tool_button_new_from_stock (GTK_STOCK_MEDIA_STOP);
-    gtk_tool_item_set_tooltip_text (stop, "Remove Selected");
-    g_signal_connect (stop, "clicked", G_CALLBACK (ToolbarGtk::stop_cb), this);
-    gtk_toolbar_insert (GTK_TOOLBAR (widget), stop, -1);
+    remove_item = gtk_tool_button_new_from_stock (GTK_STOCK_REMOVE);
+    gtk_tool_item_set_tooltip_text (remove_item, "Remove Selected");
+    g_signal_connect (remove_item, "clicked",
+        G_CALLBACK (ToolbarGtk::remove_cb), this);
+    gtk_toolbar_insert (GTK_TOOLBAR (widget), remove_item, -1);
 
     gtk_toolbar_insert (GTK_TOOLBAR (widget), gtk_separator_tool_item_new (), -1);
 
-    start_staging = gtk_tool_button_new_from_stock (GTK_STOCK_MEDIA_NEXT);
-    gtk_tool_item_set_tooltip_text (start_staging, "Start Staging");
-    g_signal_connect (start_staging, "clicked", G_CALLBACK (ToolbarGtk::start_staging_cb), this);
-    gtk_toolbar_insert (GTK_TOOLBAR (widget), start_staging, -1);
+    start_item = gtk_tool_button_new_from_stock (GTK_STOCK_MEDIA_PLAY);
+    gtk_tool_item_set_tooltip_text (start_item, "Start");
+    g_signal_connect (start_item, "clicked",
+        G_CALLBACK (ToolbarGtk::start_cb), this);
+    gtk_toolbar_insert (GTK_TOOLBAR (widget), start_item, -1);
 
-    clear_staging = gtk_tool_button_new_from_stock (GTK_STOCK_CLEAR);
-    gtk_tool_item_set_tooltip_text (clear_staging, "Remove Selected");
-    g_signal_connect (clear_staging, "clicked", G_CALLBACK (ToolbarGtk::clear_staging_cb), this);
-    gtk_toolbar_insert (GTK_TOOLBAR (widget), clear_staging, -1);
+    stop_item = gtk_tool_button_new_from_stock (GTK_STOCK_MEDIA_STOP);
+    gtk_tool_item_set_tooltip_text (stop_item, "Remove Selected");
+    g_signal_connect (stop_item, "clicked",
+        G_CALLBACK (ToolbarGtk::stop_cb), this);
+    gtk_toolbar_insert (GTK_TOOLBAR (widget), stop_item, -1);
+
+    gtk_toolbar_insert (GTK_TOOLBAR (widget), gtk_separator_tool_item_new (), -1);
+
+    start_staging_item = gtk_tool_button_new_from_stock (GTK_STOCK_MEDIA_NEXT);
+    gtk_tool_item_set_tooltip_text (start_staging_item, "Start Staging");
+    g_signal_connect (start_staging_item, "clicked",
+        G_CALLBACK (ToolbarGtk::start_staging_cb), this);
+    gtk_toolbar_insert (GTK_TOOLBAR (widget), start_staging_item, -1);
+
+    clear_staging_item = gtk_tool_button_new_from_stock (GTK_STOCK_CLEAR);
+    gtk_tool_item_set_tooltip_text (clear_staging_item, "Remove Selected");
+    g_signal_connect (clear_staging_item, "clicked",
+        G_CALLBACK (ToolbarGtk::clear_staging_cb), this);
+    gtk_toolbar_insert (GTK_TOOLBAR (widget), clear_staging_item, -1);
 
     gtk_widget_show_all (widget);
 }
@@ -79,13 +84,13 @@ ToolbarGtk::~ToolbarGtk ()
 void
 ToolbarGtk::set_start_enabled (bool enabled)
 {
-    printf ("ToolbarGtk::set_start_enabled (enabled): stub\n");
+    std::cout << "ToolbarGtk::set_start_enabled (enabled): stub\n";
 }
 
 void
 ToolbarGtk::set_stop_enabled (bool enabled)
 {
-    printf ("ToolbarGtk::set_stop_enabled (enabled): stub\n");
+    std::cout << "ToolbarGtk::set_stop_enabled (enabled): stub\n";
 }
 
 GtkWidget*
@@ -97,41 +102,41 @@ ToolbarGtk::get_widget ()
 void
 ToolbarGtk::add_url_cb (GtkWidget *widget, ToolbarGtk *tb)
 {
-    tb->downman->prompt_for_urls ();
+    tb->add_url ();
 }
 
 void
 ToolbarGtk::add_file_cb (GtkWidget *widget, ToolbarGtk *tb)
 {
-    printf ("ToolbarGtk::add_file_cb (): stub\n");
+    tb->add_file ();
 }
 
 void
 ToolbarGtk::remove_cb (GtkWidget *widget, ToolbarGtk *tb)
 {
-    printf ("ToolbarGtk::remove_cb(): stub\n");
+    tb->remove ();
 }
 
 void
 ToolbarGtk::start_cb (GtkWidget *widget, ToolbarGtk *tb)
 {
-    printf ("ToolbarGtk::start_cb (): stub\n");
+    tb->start ();
 }
 
 void
 ToolbarGtk::stop_cb (GtkWidget *widget, ToolbarGtk *tb)
 {
-    printf ("ToolbarGtk::stop_cb (): stub\n");
+    tb->stop ();
 }
 
 void
 ToolbarGtk::start_staging_cb (GtkWidget *widget, ToolbarGtk *tb)
 {
-    printf ("ToolbarGtk::start_staging_cb (): stub\n");
+    tb->start_staging ();
 }
 
 void
 ToolbarGtk::clear_staging_cb (GtkWidget *widget, ToolbarGtk *tb)
 {
-    printf ("ToolbarGtk::clear_staging_cb (): stub\n");
+    tb->clear_staging ();
 }

@@ -19,11 +19,11 @@
  *      MA 02110-1301, USA.
  */
 
-#include <stdio.h>
+#include <iostream>
 
 #include "toolbar.h"
 
-Toolbar::Toolbar (DownMan *downman) : downman (downman)
+Toolbar::Toolbar ()
 {
 
 }
@@ -36,11 +36,11 @@ Toolbar::~Toolbar ()
 void
 Toolbar::set_start_enabled (bool enabled)
 {
-    printf ("Toolbar::set_start_enabled (enabled): stub\n");
+    std::cout << "Toolbar::set_start_enabled (enabled): stub\n";
 }
 
 void
 Toolbar::set_stop_enabled (bool enabled)
 {
-    printf ("Toolbar::set_stop_enabled (enabled): stub\n");
+    std::cout << "Toolbar::set_stop_enabled (enabled): stub\n";
 }

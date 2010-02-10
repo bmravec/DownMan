@@ -24,18 +24,32 @@ class Toolbar;
 #ifndef __TOOLBAR_H__
 #define __TOOLBAR_H__
 
-#include "downman.h"
+#include <sigc++/sigc++.h>
 
 class Toolbar {
     public:
-        Toolbar (DownMan *downman);
+        Toolbar ();
         ~Toolbar ();
 
         virtual void set_start_enabled (bool enabled);
         virtual void set_stop_enabled (bool enabled);
 
+        sigc::signal<void> &signal_add_url () { return add_url; }
+        sigc::signal<void> &signal_add_file () { return add_file; }
+        sigc::signal<void> &signal_remove () { return remove; }
+        sigc::signal<void> &signal_start () { return start; }
+        sigc::signal<void> &signal_stop () { return stop; }
+        sigc::signal<void> &signal_start_staging () { return start_staging; }
+        sigc::signal<void> &signal_clear_staging () { return clear_staging; }
+
     protected:
-        DownMan *downman;
+        sigc::signal<void> add_url;
+        sigc::signal<void> add_file;
+        sigc::signal<void> remove;
+        sigc::signal<void> start;
+        sigc::signal<void> stop;
+        sigc::signal<void> start_staging;
+        sigc::signal<void> clear_staging;
 
     private:
 };

@@ -67,7 +67,7 @@ GuiFactory::create_mainwindow ()
 Toolbar *
 GuiFactory::create_toolbar ()
 {
-    return (Toolbar*) new ToolbarGtk (downman);
+    return (Toolbar*) new ToolbarGtk ();
 }
 
 Menubar *

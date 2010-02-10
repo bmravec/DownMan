@@ -36,6 +36,8 @@ class DownMan;
 #include "staginglist.h"
 #include "speedlimit.h"
 
+#include "download.h"
+
 class DownMan {
     public:
         DownMan ();

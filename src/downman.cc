@@ -39,6 +39,8 @@ DownMan::DownMan ()
 
     mainwindow->set_downloadview (downloadview);
     mainwindow->set_toolbar (toolbar);
+
+    toolbar->signal_add_url ().connect (sigc::mem_fun (*this, &DownMan::prompt_for_urls));
 }
 
 DownMan::~DownMan ()

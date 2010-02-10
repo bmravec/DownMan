@@ -26,18 +26,28 @@ class ToolbarGtk;
 
 #include <gtk/gtk.h>
 
-#include "downman.h"
 #include "toolbar.h"
 
 class ToolbarGtk : public Toolbar {
     public:
-        ToolbarGtk (DownMan *downman);
+        ToolbarGtk ();
         ~ToolbarGtk ();
 
         void set_start_enabled (bool enabled);
         void set_stop_enabled (bool enabled);
 
         GtkWidget *get_widget ();
+
+    private:
+        GtkWidget *widget;
+
+        GtkToolItem *add_url_item;
+        GtkToolItem *add_file_item;
+        GtkToolItem *remove_item;
+        GtkToolItem *start_item;
+        GtkToolItem *stop_item;
+        GtkToolItem *start_staging_item;
+        GtkToolItem *clear_staging_item;
 
         static void add_url_cb (GtkWidget *widget, ToolbarGtk *tb);
         static void add_file_cb (GtkWidget *widget, ToolbarGtk *tb);
@@ -46,16 +56,6 @@ class ToolbarGtk : public Toolbar {
         static void stop_cb (GtkWidget *widget, ToolbarGtk *tb);
         static void start_staging_cb (GtkWidget *widget, ToolbarGtk *tb);
         static void clear_staging_cb (GtkWidget *widget, ToolbarGtk *tb);
-
-    private:
-        GtkWidget *widget;
-        GtkToolItem *add_url;
-        GtkToolItem *add_file;
-        GtkToolItem *remove;
-        GtkToolItem *start;
-        GtkToolItem *stop;
-        GtkToolItem *start_staging;
-        GtkToolItem *clear_staging;
 };
 
 #endif /* __TOOLBAR_GTK_H__ */
