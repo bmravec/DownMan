@@ -18,6 +18,7 @@ downman_SOURCES =                  \
     downloadview.cc downloadview.h \
     toolbar.cc toolbar.h           \
     gui-factory.cc gui-factory.h   \
+    download.cc download.h         \
     $(gtksources)
 
 EXTRA_DIST=

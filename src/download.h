@@ -24,12 +24,47 @@ class Download;
 #ifndef __DOWNLOAD_H__
 #define __DOWNLOAD_H__
 
+#include <string>
+#include <map>
+#include <sigc++/sigc++.h>
+
+typedef enum {
+    STATE_NULL = 0,
+    STATE_PAUSED,
+    STATE_QUEUED,
+    STATE_CONNECTING,
+    STATE_DOWNLOADING,
+    STATE_SEEDING,
+    STATE_WAITING,
+    STATE_HOLDING,
+    STATE_DISABLED,
+    STATE_COMPLETED,
+    STATE_INFO,
+    STATE_INFO_COMPLETED,
+    STATE_NOT_FOUND,
+} DownloadState;
+
 class Download {
     public:
         Download ();
         ~Download ();
 
+        void start_get_info ();
+        void start_download ();
+
+        void startup (const std::map<std::string,std::string> &data);
+        std::map<std::string,std::string> *shutdown ();
+
+        sigc::signal<void, DownloadState> &signal_state_changed () { return state_changed; }
+
+    protected:
+        DownloadState state;
+        char *status;
+
+        void set_state (DownloadState state);
+
     private:
+        sigc::signal<void, DownloadState> state_changed;
 };
 
 #endif /* __DOWNLOAD_H__ */
