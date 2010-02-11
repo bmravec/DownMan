@@ -7,20 +7,24 @@ gtksources = \
     gtk/downloadview-gtk.cc gtk/downloadview-gtk.h \
     gtk/toolbar-gtk.cc gtk/toolbar-gtk.h
 
+guisources = \
+    gui-factory.cc gui-factory.h   \
+    application.cc application.h   \
+    mainwindow.cc mainwindow.h     \
+    downloadview.cc downloadview.h \
+    stagingview.cc stagingview.h   \
+    toolbar.cc toolbar.h
+
 bin_PROGRAMS = downman
 
 downman_LDADD = $(GTK_LIBS) $(GLIB_LIBS) $(SIGC_LIBS) $(CURL_LIBS)
 
 downman_SOURCES =                  \
     downman.cc downman.h           \
-    application.cc application.h   \
-    mainwindow.cc mainwindow.h     \
-    downloadview.cc downloadview.h \
-    toolbar.cc toolbar.h           \
-    gui-factory.cc gui-factory.h   \
+    staginglist.cc staginglist.h   \
     download.cc download.h         \
     http-download.cc http-download.h \
-    $(gtksources)
+    $(guisources) $(gtksources)
 
 EXTRA_DIST=
 CLEANFILES=

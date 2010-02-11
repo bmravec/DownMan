@@ -1,5 +1,5 @@
 /*
- *      stagingview.h
+ *      stagingview.cc
  *
  *      Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
  *
@@ -19,29 +19,22 @@
  *      MA 02110-1301, USA.
  */
 
-class StagingView;
+#include <iostream>
 
-#ifndef __STAGING_VIEW_H__
-#define __STAGING_VIEW_H__
+#include "stagingview.h"
 
-#include <sigc++/sigc++.h>
+StagingView::StagingView ()
+{
 
-#include "download.h"
-#include "staginglist.h"
+}
 
-class StagingView {
-    public:
-        StagingView ();
-        ~StagingView ();
+StagingView::~StagingView ()
+{
 
-        virtual void set_staginglist (StagingList *list);
+}
 
-        sigc::signal<void, Download*> &signal_start () { return start; }
-
-    protected:
-        sigc::signal<void, Download*> start;
-
-        StagingList *list;
-};
-
-#endif /* __STAGING_VIEW_H__ */
+void
+StagingView::set_staginglist (StagingList *list)
+{
+    std::cout << "StagingView::set_staginglist (list): stub\n";
+}

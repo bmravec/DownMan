@@ -24,12 +24,36 @@ class StagingList;
 #ifndef __STAGING_LIST_H__
 #define __STAGING_LIST_H__
 
+#include <sigc++/sigc++.h>
+#include <vector>
+
+#include "download.h"
+
 class StagingList {
     public:
         StagingList ();
         ~StagingList ();
 
+        void add_download (Download *d, Download *nextd);
+        void update_download (Download *d);
+        void remove_download (Download *d);
+
+        void reorder_download (Download *d, Download *nextd);
+
+        sigc::signal<void, Download*, Download*> &signal_add () { return add; }
+        sigc::signal<void, Download*> &signal_update () { return update; }
+        sigc::signal<void, Download*> &signal_remove () { return remove; }
+
+        sigc::signal<void, Download*, Download*> &signal_reorder () { return reorder; }
+
     private:
+        sigc::signal<void, Download*, Download*> add;
+        sigc::signal<void, Download*> update;
+        sigc::signal<void, Download*> remove;
+
+        sigc::signal<void, Download*, Download*> reorder;
+
+        std::vector<Download*> downloads;
 };
 
 #endif /* __STAGING_LIST_H__ */
