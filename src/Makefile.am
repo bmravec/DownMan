@@ -1,4 +1,4 @@
-INCLUDES = $(GTK_CFLAGS) $(GLIB_CFLAGS) $(SIGC_CFLAGS) \
+INCLUDES = $(GTK_CFLAGS) $(GLIB_CFLAGS) $(SIGC_CFLAGS) $(CURL_CFLAGS) \
     -DSHARE_DIR=\"$(pkgdatadir)\"
 
 gtksources = \
@@ -9,7 +9,7 @@ gtksources = \
 
 bin_PROGRAMS = downman
 
-downman_LDADD = $(GTK_LIBS) $(GLIB_LIBS) $(SIGC_LIBS)
+downman_LDADD = $(GTK_LIBS) $(GLIB_LIBS) $(SIGC_LIBS) $(CURL_LIBS)
 
 downman_SOURCES =                  \
     downman.cc downman.h           \
@@ -19,6 +19,7 @@ downman_SOURCES =                  \
     toolbar.cc toolbar.h           \
     gui-factory.cc gui-factory.h   \
     download.cc download.h         \
+    http-download.cc http-download.h \
     $(gtksources)
 
 EXTRA_DIST=
