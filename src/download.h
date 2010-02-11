@@ -46,20 +46,24 @@ typedef enum {
 
 class Download {
     public:
-        Download ();
+        Download (std::string &url);
         ~Download ();
 
-        void start_get_info ();
-        void start_download ();
+        virtual void start_get_info ();
+        virtual void start_download ();
 
-        void startup (const std::map<std::string,std::string> &data);
-        std::map<std::string,std::string> *shutdown ();
+        virtual void startup (const std::map<std::string,std::string> &data);
+        virtual std::map<std::string,std::string> *shutdown ();
 
         sigc::signal<void, DownloadState> &signal_state_changed () { return state_changed; }
 
+        const std::string &get_status () { return status; }
+
     protected:
         DownloadState state;
-        char *status;
+        std::string status;
+        std::string url;
+        int dsize, dtrans, usize, utrans;
 
         void set_state (DownloadState state);
 

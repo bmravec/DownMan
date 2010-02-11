@@ -23,8 +23,11 @@
 
 #include "download.h"
 
-Download::Download ()
+Download::Download (std::string &url)
 {
+    this->url = url;
+
+    dsize = dtrans = usize = utrans = -1;
 
 }
 
