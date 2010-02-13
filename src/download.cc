@@ -23,11 +23,9 @@
 
 #include "download.h"
 
-Download::Download (std::string &url)
+Download::Download (std::string &url) : state (STATE_NULL), url (url),
+    dsize (-1), dtrans (-1), usize (-1), utrans (-1)
 {
-    this->url = url;
-
-    dsize = dtrans = usize = utrans = -1;
 
 }
 
