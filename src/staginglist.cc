@@ -37,6 +37,8 @@ StagingList::add_download (Download *d, Download *nextd)
     std::vector<Download*>::iterator iter;
     Download *diter = NULL;
 
+    d->start_get_info ();
+
     if (nextd == NULL) {
         for (iter = downloads.begin (); iter < downloads.end (); iter++) {
             if (*iter == nextd) {
@@ -50,6 +52,8 @@ StagingList::add_download (Download *d, Download *nextd)
     if (diter != NULL) {
         downloads.push_back (d);
     }
+
+    d->signal_state_changed ().connect (sigc::mem_fun (*this, &StagingList::download_update));
 
     add (d, diter);
 }
@@ -102,4 +106,10 @@ StagingList::reorder_download (Download *d, Download *nextd)
     }
 
     reorder (d, nextd);
+}
+
+void
+StagingList::download_update (Download *d, DownloadState state)
+{
+    update_download (d);
 }

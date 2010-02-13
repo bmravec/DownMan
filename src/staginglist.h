@@ -54,6 +54,8 @@ class StagingList {
         sigc::signal<void, Download*, Download*> reorder;
 
         std::vector<Download*> downloads;
+
+        void download_update (Download *d, DownloadState state);
 };
 
 #endif /* __STAGING_LIST_H__ */
