@@ -28,6 +28,9 @@
 HttpDownload::HttpDownload (std::string &url) : Download (url)
 {
     this->url = url;
+
+    size_t pos = url.rfind ("/");
+    name = url.substr (pos + 1);
 }
 
 HttpDownload::~HttpDownload ()
