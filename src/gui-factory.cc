@@ -26,6 +26,7 @@
 #include "gtk/application-gtk.h"
 #include "gtk/mainwindow-gtk.h"
 #include "gtk/downloadview-gtk.h"
+#include "gtk/stagingview-gtk.h"
 #include "gtk/toolbar-gtk.h"
 
 GuiFactory::GuiFactory (DownMan *downman)
@@ -51,11 +52,9 @@ GuiFactory::create_downloadview (DownloadList *downloadlist)
 }
 
 StagingView *
-GuiFactory::create_stagingview ()
+GuiFactory::create_stagingview (StagingList *staginglist)
 {
-    printf ("GuiFactory::create_staging_view (): stub\n");
-
-    return NULL;
+    return (StagingView*) new StagingViewGtk (staginglist);
 }
 
 MainWindow *

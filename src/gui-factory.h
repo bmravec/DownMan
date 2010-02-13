@@ -42,8 +42,8 @@ class GuiFactory {
         ~GuiFactory ();
 
         Application *create_application ();
-        DownloadView *create_downloadview (DownloadList* downloadlist);
-        StagingView *create_stagingview ();
+        DownloadView *create_downloadview (DownloadList *downloadlist);
+        StagingView *create_stagingview (StagingList *staginglist);
         MainWindow *create_mainwindow ();
         Toolbar *create_toolbar ();
         Menubar *create_menubar ();
