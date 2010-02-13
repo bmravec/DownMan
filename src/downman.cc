@@ -19,7 +19,6 @@
  *      MA 02110-1301, USA.
  */
 
-#include <stdio.h>
 #include <iostream>
 
 #include "downman.h"
@@ -27,8 +26,6 @@
 #include "application.h"
 #include "mainwindow.h"
 #include "gui-factory.h"
-
-#include "http-download.h"
 
 DownMan::DownMan ()
 {
@@ -48,7 +45,7 @@ DownMan::DownMan ()
 
     toolbar->signal_add_url ().connect (sigc::mem_fun (*this, &DownMan::prompt_for_urls));
 
-    url_regex = new  DRegex ("\\S*://\\S*");
+    url_regex = new DRegex ("\\S*://\\S*");
 }
 
 DownMan::~DownMan ()
@@ -59,7 +56,7 @@ DownMan::~DownMan ()
 void
 DownMan::setup ()
 {
-    printf ("DownMan::setup (): stub\n");
+    std::cout << "DownMan::setup (): stub\n";
 }
 
 void
@@ -71,7 +68,7 @@ DownMan::run ()
 void
 DownMan::shutdown ()
 {
-    printf ("DownMan::shutdown (): stub\n");
+    std::cout << "DownMan::shutdown (): stub\n";
 }
 
 void
@@ -90,8 +87,10 @@ DownMan::prompt_for_urls ()
 
         if (url_regex->find_all (urls, surls)) {
             for (int i = 0; i < surls.size (); i++) {
-                HttpDownload *d = new HttpDownload (surls[i]);
-                staginglist->add_download (d, NULL);
+                Download *d = dfactory.create_download (surls[i]);
+                if (d != NULL) {
+                    staginglist->add_download (d, NULL);
+                }
             }
         }
     } else {

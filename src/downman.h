@@ -36,6 +36,7 @@ class DownMan;
 #include "staginglist.h"
 #include "speedlimit.h"
 
+#include "download-factory.h"
 #include "download.h"
 #include "dregex.h"
 
@@ -52,6 +53,7 @@ class DownMan {
         void prompt_for_urls ();
     private:
         GuiFactory *guifactory;
+        DownloadFactory dfactory;
 
         Application *application;
         DownloadView *downloadview;
