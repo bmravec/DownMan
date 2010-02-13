@@ -19,15 +19,18 @@
  *      MA 02110-1301, USA.
  */
 
-#include <stdio.h>
+#include <iostream>
 
 #include "downloadview.h"
 
-DownloadView::DownloadView (DownMan *downman, DownloadList *downloadlist) :
-    downloadlist (downloadlist),
-    downman (downman)
+DownloadView::DownloadView (DownloadList *list) : list (list)
 {
-
+    if (list != NULL) {
+        list->signal_add ().connect (sigc::mem_fun (*this, &DownloadView::list_add_cb));
+        list->signal_update ().connect (sigc::mem_fun (*this, &DownloadView::list_update_cb));
+        list->signal_remove ().connect (sigc::mem_fun (*this, &DownloadView::list_remove_cb));
+        list->signal_reorder ().connect (sigc::mem_fun (*this, &DownloadView::list_reorder_cb));
+    }
 }
 
 DownloadView::~DownloadView ()
@@ -36,27 +39,25 @@ DownloadView::~DownloadView ()
 }
 
 void
-DownloadView::add_download (Download *download)
+DownloadView::list_add_cb (Download *d, Download *nextd)
 {
-    printf ("DownloadView::add_download (download): stub\n");
+    std::cout << "DownloadView::list_add_cb (d, nextd): stub\n";
 }
 
 void
-DownloadView::update_download (Download *download)
+DownloadView::list_update_cb (Download *d)
 {
-    printf ("DownloadView::update_download (download): stub\n");
+    std::cout << "DownloadView::list_update_cb (d): stub\n";
 }
 
 void
-DownloadView::remove_download (Download *download)
+DownloadView::list_remove_cb (Download *d)
 {
-    printf ("DownloadView::remove_download (download): stub\n");
+    std::cout << "DownloadView::list_remove_cb (d): stub\n";
 }
 
-Download**
-DownloadView::get_selected ()
+void
+DownloadView::list_reorder_cb (Download *d, Download *nextd)
 {
-    printf ("DownloadView::get_selected (download): stub\n");
-
-    return NULL;
+    std::cout << "DownloadView::list_reorder_cb (d, nextd): stub\n";
 }

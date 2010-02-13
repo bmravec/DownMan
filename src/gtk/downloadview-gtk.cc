@@ -19,12 +19,12 @@
  *      MA 02110-1301, USA.
  */
 
-#include <stdio.h>
+#include <iostream>
 
 #include "downloadview-gtk.h"
 
-DownloadViewGtk::DownloadViewGtk (DownMan *downman, DownloadList *downloadlist) :
-    DownloadView (downman, downloadlist)
+DownloadViewGtk::DownloadViewGtk (DownloadList *list) :
+    DownloadView (list)
 {
     GtkTreeViewColumn *column;
     GtkCellRenderer *renderer;
@@ -62,33 +62,84 @@ DownloadViewGtk::~DownloadViewGtk ()
 }
 
 void
-DownloadViewGtk::add_download (Download *download)
+DownloadViewGtk::list_add_cb (Download *d, Download *nextd)
 {
-    printf ("DownloadViewGtk::add_download (download): stub\n");
+    Download *diter;
+
+    if (nextd == NULL) {
+        gtk_list_store_insert_with_values (store, NULL, -1,
+            0, d,
+            1, d->get_name ().c_str (),
+            2, d->get_status ().c_str (), -1);
+    } else {
+        GtkTreeIter iter, iter2;
+        if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (store), &iter)) {
+            do {
+                gtk_tree_model_get (GTK_TREE_MODEL (store), &iter, 0, &diter, -1);
+
+                if (diter == nextd) {
+                    gtk_list_store_insert_before (store, &iter2, &iter);
+                    gtk_list_store_set (store, &iter,
+                        0, d,
+                        1, d->get_name ().c_str (),
+                        2, d->get_status ().c_str (), -1);
+                    return;
+                }
+            } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter));
+
+            gtk_list_store_append (store, &iter);
+            gtk_list_store_set (store, &iter,
+                0, d,
+                1, d->get_name ().c_str (),
+                2, d->get_status ().c_str (), -1);
+        } else {
+            gtk_list_store_append (store, &iter);
+            gtk_list_store_set (store, &iter,
+                0, d,
+                1, d->get_name ().c_str (),
+                2, d->get_status ().c_str (), -1);
+        }
+    }
 }
 
 void
-DownloadViewGtk::update_download (Download *download)
+DownloadViewGtk::list_update_cb (Download *d)
 {
-    printf ("DownloadViewGtk::update_download (download): stub\n");
+    GtkTreeIter iter;
+    Download *diter;
+
+    if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (store), &iter)) {
+        do {
+            gtk_tree_model_get (GTK_TREE_MODEL (store), &iter, 0, &diter, -1);
+
+            if (diter == d) {
+                gtk_list_store_set (store, &iter,
+                    1, d->get_name ().c_str (),
+                    2, d->get_status ().c_str (), -1);
+            }
+        } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter));
+    }
 }
 
 void
-DownloadViewGtk::remove_download (Download *download)
+DownloadViewGtk::list_remove_cb (Download *d)
 {
-    printf ("DownloadViewGtk::remove_download (download): stub\n");
+    GtkTreeIter iter;
+    Download *diter;
+
+    if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (store), &iter)) {
+        do {
+            gtk_tree_model_get (GTK_TREE_MODEL (store), &iter, 0, &diter, -1);
+
+            if (diter == d) {
+                gtk_list_store_remove (store, &iter);
+            }
+        } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter));
+    }
 }
 
-Download**
-DownloadViewGtk::get_selected ()
+void
+DownloadViewGtk::list_reorder_cb (Download *d, Download *nextd)
 {
-    printf ("DownloadViewGtk::get_selected (download): stub\n");
-
-    return NULL;
-}
-
-GtkWidget*
-DownloadViewGtk::get_widget ()
-{
-    return widget;
+    std::cout << "DownloadViewGtk::list_reorder_cb (d, nextd): stub\n";
 }

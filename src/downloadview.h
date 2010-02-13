@@ -24,23 +24,21 @@ class DownloadView;
 #ifndef __DOWNLOADVIEW_H__
 #define __DOWNLOADVIEW_H__
 
-#include "downman.h"
-#include "downloadlist.h"
 #include "download.h"
+#include "downloadlist.h"
 
 class DownloadView {
     public:
-        DownloadView (DownMan *downman, DownloadList *downloadlist);
+        DownloadView (DownloadList *list);
         ~DownloadView ();
 
-        void add_download (Download *download);
-        void update_download (Download *download);
-        void remove_download (Download *download);
-        Download **get_selected ();
-
     protected:
-        DownloadList *downloadlist;
-        DownMan *downman;
+        DownloadList *list;
+
+        virtual void list_add_cb (Download *d, Download *nextd);
+        virtual void list_update_cb (Download *d);
+        virtual void list_remove_cb (Download *d);
+        virtual void list_reorder_cb (Download *d, Download *nextd);
 };
 
 #endif /* __DOWNLOADVIEW_H__ */

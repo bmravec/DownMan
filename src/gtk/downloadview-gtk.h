@@ -33,22 +33,19 @@ class DownloadViewGtk;
 
 class DownloadViewGtk : public DownloadView {
     public:
-        DownloadViewGtk (DownMan *downman, DownloadList *downloadlist);
+        DownloadViewGtk (DownloadList *list);
         ~DownloadViewGtk ();
 
-        void add_download (Download *download);
-        void update_download (Download *download);
-        void remove_download (Download *download);
-        Download **get_selected ();
+        GtkWidget *get_widget () { return widget; }
 
-        GtkWidget *get_widget ();
-
-    protected:
-        DownloadList *downloadlist;
-        DownMan *downman;
-
+    private:
         GtkWidget *widget;
         GtkListStore *store;
+
+        void list_add_cb (Download *d, Download *nextd);
+        void list_update_cb (Download *d);
+        void list_remove_cb (Download *d);
+        void list_reorder_cb (Download *d, Download *nextd);
 };
 
 #endif /* __DOWNLOAD_VIEW_GTK_H__ */

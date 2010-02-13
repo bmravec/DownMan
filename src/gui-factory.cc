@@ -48,7 +48,7 @@ GuiFactory::create_application ()
 DownloadView *
 GuiFactory::create_downloadview (DownloadList *downloadlist)
 {
-    return (DownloadView*) new DownloadViewGtk (downman, downloadlist);
+    return (DownloadView*) new DownloadViewGtk (downloadlist);
 }
 
 StagingView *
