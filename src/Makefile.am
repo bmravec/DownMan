@@ -21,6 +21,7 @@ downman_LDADD = $(GTK_LIBS) $(GLIB_LIBS) $(SIGC_LIBS) $(CURL_LIBS)
 
 downman_SOURCES =                  \
     downman.cc downman.h           \
+    dregex.cc dregex.h             \
     staginglist.cc staginglist.h   \
     download.cc download.h         \
     http-download.cc http-download.h \
