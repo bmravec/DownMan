@@ -128,7 +128,18 @@ StagingViewGtk::list_update_cb (Download *d)
 void
 StagingViewGtk::list_remove_cb (Download *d)
 {
-    std::cout << "StagingViewGtk::list_remove_cb (d): stub\n";
+    GtkTreeIter iter;
+    Download *diter;
+
+    if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (store), &iter)) {
+        do {
+            gtk_tree_model_get (GTK_TREE_MODEL (store), &iter, 0, &diter, -1);
+
+            if (diter == d) {
+                gtk_list_store_remove (store, &iter);
+            }
+        } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter));
+    }
 }
 
 void
