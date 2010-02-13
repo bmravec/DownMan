@@ -24,12 +24,15 @@ class DownloadList;
 #ifndef __DOWNLOAD_LIST_H__
 #define __DOWNLOAD_LIST_H__
 
-class DownloadList {
+#include "dlist.h"
+
+class DownloadList : public DList {
     public:
         DownloadList ();
         ~DownloadList ();
 
     private:
+        void download_update (Download *d, DownloadState state);
 };
 
 #endif /* __DOWNLOAD_LIST_H__ */

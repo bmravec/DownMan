@@ -30,3 +30,9 @@ DownloadList::~DownloadList ()
 {
 
 }
+
+void
+DownloadList::download_update (Download *d, DownloadState state)
+{
+    update (d);
+}
