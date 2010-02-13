@@ -55,20 +55,28 @@ class Download {
         virtual void startup (const std::map<std::string,std::string> &data);
         virtual std::map<std::string,std::string> *shutdown ();
 
-        sigc::signal<void, DownloadState> &signal_state_changed () { return state_changed; }
+        sigc::signal<void, Download*, DownloadState> &signal_state_changed () { return state_changed; }
 
         const std::string &get_status () { return status; }
+        const std::string &get_name () { return name; }
+        DownloadState get_state () { return state; }
+
+        int get_dsize () { return dsize; }
+        int get_dtrans () { return dtrans; }
+        int get_usize () { return usize; }
+        int get_utrans () { return utrans; }
 
     protected:
         DownloadState state;
         std::string status;
         std::string url;
+        std::string name;
         int dsize, dtrans, usize, utrans;
 
         void set_state (DownloadState state);
 
     private:
-        sigc::signal<void, DownloadState> state_changed;
+        sigc::signal<void, Download*, DownloadState> state_changed;
 };
 
 #endif /* __DOWNLOAD_H__ */

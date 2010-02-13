@@ -67,5 +67,5 @@ Download::set_state (DownloadState state)
 {
     this->state = state;
 
-    state_changed (state);
+    state_changed (this, state);
 }
