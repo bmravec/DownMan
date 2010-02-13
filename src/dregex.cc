@@ -19,6 +19,8 @@
  *      MA 02110-1301, USA.
  */
 
+#include <iostream>
+
 #include "dregex.h"
 
 DRegex::DRegex (std::string &m) : m_str (m)
@@ -45,6 +47,34 @@ DRegex::match (std::string &str)
     regmatch_t *result = new regmatch_t[no_sub];
 
     bool res = regexec (&pattern, str.c_str (), no_sub, result, 0) == 0;
+
+    delete result;
+
+    return res;
+}
+
+bool
+DRegex::find (std::string &str, std::vector<std::string> &m)
+{
+    return find (str.c_str (), m);
+}
+
+bool
+DRegex::find (const char *str, std::vector<std::string> &m)
+{
+    size_t no_sub = pattern.re_nsub + 1;
+    regmatch_t *result = new regmatch_t[no_sub];
+    bool res = false;
+
+    std::cout << "NOSUB" << no_sub << std::endl;
+
+    if (regexec (&pattern, str, no_sub, result, 0) == 0) {
+        for (int i = 0; i < no_sub; i++) {
+            std::string smatch (str + result[i].rm_so, result[i].rm_eo - result[i].rm_so);
+            m.push_back (smatch);
+        }
+        res = true;
+    }
 
     delete result;
 

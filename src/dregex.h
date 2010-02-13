@@ -35,6 +35,8 @@ class DRegex {
         ~DRegex ();
 
         bool match (std::string &str);
+        bool find (std::string &str, std::vector<std::string> &m);
+        bool find (const char *str, std::vector<std::string> &m);
         bool find_all (std::string &str, std::vector<std::string> &matches);
         bool find_all (const char *str, std::vector<std::string> &matches);
 
