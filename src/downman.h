@@ -37,6 +37,7 @@ class DownMan;
 #include "speedlimit.h"
 
 #include "download.h"
+#include "dregex.h"
 
 class DownMan {
     public:
@@ -62,6 +63,8 @@ class DownMan {
         DownloadList *downloadlist;
         StagingList *staginglist;
         SpeedLimit *speedlimit;
+
+        DRegex *url_regex;
 };
 
 #endif /* __DOWNMAN_H__ */
