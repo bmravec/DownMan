@@ -34,8 +34,6 @@ class StagingView {
         StagingView (StagingList *list);
         ~StagingView ();
 
-        virtual void set_staginglist (StagingList *list);
-
         sigc::signal<void, Download*> &signal_start () { return start; }
 
     protected:

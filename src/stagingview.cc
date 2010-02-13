@@ -39,12 +39,6 @@ StagingView::~StagingView ()
 }
 
 void
-StagingView::set_staginglist (StagingList *list)
-{
-    std::cout << "StagingView::set_staginglist (list): stub\n";
-}
-
-void
 StagingView::list_add_cb (Download *d, Download *nextd)
 {
     std::cout << "StagingView::list_add_cb (d, nextd): stub\n";
