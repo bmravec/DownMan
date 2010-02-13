@@ -5,6 +5,7 @@ gtksources = \
     gtk/application-gtk.cc gtk/application-gtk.h   \
     gtk/mainwindow-gtk.cc gtk/mainwindow-gtk.h     \
     gtk/downloadview-gtk.cc gtk/downloadview-gtk.h \
+    gtk/stagingview-gtk.cc gtk/stagingview-gtk.h   \
     gtk/toolbar-gtk.cc gtk/toolbar-gtk.h
 
 guisources = \
