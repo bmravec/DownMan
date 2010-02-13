@@ -32,6 +32,7 @@ class MainWindowGtk;
 #include "mainwindow.h"
 #include "menubar.h"
 #include "stagingview.h"
+#include "stagingview-gtk.h"
 #include "toolbar.h"
 #include "toolbar-gtk.h"
 
@@ -55,6 +56,7 @@ class MainWindowGtk : public MainWindow {
         GtkWidget *downloadview_sw, *stagingview_sw;
 
         DownloadViewGtk *downloadview;
+        StagingViewGtk *stagingview;
         ToolbarGtk *toolbar;
 };
 

@@ -78,7 +78,6 @@ MainWindowGtk::set_menubar (Menubar *menubar)
 void
 MainWindowGtk::set_toolbar (Toolbar *toolbar)
 {
-    printf ("MainWindowGtk::set_toolbar (toolbar): stub\n");
     this->toolbar = (ToolbarGtk*) toolbar;
 
     gtk_table_attach (GTK_TABLE (table), this->toolbar->get_widget (),
@@ -97,7 +96,10 @@ MainWindowGtk::set_downloadview (DownloadView *downloadview)
 void
 MainWindowGtk::set_stagingview (StagingView *stagingview)
 {
-    printf ("MainWindowGtk::set_stagingview (stagingview): stub\n");
+    this->stagingview = (StagingViewGtk*) stagingview;
+
+    gtk_container_add (GTK_CONTAINER (stagingview_sw), this->stagingview->get_widget ());
+    gtk_widget_show_all (stagingview_sw);
 }
 
 void
