@@ -31,7 +31,7 @@ class StagingView;
 
 class StagingView {
     public:
-        StagingView ();
+        StagingView (StagingList *list);
         ~StagingView ();
 
         virtual void set_staginglist (StagingList *list);
@@ -42,6 +42,11 @@ class StagingView {
         sigc::signal<void, Download*> start;
 
         StagingList *list;
+
+        virtual void list_add_cb (Download *d, Download *nextd);
+        virtual void list_update_cb (Download *d);
+        virtual void list_remove_cb (Download *d);
+        virtual void list_reorder_cb (Download *d, Download *nextd);
 };
 
 #endif /* __STAGING_VIEW_H__ */
