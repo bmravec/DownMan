@@ -19,6 +19,8 @@
  *      MA 02110-1301, USA.
  */
 
+#include <iostream>
+
 #include "staginglist.h"
 
 StagingList::StagingList ()
@@ -32,84 +34,11 @@ StagingList::~StagingList ()
 }
 
 void
-StagingList::add_download (Download *d, Download *nextd)
-{
-    std::vector<Download*>::iterator iter;
-    Download *diter = NULL;
-
-    d->start_get_info ();
-
-    if (nextd == NULL) {
-        for (iter = downloads.begin (); iter < downloads.end (); iter++) {
-            if (*iter == nextd) {
-                downloads.insert (iter, d);
-                diter = *iter;
-                break;
-            }
-        }
-    }
-
-    if (diter != NULL) {
-        downloads.push_back (d);
-    }
-
-    d->signal_state_changed ().connect (sigc::mem_fun (*this, &StagingList::download_update));
-
-    add (d, diter);
-}
-
-void
-StagingList::update_download (Download *d)
-{
-    update (d);
-}
-
-void
-StagingList::remove_download (Download *d)
-{
-    std::vector<Download*>::iterator iter;
-
-    for (iter = downloads.begin (); iter < downloads.end (); iter++) {
-        if (*iter == d) {
-            downloads.erase (iter);
-            remove (d);
-            break;
-        }
-    }
-}
-
-void
-StagingList::reorder_download (Download *d, Download *nextd)
-{
-    std::vector<Download*>::iterator iter;
-    Download *diter = NULL;
-
-    for (iter = downloads.begin (); iter < downloads.end (); iter++) {
-        if (*iter == d) {
-            downloads.erase (iter);
-            break;
-        }
-    }
-
-    if (nextd == NULL) {
-        for (iter = downloads.begin (); iter < downloads.end (); iter++) {
-            if (*iter == nextd) {
-                downloads.insert (iter, d);
-                diter = *iter;
-                break;
-            }
-        }
-    }
-
-    if (diter != NULL) {
-        downloads.push_back (d);
-    }
-
-    reorder (d, nextd);
-}
-
-void
 StagingList::download_update (Download *d, DownloadState state)
 {
-    update_download (d);
+    if (state == STATE_NULL) {
+        d->start_get_info ();
+    }
+
+    update (d);
 }
