@@ -24,6 +24,7 @@ downman_SOURCES =                  \
     downman.cc downman.h           \
     dregex.cc dregex.h             \
     staginglist.cc staginglist.h   \
+    download-factory.cc download-factory.h \
     download.cc download.h         \
     http-download.cc http-download.h \
     $(guisources) $(gtksources)
