@@ -32,10 +32,11 @@ DownMan::DownMan ()
     guifactory = new GuiFactory (this);
 
     staginglist = new StagingList ();
+    downloadlist = new DownloadList ();
 
     application = guifactory->create_application ();
     mainwindow = guifactory->create_mainwindow ();
-    downloadview = guifactory->create_downloadview (NULL);
+    downloadview = guifactory->create_downloadview (downloadlist);
     stagingview = guifactory->create_stagingview (staginglist);
     toolbar = guifactory->create_toolbar ();
 
@@ -44,6 +45,7 @@ DownMan::DownMan ()
     mainwindow->set_toolbar (toolbar);
 
     toolbar->signal_add_url ().connect (sigc::mem_fun (*this, &DownMan::prompt_for_urls));
+    toolbar->signal_start_staging ().connect (sigc::mem_fun (*this, &DownMan::start_staging));
 
     url_regex = new DRegex ("\\S*://\\S*");
 }
@@ -93,8 +95,17 @@ DownMan::prompt_for_urls ()
                 }
             }
         }
-    } else {
-        std::cout << "No URLs Entered\n";
+    }
+}
+
+void
+DownMan::start_staging ()
+{
+    for (; staginglist->size () > 0;) {
+        Download *d = staginglist->get (0);
+
+        staginglist->remove_download (d);
+        downloadlist->add_download (d, NULL);
     }
 }
 

@@ -51,6 +51,7 @@ class DownMan {
         void quit ();
 
         void prompt_for_urls ();
+        void start_staging ();
     private:
         GuiFactory *guifactory;
         DownloadFactory dfactory;
