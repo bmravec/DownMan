@@ -34,5 +34,9 @@ DownloadList::~DownloadList ()
 void
 DownloadList::download_update (Download *d, DownloadState state)
 {
+    if (state == STATE_NULL || state == STATE_INFO_COMPLETED) {
+        d->start_download ();
+    }
+
     update (d);
 }
