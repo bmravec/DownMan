@@ -46,6 +46,7 @@ DownloadViewGtk::DownloadViewGtk (DownloadList *list) :
     renderer = gtk_cell_renderer_text_new ();
     g_object_set (G_OBJECT (renderer), "ellipsize", PANGO_ELLIPSIZE_MIDDLE, NULL);
     column = gtk_tree_view_column_new_with_attributes ("Status", renderer, "text", 2, NULL);
+    gtk_tree_view_column_set_expand (column, TRUE);
     gtk_tree_view_append_column (GTK_TREE_VIEW (widget), column);
 
     renderer = gtk_cell_renderer_progress_new ();
@@ -83,6 +84,7 @@ DownloadViewGtk::list_add_cb (Download *d, Download *nextd)
                         0, d,
                         1, d->get_name ().c_str (),
                         2, d->get_status ().c_str (), -1);
+
                     return;
                 }
             } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter));
@@ -116,6 +118,7 @@ DownloadViewGtk::list_update_cb (Download *d)
                 gtk_list_store_set (store, &iter,
                     1, d->get_name ().c_str (),
                     2, d->get_status ().c_str (), -1);
+                break;
             }
         } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter));
     }
@@ -133,6 +136,7 @@ DownloadViewGtk::list_remove_cb (Download *d)
 
             if (diter == d) {
                 gtk_list_store_remove (store, &iter);
+                break;
             }
         } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter));
     }
