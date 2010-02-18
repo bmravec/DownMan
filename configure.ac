@@ -1,7 +1,9 @@
 AC_PREREQ(2.59)
 AC_INIT([DownMan],[0.1])
 AC_CONFIG_SRCDIR([src/downman.cc])
+
 AM_INIT_AUTOMAKE([dist-bzip2])
+AM_SILENT_RULES([yes])
 
 AC_CONFIG_HEADERS(config.h)
 
