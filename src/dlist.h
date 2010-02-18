@@ -38,6 +38,9 @@ class DList {
         void update_download (Download *d);
         void remove_download (Download *d);
 
+        Download *get (int index) { return downloads[index]; }
+        int size () const { return downloads.size (); }
+
         void reorder_download (Download *d, Download *nextd);
 
         sigc::signal<void, Download*, Download*> &signal_add () { return add; }

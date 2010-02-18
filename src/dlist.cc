@@ -37,7 +37,7 @@ DList::add_download (Download *d, Download *nextd)
     std::vector<Download*>::iterator iter;
     Download *diter = NULL;
 
-    if (nextd == NULL) {
+    if (nextd != NULL) {
         for (iter = downloads.begin (); iter < downloads.end (); iter++) {
             if (*iter == nextd) {
                 downloads.insert (iter, d);
@@ -47,7 +47,7 @@ DList::add_download (Download *d, Download *nextd)
         }
     }
 
-    if (diter != NULL) {
+    if (diter == NULL) {
         downloads.push_back (d);
     }
 
