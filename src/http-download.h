@@ -24,10 +24,14 @@ class HttpDownload;
 #ifndef __HTTP_DOWNLOAD_H__
 #define __HTTP_DOWNLOAD_H__
 
+#include <iostream>
+#include <fstream>
 #include <string>
 #include <map>
 #include <sigc++/sigc++.h>
 #include <pthread.h>
+
+#include <curl/curl.h>
 
 #include "download.h"
 
@@ -47,6 +51,12 @@ class HttpDownload : public Download {
         static void *run_download (void *download);
         pthread_t thread;
         bool running;
+
+        CURL *curl;
+        std::ofstream ofile;
+
+        static size_t write_function (void *ptr, size_t size, size_t nmemb, void *stream);
+        static int progress_function (HttpDownload *d, double dt, double dn, double ut, double un);
 };
 
 #endif /* __HTTP_DOWNLOAD_H__ */

@@ -21,9 +21,8 @@
 
 #include <iostream>
 
-#include <curl/curl.h>
-
 #include "http-download.h"
+#include "utils.h"
 
 HttpDownload::HttpDownload (std::string &url) : Download (url)
 {
@@ -36,6 +35,7 @@ HttpDownload::HttpDownload (std::string &url) : Download (url)
 HttpDownload::~HttpDownload ()
 {
     if (running) {
+        running = false;
         pthread_join (thread, NULL);
     }
 }
@@ -101,5 +101,65 @@ HttpDownload::run_info (void *download)
 void*
 HttpDownload::run_download (void *download)
 {
+    HttpDownload *d = (HttpDownload*) download;
 
+    d->running = true;
+    d->status = "Downloading...";
+    d->set_state (STATE_DOWNLOADING);
+
+    d->curl = curl_easy_init ();
+    curl_easy_setopt (d->curl, CURLOPT_URL, d->url.c_str ());
+
+    curl_easy_setopt (d->curl, CURLOPT_VERBOSE, 1);
+
+    curl_easy_setopt (d->curl, CURLOPT_WRITEFUNCTION, &HttpDownload::write_function);
+    curl_easy_setopt (d->curl, CURLOPT_WRITEDATA, d);
+
+    curl_easy_setopt (d->curl, CURLOPT_NOPROGRESS, 0);
+    curl_easy_setopt (d->curl, CURLOPT_PROGRESSFUNCTION, &HttpDownload::progress_function);
+    curl_easy_setopt (d->curl, CURLOPT_PROGRESSDATA, d);
+
+    d->ofile.open (d->name.c_str (), std::ios::out | std::ios::binary);
+
+    curl_easy_perform (d->curl);
+
+    curl_easy_cleanup (d->curl);
+    d->curl = NULL;
+
+    d->ofile.close ();
+
+    d->status = "Completed";
+    d->set_state (STATE_COMPLETED);
+
+    d->running = false;
+}
+
+size_t
+HttpDownload::write_function (void *ptr,
+                              size_t size,
+                              size_t nmemb,
+                              void *stream)
+{
+    HttpDownload *d = (HttpDownload*) stream;
+
+    d->ofile.write ((char*) ptr, size * nmemb);
+
+    return size * nmemb;
+}
+
+int
+HttpDownload::progress_function (HttpDownload *d,
+                                 double dt, double dn,
+                                 double ut, double un)
+{
+    std::string dnow = size_to_string (dn);
+    std::string dtot = size_to_string (dt);
+
+    std::cout << "D (" << dnow << "," << dtot << ") ";
+    std::cout << std::endl;
+
+    d->dsize = dt;
+    d->dtrans = dn;
+
+    return 0;
 }
