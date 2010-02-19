@@ -29,7 +29,7 @@ class DownloadViewGtk;
 #include "download.h"
 #include "downloadlist.h"
 #include "downloadview.h"
-#include "downman.h"
+#include "utils.h"
 
 class DownloadViewGtk : public DownloadView {
     public:
@@ -46,6 +46,8 @@ class DownloadViewGtk : public DownloadView {
         void list_update_cb (Download *d);
         void list_remove_cb (Download *d);
         void list_reorder_cb (Download *d, Download *nextd);
+
+        void update_row (GtkTreeIter *iter, Download *d);
 };
 
 #endif /* __DOWNLOAD_VIEW_GTK_H__ */

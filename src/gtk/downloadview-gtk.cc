@@ -65,41 +65,31 @@ DownloadViewGtk::~DownloadViewGtk ()
 void
 DownloadViewGtk::list_add_cb (Download *d, Download *nextd)
 {
+    GtkTreeIter iter, iter2;
     Download *diter;
 
     if (nextd == NULL) {
-        gtk_list_store_insert_with_values (store, NULL, -1,
-            0, d,
-            1, d->get_name ().c_str (),
-            2, d->get_status ().c_str (), -1);
+        gtk_list_store_append (store, &iter);
+        update_row (&iter, d);
+
     } else {
-        GtkTreeIter iter, iter2;
         if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (store), &iter)) {
             do {
                 gtk_tree_model_get (GTK_TREE_MODEL (store), &iter, 0, &diter, -1);
 
                 if (diter == nextd) {
                     gtk_list_store_insert_before (store, &iter2, &iter);
-                    gtk_list_store_set (store, &iter,
-                        0, d,
-                        1, d->get_name ().c_str (),
-                        2, d->get_status ().c_str (), -1);
+                    update_row (&iter, d);
 
                     return;
                 }
             } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter));
 
             gtk_list_store_append (store, &iter);
-            gtk_list_store_set (store, &iter,
-                0, d,
-                1, d->get_name ().c_str (),
-                2, d->get_status ().c_str (), -1);
+            update_row (&iter, d);
         } else {
             gtk_list_store_append (store, &iter);
-            gtk_list_store_set (store, &iter,
-                0, d,
-                1, d->get_name ().c_str (),
-                2, d->get_status ().c_str (), -1);
+            update_row (&iter, d);
         }
     }
 }
@@ -115,9 +105,7 @@ DownloadViewGtk::list_update_cb (Download *d)
             gtk_tree_model_get (GTK_TREE_MODEL (store), &iter, 0, &diter, -1);
 
             if (diter == d) {
-                gtk_list_store_set (store, &iter,
-                    1, d->get_name ().c_str (),
-                    2, d->get_status ().c_str (), -1);
+                update_row (&iter, d);
                 break;
             }
         } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter));
@@ -140,6 +128,32 @@ DownloadViewGtk::list_remove_cb (Download *d)
             }
         } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter));
     }
+}
+
+void
+DownloadViewGtk::update_row (GtkTreeIter *iter, Download *d)
+{
+    int pulse = -1;
+    float percent = 0.0;
+    const char *text = NULL;
+
+    if (d->get_dsize () != -1) {
+        if (d->get_dsize () != 0) {
+            percent = 100.0 * d->get_dtrans () / d->get_dsize ();
+        }
+
+        text = (size_to_string (d->get_dtrans ()) + " / " +
+                size_to_string (d->get_dsize ())).c_str ();
+    } else {
+        pulse = d->get_dtrans ();
+        text = size_to_string (d->get_dtrans ()).c_str ();
+    }
+
+    gtk_list_store_set (store, iter,
+        0, d,
+        1, d->get_name ().c_str (),
+        2, d->get_status ().c_str (),
+        3, text, 4, percent, 5, pulse, -1);
 }
 
 void
