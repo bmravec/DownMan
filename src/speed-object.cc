@@ -1,5 +1,5 @@
 /*
- *      speedlimit.h
+ *      speed-object.cc
  *
  *      Copyright 2010 Brett Mravec <brett.mravec@gmail.com>
  *
@@ -19,17 +19,14 @@
  *      MA 02110-1301, USA.
  */
 
-class SpeedLimit;
+#include "speed-object.h"
 
-#ifndef __SPEED_LIMIT_H__
-#define __SPEED_LIMIT_H__
+SpeedObject::SpeedObject (SpeedMonitor *monitor) : monitor (monitor)
+{
 
-class SpeedLimit {
-    public:
-        SpeedLimit ();
-        ~SpeedLimit ();
+}
 
-    private:
-};
+SpeedObject::~SpeedObject ()
+{
 
-#endif /* __SPEED_LIMIT_H__ */
+}
