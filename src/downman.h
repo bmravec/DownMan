@@ -34,7 +34,8 @@ class DownMan;
 
 #include "downloadlist.h"
 #include "staginglist.h"
-#include "speedlimit.h"
+#include "speed-monitor.h"
+#include "app-config.h"
 
 #include "download-factory.h"
 #include "download.h"
@@ -65,7 +66,8 @@ class DownMan {
 
         DownloadList *downloadlist;
         StagingList *staginglist;
-        SpeedLimit *speedlimit;
+        SpeedMonitor *speedmonitor;
+        Config *config;
 
         DRegex *url_regex;
 };

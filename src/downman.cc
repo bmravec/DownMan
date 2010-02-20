@@ -29,10 +29,13 @@
 
 DownMan::DownMan ()
 {
+    config = new Config ();
+
     guifactory = new GuiFactory (this);
 
     staginglist = new StagingList ();
     downloadlist = new DownloadList ();
+    speedmonitor = new SpeedMonitor (config);
 
     application = guifactory->create_application ();
     mainwindow = guifactory->create_mainwindow ();
