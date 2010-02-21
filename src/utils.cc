@@ -26,14 +26,14 @@
 std::string
 size_to_string (size_t size)
 {
-    const char *ss[] = { "KB", "MB", "GB", "TB" };
+    const char *ss[] = { "Kb", "Mb", "Gb", "Tb" };
 
     char digits = 2;
     char str[50];
     double num = size;
 
     if (size < 1024) {
-        sprintf (str, "%d Bytes", size);
+        sprintf (str, "%d B", size);
         return std::string (str);
     }
 
