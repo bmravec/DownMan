@@ -24,7 +24,7 @@
 #include "download.h"
 
 Download::Download (std::string &url) : state (STATE_NULL), url (url),
-    dsize (-1), dtrans (-1), usize (-1), utrans (-1)
+    dsize (-1), dtrans (-1), usize (-1), utrans (-1), so (NULL)
 {
 
 }
@@ -66,4 +66,14 @@ Download::set_state (DownloadState state)
     this->state = state;
 
     state_changed (this, state);
+}
+
+int
+Download::get_uspeed () {
+    return so != NULL ? so->get_uspeed () : 0;
+}
+
+int
+Download::get_dspeed () {
+    return so != NULL ? so->get_dspeed () : 0;
 }

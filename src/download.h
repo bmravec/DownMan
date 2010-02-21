@@ -28,6 +28,8 @@ class Download;
 #include <map>
 #include <sigc++/sigc++.h>
 
+#include "speed-object.h"
+
 typedef enum {
     STATE_NULL = 0,
     STATE_PAUSED,
@@ -65,6 +67,8 @@ class Download {
         int get_dtrans () { return dtrans; }
         int get_usize () { return usize; }
         int get_utrans () { return utrans; }
+        int get_uspeed ();
+        int get_dspeed ();
 
     protected:
         DownloadState state;
@@ -72,6 +76,7 @@ class Download {
         std::string url;
         std::string name;
         int dsize, dtrans, usize, utrans;
+        SpeedObject *so;
 
         void set_state (DownloadState state);
 
