@@ -100,6 +100,8 @@ DownloadViewGtk::list_update_cb (Download *d)
     GtkTreeIter iter;
     Download *diter;
 
+    gdk_threads_enter ();
+
     if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (store), &iter)) {
         do {
             gtk_tree_model_get (GTK_TREE_MODEL (store), &iter, 0, &diter, -1);
@@ -110,6 +112,8 @@ DownloadViewGtk::list_update_cb (Download *d)
             }
         } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter));
     }
+
+    gdk_threads_leave ();
 }
 
 void
