@@ -28,7 +28,6 @@ class HttpDownload;
 #include <fstream>
 #include <string>
 #include <map>
-#include <sigc++/sigc++.h>
 #include <pthread.h>
 
 #include <curl/curl.h>

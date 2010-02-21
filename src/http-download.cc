@@ -107,6 +107,8 @@ HttpDownload::run_download (void *download)
     d->status = "Downloading...";
     d->set_state (STATE_DOWNLOADING);
 
+    d->so = SpeedMonitor::Instance ().get (d);
+
     d->curl = curl_easy_init ();
     curl_easy_setopt (d->curl, CURLOPT_URL, d->url.c_str ());
 
@@ -127,6 +129,9 @@ HttpDownload::run_download (void *download)
     d->curl = NULL;
 
     d->ofile.close ();
+
+    d->so = NULL;
+    SpeedMonitor::Instance ().remove (d);
 
     d->status = "Completed";
     d->set_state (STATE_COMPLETED);
@@ -152,11 +157,7 @@ HttpDownload::progress_function (HttpDownload *d,
                                  double dt, double dn,
                                  double ut, double un)
 {
-    std::string dnow = size_to_string (dn);
-    std::string dtot = size_to_string (dt);
-
-    std::cout << "D (" << dnow << "," << dtot << ") ";
-    std::cout << std::endl;
+    d->so->update_downloaded (dn - d->dtrans);
 
     d->dsize = dt;
     d->dtrans = dn;
