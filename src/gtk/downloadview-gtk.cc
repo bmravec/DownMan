@@ -135,25 +135,37 @@ DownloadViewGtk::update_row (GtkTreeIter *iter, Download *d)
 {
     int pulse = -1;
     float percent = 0.0;
-    const char *text = NULL;
+    std::string text;
 
     if (d->get_dsize () != -1) {
         if (d->get_dsize () != 0) {
             percent = 100.0 * d->get_dtrans () / d->get_dsize ();
         }
 
-        text = (size_to_string (d->get_dtrans ()) + " / " +
-                size_to_string (d->get_dsize ())).c_str ();
+        text = size_to_string (d->get_dtrans ()) + " / " +
+               size_to_string (d->get_dsize ());
     } else {
         pulse = d->get_dtrans ();
-        text = size_to_string (d->get_dtrans ()).c_str ();
+        text = size_to_string (d->get_dtrans ());
+    }
+
+    std::string status;
+    if (d->get_dspeed () > 0 && d->get_uspeed () > 0) {
+        status = "U: " + size_to_string (d->get_uspeed ()) + "ps ";
+        status += "D: " + size_to_string (d->get_dspeed ()) + "ps";
+    } else if (d->get_dspeed () > 0) {
+        status = "D: " + size_to_string (d->get_dspeed ()) + "ps";
+    } else if (d->get_uspeed () > 0) {
+        status = "U: " + size_to_string (d->get_uspeed ()) + "ps";
+    } else {
+        status = d->get_status ();
     }
 
     gtk_list_store_set (store, iter,
         0, d,
         1, d->get_name ().c_str (),
-        2, d->get_status ().c_str (),
-        3, text, 4, percent, 5, pulse, -1);
+        2, status.c_str (),
+        3, text.c_str (), 4, percent, 5, pulse, -1);
 }
 
 void
