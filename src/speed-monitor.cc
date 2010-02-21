@@ -19,22 +19,16 @@
  *      MA 02110-1301, USA.
  */
 
-#include <iostream>
-
 #include "speed-monitor.h"
 
 SpeedMonitor::SpeedMonitor () :
     config (Config::Instance ())
 {
-    std::cout << "SpeedMonitor: ctor\n";
-
     pthread_create (&thread, NULL, &SpeedMonitor::monitor_main, this);
 }
 
 SpeedMonitor::~SpeedMonitor ()
 {
-    std::cout << "SpeedMonitor: dtor\n";
-
     if (running) {
         running = false;
         pthread_cancel (thread);
