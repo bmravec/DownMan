@@ -24,15 +24,45 @@ class SpeedMonitor;
 #ifndef __SPEED_MONITOR_H__
 #define __SPEED_MONITOR_H__
 
+#include <map>
+#include <sigc++/sigc++.h>
+
+#include <pthread.h>
+
+#include "speed-object.h"
+#include "download.h"
 #include "app-config.h"
 
 class SpeedMonitor {
     public:
-        SpeedMonitor (Config *config);
-        ~SpeedMonitor ();
+        static SpeedMonitor &Instance () {
+            static SpeedMonitor monitor;
+            return monitor;
+        }
+
+        SpeedObject *get (Download *d);
+        void remove (Download *d);
+
+        sigc::signal<void, Download*> &signal_update () { return update; }
+
+        int update_downloaded (int bytes);
+        int update_uploaded (int bytes);
 
     private:
-        Config *config;
+        SpeedMonitor ();
+        ~SpeedMonitor ();
+
+        Config &config;
+
+        clock_t ltime;
+        int putotal, pdtotal, utotal, dtotal, ulimit, dlimit;
+        std::map<Download*,SpeedObject*> speeds;
+
+        pthread_t thread;
+        bool running;
+        static void *monitor_main (void *m);
+
+        sigc::signal<void, Download*> update;
 };
 
 #endif /* __SPEED_MONITOR_H__ */

@@ -28,11 +28,24 @@ class SpeedObject;
 
 class SpeedObject {
     public:
-        SpeedObject (SpeedMonitor *monitor);
+        SpeedObject ();
         ~SpeedObject ();
 
+        int update_downloaded (int bytes);
+        int update_uploaded (int bytes);
+        void update ();
+
+        void wait (int time);
+
+        int get_uspeed () { return putotal; }
+        int get_dspeed () { return pdtotal; }
+
     private:
-        SpeedMonitor *monitor;
+        int ulimit, dlimit;
+        int utotal, dtotal;
+        int putotal, pdtotal;
+
+        SpeedMonitor &monitor;
 };
 
 #endif /* __SPEED_OBJECT_H__ */

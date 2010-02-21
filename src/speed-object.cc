@@ -21,7 +21,8 @@
 
 #include "speed-object.h"
 
-SpeedObject::SpeedObject (SpeedMonitor *monitor) : monitor (monitor)
+SpeedObject::SpeedObject () :
+    monitor (SpeedMonitor::Instance ())
 {
 
 }
@@ -29,4 +30,47 @@ SpeedObject::SpeedObject (SpeedMonitor *monitor) : monitor (monitor)
 SpeedObject::~SpeedObject ()
 {
 
+}
+
+int
+SpeedObject::update_downloaded (int bytes)
+{
+    dtotal += bytes;
+
+    int val = monitor.update_downloaded (bytes);
+    if (val > 0) {
+        return val;
+    }
+
+    return 0;
+}
+
+int
+SpeedObject::update_uploaded (int bytes)
+{
+    utotal += bytes;
+
+    int val = monitor.update_uploaded (bytes);
+    if (val > 0) {
+        return val;
+    }
+
+    return 0;
+}
+
+void
+SpeedObject::update ()
+{
+    putotal = utotal;
+    pdtotal = dtotal;
+
+    utotal = dtotal = 0;
+}
+
+void
+SpeedObject::wait (int time)
+{
+    if (time > 0) {
+        usleep (time);
+    }
 }
