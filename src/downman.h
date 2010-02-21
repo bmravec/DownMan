@@ -53,6 +53,8 @@ class DownMan {
 
         void prompt_for_urls ();
         void start_staging ();
+        void update_download (Download *d);
+
     private:
         GuiFactory *guifactory;
         DownloadFactory dfactory;
@@ -66,8 +68,8 @@ class DownMan {
 
         DownloadList *downloadlist;
         StagingList *staginglist;
-        SpeedMonitor *speedmonitor;
-        Config *config;
+        SpeedMonitor &speedmonitor;
+        Config &config;
 
         DRegex *url_regex;
 };

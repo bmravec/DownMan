@@ -26,10 +26,14 @@ class Config;
 
 class Config {
     public:
-        Config ();
-        ~Config ();
+        static Config &Instance () {
+            static Config config;
+            return config;
+        }
 
     private:
+        Config ();
+        ~Config ();
 };
 
 #endif /* __CONFIG_H__ */

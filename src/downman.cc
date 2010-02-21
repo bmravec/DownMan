@@ -27,15 +27,14 @@
 #include "mainwindow.h"
 #include "gui-factory.h"
 
-DownMan::DownMan ()
+DownMan::DownMan () :
+    config (Config::Instance ()),
+    speedmonitor (SpeedMonitor::Instance ())
 {
-    config = new Config ();
-
     guifactory = new GuiFactory (this);
 
     staginglist = new StagingList ();
     downloadlist = new DownloadList ();
-    speedmonitor = new SpeedMonitor (config);
 
     application = guifactory->create_application ();
     mainwindow = guifactory->create_mainwindow ();
@@ -49,6 +48,8 @@ DownMan::DownMan ()
 
     toolbar->signal_add_url ().connect (sigc::mem_fun (*this, &DownMan::prompt_for_urls));
     toolbar->signal_start_staging ().connect (sigc::mem_fun (*this, &DownMan::start_staging));
+
+    speedmonitor.signal_update ().connect (sigc::mem_fun (*this, &DownMan::update_download));
 
     url_regex = new DRegex ("\\S*://\\S*");
 }
@@ -110,6 +111,12 @@ DownMan::start_staging ()
         staginglist->remove_download (d);
         downloadlist->add_download (d, NULL);
     }
+}
+
+void
+DownMan::update_download (Download *d)
+{
+    downloadlist->update_download (d);
 }
 
 int
