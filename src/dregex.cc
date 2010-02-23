@@ -25,14 +25,12 @@
 
 DRegex::DRegex (std::string &m) : m_str (m)
 {
-    regcomp (&pattern, m_str.c_str (), 0);
+    regcomp (&pattern, m_str.c_str (), REG_EXTENDED);
 }
 
-DRegex::DRegex (const char *m)
+DRegex::DRegex (const char *m) : m_str (m)
 {
-    m_str = m;
-
-    regcomp (&pattern, m_str.c_str (), 0);
+    regcomp (&pattern, m_str.c_str (), REG_EXTENDED);
 }
 
 DRegex::~DRegex ()
@@ -65,8 +63,6 @@ DRegex::find (const char *str, std::vector<std::string> &m)
     size_t no_sub = pattern.re_nsub + 1;
     regmatch_t *result = new regmatch_t[no_sub];
     bool res = false;
-
-    std::cout << "NOSUB" << no_sub << std::endl;
 
     if (regexec (&pattern, str, no_sub, result, 0) == 0) {
         for (int i = 0; i < no_sub; i++) {
