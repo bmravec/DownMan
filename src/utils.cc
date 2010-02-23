@@ -20,11 +20,12 @@
  */
 
 #include <cstdio>
+#include <sstream>
 
 #include "utils.h"
 
 std::string
-size_to_string (size_t size)
+Utils::size_to_string (size_t size)
 {
     const char *ss[] = { "Kb", "Mb", "Gb", "Tb" };
 
@@ -58,4 +59,34 @@ size_to_string (size_t size)
 
     sprintf (str, "%.*f %s", digits, num, ss[3]);
     return std::string (str);
+}
+
+int
+Utils::parseInt (std::string &str)
+{
+    return parseInt (str.c_str ());
+}
+
+int
+Utils::parseInt (const char *str)
+{
+    int val;
+    std::istringstream iss (str);
+    iss >> val;
+    return val;
+}
+
+int
+Utils::parseHexInt (std::string &str)
+{
+    return parseHexInt (str.c_str ());
+}
+
+int
+Utils::parseHexInt (const char *str)
+{
+    int val;
+    std::istringstream iss (str);
+    iss >> std::hex >> val;
+    return val;
 }

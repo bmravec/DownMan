@@ -22,6 +22,7 @@
 #include <iostream>
 
 #include "downloadview-gtk.h"
+#include "utils.h"
 
 DownloadViewGtk::DownloadViewGtk (DownloadList *list) :
     DownloadView (list)
@@ -146,21 +147,21 @@ DownloadViewGtk::update_row (GtkTreeIter *iter, Download *d)
             percent = 100.0 * d->get_dtrans () / d->get_dsize ();
         }
 
-        text = size_to_string (d->get_dtrans ()) + " / " +
-               size_to_string (d->get_dsize ());
+        text = Utils::size_to_string (d->get_dtrans ()) + " / " +
+               Utils::size_to_string (d->get_dsize ());
     } else {
         pulse = d->get_dtrans ();
-        text = size_to_string (d->get_dtrans ());
+        text = Utils::size_to_string (d->get_dtrans ());
     }
 
     std::string status;
     if (d->get_dspeed () > 0 && d->get_uspeed () > 0) {
-        status = "U: " + size_to_string (d->get_uspeed ()) + "ps ";
-        status += "D: " + size_to_string (d->get_dspeed ()) + "ps";
+        status = "U: " + Utils::size_to_string (d->get_uspeed ()) + "ps ";
+        status += "D: " + Utils::size_to_string (d->get_dspeed ()) + "ps";
     } else if (d->get_dspeed () > 0) {
-        status = "D: " + size_to_string (d->get_dspeed ()) + "ps";
+        status = "D: " + Utils::size_to_string (d->get_dspeed ()) + "ps";
     } else if (d->get_uspeed () > 0) {
-        status = "U: " + size_to_string (d->get_uspeed ()) + "ps";
+        status = "U: " + Utils::size_to_string (d->get_uspeed ()) + "ps";
     } else {
         status = d->get_status ();
     }

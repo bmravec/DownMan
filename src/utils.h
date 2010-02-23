@@ -24,6 +24,15 @@
 
 #include <string>
 
-std::string size_to_string (size_t size);
+class Utils {
+    public:
+        static std::string size_to_string (size_t size);
+
+        static int parseInt (std::string &str);
+        static int parseInt (const char *str);
+        static int parseHexInt (std::string &str);
+        static int parseHexInt (const char *str);
+
+};
 
 #endif /* __UTILS_H__ */
