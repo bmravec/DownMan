@@ -26,6 +26,7 @@ class SpeedMonitor;
 
 #include <map>
 #include <sigc++/sigc++.h>
+#include <sys/time.h>
 
 #include <pthread.h>
 
@@ -52,9 +53,11 @@ class SpeedMonitor {
         SpeedMonitor ();
         ~SpeedMonitor ();
 
+        int time_to_next ();
+
         Config &config;
 
-        clock_t ltime;
+        struct timeval ltime;
         int putotal, pdtotal, utotal, dtotal, ulimit, dlimit;
         std::map<Download*,SpeedObject*> speeds;
 

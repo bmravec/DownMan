@@ -19,10 +19,13 @@
  *      MA 02110-1301, USA.
  */
 
+#include <iostream>
+
 #include "speed-monitor.h"
 
 SpeedMonitor::SpeedMonitor () :
-    config (Config::Instance ())
+    config (Config::Instance ()),
+    ulimit (51200), dlimit (51200)
 {
     pthread_create (&thread, NULL, &SpeedMonitor::monitor_main, this);
 }
@@ -63,18 +66,41 @@ int
 SpeedMonitor::update_downloaded (int bytes)
 {
     dtotal += bytes;
-    //TODO: Return waits
 
-    return 0;
+    int waitval = 0;
+
+    if (dlimit != -1) {
+        if (dtotal > dlimit) {
+            waitval = time_to_next ();
+        }
+    }
+
+    return waitval;
 }
 
 int
 SpeedMonitor::update_uploaded (int bytes)
 {
     utotal += bytes;
-    //TODO: Return waits
 
-    return 0;
+    int waitval = 0;
+
+    if (ulimit != -1) {
+        if (utotal > ulimit) {
+            waitval = time_to_next ();
+        }
+    }
+
+    return waitval;
+}
+
+int
+SpeedMonitor::time_to_next ()
+{
+    struct timeval now;
+    gettimeofday (&now, NULL);
+
+    return 1000000 - (now.tv_sec - ltime.tv_sec) * 1000000 - now.tv_usec + ltime.tv_usec;
 }
 
 void*
@@ -84,9 +110,10 @@ SpeedMonitor::monitor_main (void *m)
     std::map<Download*,SpeedObject*>::iterator iter;
 
     monitor->running = true;
-    monitor->ltime = clock ();
 
     while (monitor->running) {
+        gettimeofday (&monitor->ltime, NULL);
+
         monitor->putotal = monitor->utotal;
         monitor->pdtotal = monitor->dtotal;
         monitor->utotal = monitor->dtotal = 0;
