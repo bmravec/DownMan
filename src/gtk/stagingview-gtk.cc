@@ -22,6 +22,7 @@
 #include <iostream>
 
 #include "stagingview-gtk.h"
+#include "utils.h"
 
 StagingViewGtk::StagingViewGtk (StagingList *staginglist) :
     StagingView (staginglist)
@@ -30,7 +31,7 @@ StagingViewGtk::StagingViewGtk (StagingList *staginglist) :
     GtkCellRenderer *renderer;
 
     store = gtk_list_store_new (4, G_TYPE_POINTER, G_TYPE_STRING,
-        G_TYPE_INT, G_TYPE_STRING);
+        G_TYPE_STRING, G_TYPE_STRING);
 
     widget = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
 
@@ -64,12 +65,19 @@ void
 StagingViewGtk::list_add_cb (Download *d, Download *nextd)
 {
     Download *diter;
+    std::string size;
+
+    if (d->get_dsize () > 0) {
+        size = Utils::size_to_string (d->get_dsize ());
+    } else {
+        size = "Unknown";
+    }
 
     if (nextd == NULL) {
         gtk_list_store_insert_with_values (store, NULL, -1,
             0, d,
             1, d->get_name ().c_str (),
-            2, d->get_dsize (),
+            2, size.c_str (),
             3, d->get_status ().c_str (), -1);
     } else {
         GtkTreeIter iter, iter2;
@@ -82,7 +90,7 @@ StagingViewGtk::list_add_cb (Download *d, Download *nextd)
                     gtk_list_store_set (store, &iter,
                         0, d,
                         1, d->get_name ().c_str (),
-                        2, d->get_dsize (),
+                        2, size.c_str (),
                         3, d->get_status ().c_str (), -1);
                     return;
                 }
@@ -92,14 +100,14 @@ StagingViewGtk::list_add_cb (Download *d, Download *nextd)
             gtk_list_store_set (store, &iter,
                 0, d,
                 1, d->get_name ().c_str (),
-                2, d->get_dsize (),
+                2, size.c_str (),
                 3, d->get_status ().c_str (), -1);
         } else {
             gtk_list_store_append (store, &iter);
             gtk_list_store_set (store, &iter,
                 0, d,
                 1, d->get_name ().c_str (),
-                2, d->get_dsize (),
+                2, size.c_str (),
                 3, d->get_status ().c_str (), -1);
         }
     }
@@ -110,6 +118,13 @@ StagingViewGtk::list_update_cb (Download *d)
 {
     GtkTreeIter iter;
     Download *diter;
+    std::string size;
+
+    if (d->get_dsize () > 0) {
+        size = Utils::size_to_string (d->get_dsize ());
+    } else {
+        size = "Unknown";
+    }
 
     if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (store), &iter)) {
         do {
@@ -118,7 +133,7 @@ StagingViewGtk::list_update_cb (Download *d)
             if (diter == d) {
                 gtk_list_store_set (store, &iter,
                     1, d->get_name ().c_str (),
-                    2, d->get_dsize (),
+                    2, size.c_str (),
                     3, d->get_status ().c_str (), -1);
             }
         } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &iter));
