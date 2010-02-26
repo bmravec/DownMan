@@ -1,4 +1,4 @@
-INCLUDES = $(GTK_CFLAGS) $(GLIB_CFLAGS) $(SIGC_CFLAGS) $(CURL_CFLAGS) \
+INCLUDES = $(GTK_CFLAGS) $(GLIB_CFLAGS) $(SIGC_CFLAGS) \
     -DSHARE_DIR=\"$(pkgdatadir)\"
 
 gtksources = \
@@ -18,7 +18,7 @@ guisources = \
 
 bin_PROGRAMS = downman
 
-downman_LDADD = $(GTK_LIBS) $(GLIB_LIBS) $(SIGC_LIBS) $(CURL_LIBS)
+downman_LDADD = $(GTK_LIBS) $(GLIB_LIBS) $(SIGC_LIBS)
 
 downman_SOURCES =                  \
     downman.cc downman.h           \
@@ -27,6 +27,9 @@ downman_SOURCES =                  \
     speed-object.cc speed-object.h \
     utils.cc utils.h               \
     dregex.cc dregex.h             \
+    url.cc url.h                   \
+    socket.cc socket.h             \
+    http-connection.cc http-connection.h \
     dlist.cc dlist.h               \
     downloadlist.cc downloadlist.h \
     staginglist.cc staginglist.h   \
