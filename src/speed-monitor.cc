@@ -57,6 +57,8 @@ void
 SpeedMonitor::remove (Download *d)
 {
     if (speeds.count (d) > 0) {
+        update (d);
+
         delete speeds[d];
         speeds.erase (d);
     }
