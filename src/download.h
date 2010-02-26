@@ -29,6 +29,7 @@ class Download;
 #include <sigc++/sigc++.h>
 
 #include "speed-object.h"
+#include "url.h"
 
 typedef enum {
     STATE_NULL = 0,
@@ -48,6 +49,7 @@ typedef enum {
 
 class Download {
     public:
+        Download (Url &url);
         Download (std::string &url);
         ~Download ();
 
@@ -59,8 +61,8 @@ class Download {
 
         sigc::signal<void, Download*, DownloadState> &signal_state_changed () { return state_changed; }
 
-        const std::string &get_status () { return status; }
-        const std::string &get_name () { return name; }
+        const std::string get_status () { return status; }
+        const std::string get_name () { return url.get_name (); }
         DownloadState get_state () { return state; }
 
         int get_dsize () { return dsize; }
@@ -72,8 +74,8 @@ class Download {
 
     protected:
         DownloadState state;
+        Url url;
         std::string status;
-        std::string url;
         std::string name;
         int dsize, dtrans, usize, utrans;
         SpeedObject *so;
