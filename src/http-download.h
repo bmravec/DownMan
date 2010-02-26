@@ -30,12 +30,12 @@ class HttpDownload;
 #include <map>
 #include <pthread.h>
 
-#include <curl/curl.h>
-
 #include "download.h"
+#include "url.h"
 
 class HttpDownload : public Download {
     public:
+        HttpDownload (Url &url);
         HttpDownload (std::string &url);
         ~HttpDownload ();
 
@@ -46,16 +46,16 @@ class HttpDownload : public Download {
         std::map<std::string,std::string> *shutdown ();
 
     private:
-        static void *run_info (void *download);
-        static void *run_download (void *download);
+        void run_info ();
+        void run_download ();
+
+        static void *static_run_info (void *download);
+        static void *static_run_download (void *download);
+
         pthread_t thread;
         bool running;
 
-        CURL *curl;
         std::ofstream ofile;
-
-        static size_t write_function (void *ptr, size_t size, size_t nmemb, void *stream);
-        static int progress_function (HttpDownload *d, double dt, double dn, double ut, double un);
 };
 
 #endif /* __HTTP_DOWNLOAD_H__ */

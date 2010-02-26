@@ -22,14 +22,21 @@
 #include <iostream>
 
 #include "http-download.h"
+#include "http-connection.h"
 #include "utils.h"
+#include "socket.h"
+
+void *static_main_info (void*);
+void *static_main_download (void*);
+
+HttpDownload::HttpDownload (Url &url) : Download (url)
+{
+
+}
 
 HttpDownload::HttpDownload (std::string &url) : Download (url)
 {
-    this->url = url;
 
-    size_t pos = url.rfind ("/");
-    name = url.substr (pos + 1);
 }
 
 HttpDownload::~HttpDownload ()
@@ -43,13 +50,13 @@ HttpDownload::~HttpDownload ()
 void
 HttpDownload::start_get_info ()
 {
-    pthread_create (&thread, NULL, HttpDownload::run_info, this);
+    pthread_create (&thread, NULL, HttpDownload::static_run_info, this);
 }
 
 void
 HttpDownload::start_download ()
 {
-    pthread_create (&thread, NULL, HttpDownload::run_download, this);
+    pthread_create (&thread, NULL, HttpDownload::static_run_download, this);
 }
 
 void
@@ -66,79 +73,79 @@ HttpDownload::shutdown ()
     return NULL;
 }
 
-void*
-HttpDownload::run_info (void *download)
+void
+HttpDownload::run_info ()
 {
-    HttpDownload *d = (HttpDownload*) download;
+    int len;
 
-    d->running = true;
-    d->set_state (STATE_INFO);
+    running = true;
+    set_state (STATE_INFO);
 
-    CURL *curl = curl_easy_init ();
-    curl_easy_setopt (curl, CURLOPT_URL, d->url.c_str ());
-    curl_easy_setopt (curl, CURLOPT_NOBODY, 1);
-    curl_easy_perform (curl);
+    HttpConnection conn;
+    conn.send_head_request (url);
 
-    double cl;
-    curl_easy_getinfo (curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &cl);
+    dsize = conn.get_content_length ();
 
-    d->dsize = cl;
+    int rc = conn.get_response_code ();
 
-    int response;
-    curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &response);
-
-    if (response >= 200 && response < 400) {
-        d->status = "Online";
-        d->set_state (STATE_INFO_COMPLETED);
+    if (rc >= 200 && rc < 400) {
+        status = "Online";
+        set_state (STATE_INFO_COMPLETED);
     } else {
-        d->status = "Offline";
-        d->set_state (STATE_NOT_FOUND);
+        status = "Offline";
+        set_state (STATE_NOT_FOUND);
     }
 
-    d->running = false;
+    running = false;
 }
 
-void*
-HttpDownload::run_download (void *download)
+void
+HttpDownload::run_download ()
 {
-    HttpDownload *d = (HttpDownload*) download;
+    running = true;
+    status = "Downloading...";
+    set_state (STATE_DOWNLOADING);
 
-    d->running = true;
-    d->status = "Downloading...";
-    d->set_state (STATE_DOWNLOADING);
+    so = SpeedMonitor::Instance ().get (this);
 
-    d->so = SpeedMonitor::Instance ().get (d);
+    HttpConnection conn;
+    conn.send_get_request (url);
 
-    d->curl = curl_easy_init ();
-    curl_easy_setopt (d->curl, CURLOPT_URL, d->url.c_str ());
+    int rc = conn.get_response_code ();
+    if (rc >= 400 || rc < 200) {
+        status = "Not Found";
+        set_state (STATE_NOT_FOUND);
+    } else {
+        ofile.open (url.get_name ().c_str (), std::ios::out | std::ios::binary);
 
-    curl_easy_setopt (d->curl, CURLOPT_VERBOSE, 1);
+        dtrans = 0;
+        int len;
+        char *buff = new char[2048];
 
-    curl_easy_setopt (d->curl, CURLOPT_WRITEFUNCTION, &HttpDownload::write_function);
-    curl_easy_setopt (d->curl, CURLOPT_WRITEDATA, d);
+        while (running) {
+            len = conn.read (buff, 2048);
+            if (len <= 0) {
+                break;
+            }
 
-    curl_easy_setopt (d->curl, CURLOPT_NOPROGRESS, 0);
-    curl_easy_setopt (d->curl, CURLOPT_PROGRESSFUNCTION, &HttpDownload::progress_function);
-    curl_easy_setopt (d->curl, CURLOPT_PROGRESSDATA, d);
+            ofile.write (buff, len);
+            dtrans += len;
+            so->wait (so->update_downloaded (len));
+        }
 
-    d->ofile.open (d->name.c_str (), std::ios::out | std::ios::binary);
+        ofile.close ();
 
-    curl_easy_perform (d->curl);
+        status = "Completed";
+        set_state (STATE_COMPLETED);
+    }
 
-    curl_easy_cleanup (d->curl);
-    d->curl = NULL;
+    so = NULL;
+    SpeedMonitor::Instance ().remove (this);
 
-    d->ofile.close ();
-
-    d->so = NULL;
-    SpeedMonitor::Instance ().remove (d);
-
-    d->status = "Completed";
-    d->set_state (STATE_COMPLETED);
-
-    d->running = false;
+    running = false;
 }
 
+/*
 size_t
 HttpDownload::write_function (void *ptr,
                               size_t size,
@@ -149,6 +156,15 @@ HttpDownload::write_function (void *ptr,
 
     d->ofile.write ((char*) ptr, size * nmemb);
 
+    int wait = d->so->update_downloaded (size * nmemb);
+
+
+    if (wait > 0) {
+        curl_easy_pause (d->curl, CURLPAUSE_ALL);
+        d->so->wait (wait);
+        curl_easy_pause (d->curl, CURLPAUSE_CONT);
+    }
+
     return size * nmemb;
 }
 
@@ -157,10 +173,25 @@ HttpDownload::progress_function (HttpDownload *d,
                                  double dt, double dn,
                                  double ut, double un)
 {
-    d->so->update_downloaded (dn - d->dtrans);
-
     d->dsize = dt;
     d->dtrans = dn;
 
     return 0;
+}
+*/
+
+void*
+HttpDownload::static_run_info (void *download)
+{
+    ((HttpDownload*) download)->run_info ();
+
+    return NULL;
+}
+
+void*
+HttpDownload::static_run_download (void *download)
+{
+    ((HttpDownload*) download)->run_download ();
+
+    return NULL;
 }
