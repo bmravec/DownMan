@@ -71,7 +71,7 @@ class DownMan {
         SpeedMonitor &speedmonitor;
         Config &config;
 
-        DRegex *url_regex;
+        DRegex url_regex;
 };
 
 #endif /* __DOWNMAN_H__ */

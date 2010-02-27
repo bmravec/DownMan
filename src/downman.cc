@@ -29,8 +29,11 @@
 
 DownMan::DownMan () :
     config (Config::Instance ()),
-    speedmonitor (SpeedMonitor::Instance ())
+    speedmonitor (SpeedMonitor::Instance ()),
+    url_regex ("\\S*://\\S*")
 {
+    config.load_settings ();
+
     guifactory = new GuiFactory (this);
 
     staginglist = new StagingList ();
@@ -50,19 +53,21 @@ DownMan::DownMan () :
     toolbar->signal_start_staging ().connect (sigc::mem_fun (*this, &DownMan::start_staging));
 
     speedmonitor.signal_update ().connect (sigc::mem_fun (*this, &DownMan::update_download));
-
-    url_regex = new DRegex ("\\S*://\\S*");
 }
 
 DownMan::~DownMan ()
 {
-    delete url_regex;
+
 }
 
 void
 DownMan::setup ()
 {
     std::cout << "DownMan::setup (): stub\n";
+
+    config.load_downloads ();
+
+    //TODO: Use returned vector to initialize downloadlist
 }
 
 void
@@ -75,6 +80,11 @@ void
 DownMan::shutdown ()
 {
     std::cout << "DownMan::shutdown (): stub\n";
+    std::vector<std::map<std::string, std::string> > dlist;
+
+    //TODO: Fill with downloads
+
+    config.save (dlist);
 }
 
 void
@@ -91,7 +101,7 @@ DownMan::prompt_for_urls ()
     if (urls.length () > 0) {
         std::vector<std::string> surls;
 
-        if (url_regex->find_all (urls, surls)) {
+        if (url_regex.find_all (urls, surls)) {
             for (int i = 0; i < surls.size (); i++) {
                 Download *d = dfactory.create_download (surls[i]);
                 if (d != NULL) {
