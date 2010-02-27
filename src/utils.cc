@@ -62,7 +62,7 @@ Utils::size_to_string (size_t size)
 }
 
 int
-Utils::parseInt (std::string &str)
+Utils::parseInt (const std::string &str)
 {
     return parseInt (str.c_str ());
 }
@@ -77,7 +77,7 @@ Utils::parseInt (const char *str)
 }
 
 int
-Utils::parseHexInt (std::string &str)
+Utils::parseHexInt (const std::string &str)
 {
     return parseHexInt (str.c_str ());
 }
