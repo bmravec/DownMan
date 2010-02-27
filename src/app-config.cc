@@ -69,7 +69,7 @@ Config::get_signal (const std::string &key)
 }
 
 std::string
-Config::get_property (std::string &key)
+Config::get_property (const std::string &key)
 {
     return properties[key].val;
 }

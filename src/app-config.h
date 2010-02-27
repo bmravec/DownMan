@@ -45,7 +45,7 @@ class Config {
 
         sigc::signal<void, const std::string&, const std::string&> &get_signal (const std::string &key);
 
-        std::string get_property (std::string &key);
+        std::string get_property (const std::string &key);
         void set_property (const std::string &key, const std::string &val);
         void set_property (const std::string &key, const char *val);
 
