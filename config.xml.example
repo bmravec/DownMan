@@ -2,7 +2,7 @@
     <config>
         <MaxUploadSpeed> </MaxUploadSpeed>
         <MaxDownloadSpeed> </MaxDownloadSpeed>
-        <DefaultDownloadDirectory> </DefaultDownloadDirectory>
+        <DownloadDirectory> </DownloadDirectory>
     </config>
     <!-- Example download
     <download>
