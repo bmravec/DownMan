@@ -19,12 +19,11 @@
  *      MA 02110-1301, USA.
  */
 
-#include <stdio.h>
+#include <iostream>
 
 #include <gtk/gtk.h>
 
 #include "application-gtk.h"
-#include "downman.h"
 
 GStaticRecMutex rmutex;
 
@@ -38,7 +37,7 @@ unlock_function () {
     g_static_rec_mutex_unlock (&rmutex);
 }
 
-ApplicationGtk::ApplicationGtk (DownMan *downman) : Application (downman)
+ApplicationGtk::ApplicationGtk ()
 {
     g_type_init ();
 
@@ -78,7 +77,7 @@ ApplicationGtk::prompt_for_captcha (char *img_data)
 {
     std::string text;
 
-    printf ("ApplicationGtk::prompt_for_captcha (): stub\n");
+    std::cout << "ApplicationGtk::prompt_for_captcha (): stub\n";
 
     return text;
 }
@@ -132,7 +131,7 @@ ApplicationGtk::prompt_for_files ()
 {
     std::string text;
 
-    printf ("ApplicationGtk::prompt_for_files (): stub\n");
+    std::cout << "ApplicationGtk::prompt_for_files (): stub\n";
 
     return text;
 }

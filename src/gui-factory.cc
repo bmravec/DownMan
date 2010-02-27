@@ -42,7 +42,7 @@ GuiFactory::~GuiFactory ()
 Application*
 GuiFactory::create_application ()
 {
-    return (Application*) new ApplicationGtk (downman);
+    return (Application*) new ApplicationGtk ();
 }
 
 DownloadView *

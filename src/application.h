@@ -26,11 +26,9 @@ class Application;
 
 #include <string>
 
-#include "downman.h"
-
 class Application {
     public:
-        Application (DownMan *downman);
+        Application ();
         ~Application ();
 
         virtual void run ();
@@ -39,9 +37,6 @@ class Application {
         virtual std::string prompt_for_captcha (char *img_data);
         virtual std::string prompt_for_urls ();
         virtual std::string prompt_for_files ();
-
-    protected:
-        DownMan *downman;
 };
 
 #endif /* __APPLICATION_H__ */

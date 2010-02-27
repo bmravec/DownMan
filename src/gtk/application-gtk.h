@@ -27,11 +27,10 @@ class ApplicationGtk;
 #include <string>
 
 #include "application.h"
-#include "downman.h"
 
 class ApplicationGtk : public Application {
     public:
-        ApplicationGtk (DownMan *downman);
+        ApplicationGtk ();
         ~ApplicationGtk ();
 
         void run ();
@@ -40,8 +39,6 @@ class ApplicationGtk : public Application {
         std::string prompt_for_captcha (char *img_data);
         std::string prompt_for_urls ();
         std::string prompt_for_files ();
-    protected:
-        DownMan *downman;
 };
 
 #endif /* __APPLICATION_GTK_H__ */

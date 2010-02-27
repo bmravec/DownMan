@@ -19,14 +19,13 @@
  *      MA 02110-1301, USA.
  */
 
-#include <stdio.h>
+#include <iostream>
 
 #include "application.h"
-#include "downman.h"
 
-Application::Application (DownMan *downman)
+Application::Application ()
 {
-    this->downman = downman;
+
 }
 
 Application::~Application ()
@@ -37,19 +36,19 @@ Application::~Application ()
 void
 Application::run ()
 {
-    printf ("Application::run (): stub\n");
+    std::cout << "Application::run (): stub\n";
 }
 
 void
 Application::quit ()
 {
-    printf ("Application::quit (): stub\n");
+    std::cout << "Application::quit (): stub\n";
 }
 
 std::string
 Application::prompt_for_captcha (char *img_data)
 {
-    printf ("Application::prompt_for_captcha (): stub\n");
+    std::cout << "Application::prompt_for_captcha (): stub\n";
 
     return NULL;
 }
@@ -57,7 +56,7 @@ Application::prompt_for_captcha (char *img_data)
 std::string
 Application::prompt_for_urls ()
 {
-    printf ("Application::prompt_for_urls (): stub\n");
+    std::cout << "Application::prompt_for_urls (): stub\n";
 
     return NULL;
 }
@@ -65,7 +64,7 @@ Application::prompt_for_urls ()
 std::string
 Application::prompt_for_files ()
 {
-    printf ("Application::prompt_for_files (): stub\n");
+    std::cout << "Application::prompt_for_files (): stub\n";
 
     return NULL;
 }
