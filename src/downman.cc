@@ -102,7 +102,8 @@ DownMan::prompt_for_urls ()
 
         if (url_regex.find_all (urls, surls)) {
             for (int i = 0; i < surls.size (); i++) {
-                Download *d = dfactory.create_download (surls[i]);
+                Url url (surls[i]);
+                Download *d = dfactory.create_download (url);
                 if (d != NULL) {
                     staginglist->add_download (d, NULL);
                 }

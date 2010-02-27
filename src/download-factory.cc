@@ -34,11 +34,11 @@ DownloadFactory::~DownloadFactory ()
 }
 
 Download*
-DownloadFactory::create_download (std::string &url)
+DownloadFactory::create_download (Url &url)
 {
     Download *d = NULL;
 
-    if (url.compare (0, 4, "http") == 0) {
+    if (url.get_proto () == "http") {
         d = new HttpDownload (url);
     }
 

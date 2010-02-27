@@ -24,16 +24,15 @@ class DownloadFactory;
 #ifndef __DOWNLOAD_FACTORY_H__
 #define __DOWNLOAD_FACTORY_H__
 
-#include <string>
-
 #include "download.h"
+#include "url.h"
 
 class DownloadFactory {
     public:
         DownloadFactory ();
         ~DownloadFactory ();
 
-        Download *create_download (std::string &url);
+        Download *create_download (Url &url);
 
     private:
 };
