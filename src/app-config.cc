@@ -23,6 +23,12 @@
 #include <cstring>
 #include <cstdlib>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#include <libxml/encoding.h>
+#include <libxml/xmlwriter.h>
+
 #include "app-config.h"
 
 #define DEFAULT_DOWNLOAD_DIRECTORY "~/Downloads"
@@ -106,7 +112,11 @@ Config::load_settings ()
 
     char *home = getenv ("HOME");
     std::string configpath (home);
-    configpath += "/.config/downman/config.xml";
+    configpath += "/.config/downman";
+
+    mkdir (configpath.c_str (), 0700);
+
+    configpath += "/config.xml";
 
     xmlSAXUserParseFile (shandle, data, configpath.c_str ());
 
@@ -129,7 +139,58 @@ Config::load_downloads ()
 void
 Config::save (std::vector<std::map<std::string, std::string> > &dlist)
 {
-    std::cout << "Config::save (&dlist): stub\n";
+    int rc;
+    xmlTextWriterPtr writer;
+    xmlChar *tmp;
+
+    char *home = getenv ("HOME");
+    std::string configpath (home);
+    configpath += "/.config/downman";
+
+    mkdir (configpath.c_str (), 0700);
+
+    configpath += "/config.xml";
+
+    writer = xmlNewTextWriterFilename (configpath.c_str (), 0);
+    if (writer == NULL) {
+        std::cerr << "Error creating xml writer\n";
+        return;
+    }
+
+    xmlTextWriterStartDocument (writer, NULL, "utf-8", NULL);
+    xmlTextWriterStartElement (writer, BAD_CAST "downman");
+
+    { // Write config block
+        std::map<std::string, PropertySet>::iterator iter;
+        xmlTextWriterStartElement (writer, BAD_CAST "config");
+
+        for (iter = properties.begin (); iter != properties.end (); iter++) {
+            xmlTextWriterWriteElement (writer,
+                BAD_CAST iter->first.c_str (), BAD_CAST iter->second.val.c_str ());
+        }
+
+        xmlTextWriterEndElement (writer);
+    }
+
+    { // Write download blocks
+        std::vector<std::map<std::string, std::string> >::iterator viter;
+        std::map<std::string, std::string>::iterator miter;
+
+        for (viter = dlist.begin (); viter != dlist.end (); viter++) {
+            xmlTextWriterStartElement (writer, BAD_CAST "download");
+            for (miter = viter->begin (); miter != viter->end (); miter++) {
+                xmlTextWriterWriteElement (writer,
+                    BAD_CAST miter->first.c_str (), BAD_CAST miter->second.c_str ());
+            }
+
+            xmlTextWriterEndElement (writer);
+        }
+    }
+
+    xmlTextWriterEndElement (writer);
+    xmlTextWriterEndDocument (writer);
+
+    xmlFreeTextWriter (writer);
 }
 
 void
