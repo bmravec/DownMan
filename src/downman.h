@@ -56,7 +56,7 @@ class DownMan {
         void update_download (Download *d);
 
     private:
-        GuiFactory *guifactory;
+        GuiFactory guifactory;
         DownloadFactory dfactory;
 
         Application *application;
@@ -68,6 +68,7 @@ class DownMan {
 
         DownloadList *downloadlist;
         StagingList *staginglist;
+
         SpeedMonitor &speedmonitor;
         Config &config;
 

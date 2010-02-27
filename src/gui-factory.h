@@ -24,7 +24,6 @@ class GuiFactory;
 #ifndef __GUI_FACTORY_H__
 #define __GUI_FACTORY_H__
 
-#include "downman.h"
 #include "application.h"
 #include "downloadview.h"
 #include "stagingview.h"
@@ -38,7 +37,7 @@ class GuiFactory;
 
 class GuiFactory {
     public:
-        GuiFactory (DownMan *downman);
+        GuiFactory ();
         ~GuiFactory ();
 
         Application *create_application ();
@@ -47,8 +46,6 @@ class GuiFactory {
         MainWindow *create_mainwindow ();
         Toolbar *create_toolbar ();
         Menubar *create_menubar ();
-    private:
-        DownMan *downman;
 };
 
 #endif /* __GUI_FACTORY_H__ */

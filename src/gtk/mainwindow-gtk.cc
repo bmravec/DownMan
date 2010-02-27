@@ -21,13 +21,12 @@
 
 #include "../config.h"
 
-#include <stdio.h>
+#include <iostream>
 
-#include "downman.h"
 #include "mainwindow-gtk.h"
 #include "downloadview-gtk.h"
 
-MainWindowGtk::MainWindowGtk (DownMan *downman) : MainWindow (downman)
+MainWindowGtk::MainWindowGtk () : MainWindow ()
 {
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
@@ -72,7 +71,7 @@ MainWindowGtk::~MainWindowGtk ()
 void
 MainWindowGtk::set_menubar (Menubar *menubar)
 {
-    printf ("MainWindowGtk::set_menubar (menubar): stub\n");
+    std::cout << "MainWindowGtk::set_menubar (menubar): stub\n";
 }
 
 void
@@ -105,5 +104,5 @@ MainWindowGtk::set_stagingview (StagingView *stagingview)
 void
 MainWindowGtk::destroy_cb (GtkWidget *widget, MainWindowGtk *mw)
 {
-    mw->downman->quit ();
+    mw->destroy ();
 }

@@ -26,19 +26,15 @@ class MainWindowGtk;
 
 #include <gtk/gtk.h>
 
-#include "downloadview.h"
-#include "downloadview-gtk.h"
-#include "downman.h"
 #include "mainwindow.h"
 #include "menubar.h"
-#include "stagingview.h"
+#include "downloadview-gtk.h"
 #include "stagingview-gtk.h"
-#include "toolbar.h"
 #include "toolbar-gtk.h"
 
 class MainWindowGtk : public MainWindow {
     public:
-        MainWindowGtk (DownMan *downman);
+        MainWindowGtk ();
         ~MainWindowGtk ();
 
         void set_menubar (Menubar *menubar);

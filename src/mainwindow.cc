@@ -19,11 +19,11 @@
  *      MA 02110-1301, USA.
  */
 
-#include <stdio.h>
+#include <iostream>
 
 #include "mainwindow.h"
 
-MainWindow::MainWindow (DownMan *downman) : downman (downman)
+MainWindow::MainWindow ()
 {
 
 }
@@ -36,23 +36,23 @@ MainWindow::~MainWindow ()
 void
 MainWindow::set_menubar (Menubar *menubar)
 {
-    printf ("MainWindow::set_menubar (menubar): stub\n");
+    std::cout << "MainWindow::set_menubar (menubar): stub\n";
 }
 
 void
 MainWindow::set_toolbar (Toolbar *toolbar)
 {
-    printf ("MainWindow::set_toolbar (toolbar): stub\n");
+    std::cout << "MainWindow::set_toolbar (toolbar): stub\n";
 }
 
 void
 MainWindow::set_downloadview (DownloadView *downloadview)
 {
-    printf ("MainWindow::set_downloadview (downloadview): stub\n");
+    std::cout << "MainWindow::set_downloadview (downloadview): stub\n";
 }
 
 void
 MainWindow::set_stagingview (StagingView *stagingview)
 {
-    printf ("MainWindow::set_stagingview (stagingview): stub\n");
+    std::cout << "MainWindow::set_stagingview (stagingview): stub\n";
 }

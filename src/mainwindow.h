@@ -24,7 +24,8 @@ class MainWindow;
 #ifndef __MAIN_WINDOW_H__
 #define __MAIN_WINDOW_H__
 
-#include "downman.h"
+#include <sigc++/sigc++.h>
+
 #include "menubar.h"
 #include "toolbar.h"
 #include "downloadview.h"
@@ -32,7 +33,7 @@ class MainWindow;
 
 class MainWindow {
     public:
-        MainWindow (DownMan *downman);
+        MainWindow ();
         ~MainWindow ();
 
         virtual void set_menubar (Menubar *menubar);
@@ -40,8 +41,10 @@ class MainWindow {
         virtual void set_downloadview (DownloadView *downloadview);
         virtual void set_stagingview (StagingView *stagingview);
 
+        sigc::signal<void> &signal_destroy () { return destroy; }
+
     protected:
-        DownMan *downman;
+        sigc::signal<void> destroy;
 };
 
 #endif /* __MAIN_WINDOW_H__ */

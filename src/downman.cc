@@ -34,16 +34,14 @@ DownMan::DownMan () :
 {
     config.load_settings ();
 
-    guifactory = new GuiFactory (this);
-
     staginglist = new StagingList ();
     downloadlist = new DownloadList ();
 
-    application = guifactory->create_application ();
-    mainwindow = guifactory->create_mainwindow ();
-    downloadview = guifactory->create_downloadview (downloadlist);
-    stagingview = guifactory->create_stagingview (staginglist);
-    toolbar = guifactory->create_toolbar ();
+    application = guifactory.create_application ();
+    mainwindow = guifactory.create_mainwindow ();
+    downloadview = guifactory.create_downloadview (downloadlist);
+    stagingview = guifactory.create_stagingview (staginglist);
+    toolbar = guifactory.create_toolbar ();
 
     mainwindow->set_downloadview (downloadview);
     mainwindow->set_stagingview (stagingview);
@@ -51,6 +49,7 @@ DownMan::DownMan () :
 
     toolbar->signal_add_url ().connect (sigc::mem_fun (*this, &DownMan::prompt_for_urls));
     toolbar->signal_start_staging ().connect (sigc::mem_fun (*this, &DownMan::start_staging));
+    mainwindow->signal_destroy ().connect (sigc::mem_fun (*this, &DownMan::quit));
 
     speedmonitor.signal_update ().connect (sigc::mem_fun (*this, &DownMan::update_download));
 }

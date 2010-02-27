@@ -19,7 +19,7 @@
  *      MA 02110-1301, USA.
  */
 
-#include <stdio.h>
+#include <iostream>
 
 #include "gui-factory.h"
 
@@ -29,9 +29,9 @@
 #include "gtk/stagingview-gtk.h"
 #include "gtk/toolbar-gtk.h"
 
-GuiFactory::GuiFactory (DownMan *downman)
+GuiFactory::GuiFactory ()
 {
-    this->downman = downman;
+
 }
 
 GuiFactory::~GuiFactory ()
@@ -60,7 +60,7 @@ GuiFactory::create_stagingview (StagingList *staginglist)
 MainWindow *
 GuiFactory::create_mainwindow ()
 {
-    return (MainWindow*) new MainWindowGtk (downman);
+    return (MainWindow*) new MainWindowGtk ();
 }
 
 Toolbar *
@@ -72,7 +72,7 @@ GuiFactory::create_toolbar ()
 Menubar *
 GuiFactory::create_menubar ()
 {
-    printf ("GuiFactory::create_menubar (): stub\n");
+    std::cout << "GuiFactory::create_menubar (): stub\n";
 
     return NULL;
 }
