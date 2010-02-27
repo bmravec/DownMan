@@ -22,11 +22,16 @@
 #include <iostream>
 
 #include "speed-monitor.h"
+#include "utils.h"
 
 SpeedMonitor::SpeedMonitor () :
     config (Config::Instance ()),
-    ulimit (51200), dlimit (51200)
+    ulimit (Utils::parseInt (config.get_property (Config::MAX_UPLOAD_SPEED))),
+    dlimit (Utils::parseInt (config.get_property (Config::MAX_DOWNLOAD_SPEED)))
 {
+    config.get_signal (Config::MAX_UPLOAD_SPEED).connect (sigc::mem_fun (*this, &SpeedMonitor::property_changed));
+    config.get_signal (Config::MAX_DOWNLOAD_SPEED).connect (sigc::mem_fun (*this, &SpeedMonitor::property_changed));
+
     pthread_create (&thread, NULL, &SpeedMonitor::monitor_main, this);
 }
 
@@ -126,5 +131,15 @@ SpeedMonitor::monitor_main (void *m)
         }
 
         usleep (1000000);
+    }
+}
+
+void
+SpeedMonitor::property_changed (const std::string &key, const std::string &val)
+{
+    if (key == Config::MAX_UPLOAD_SPEED) {
+        ulimit = Utils::parseInt (val);
+    } else if (key == Config::MAX_DOWNLOAD_SPEED) {
+        dlimit = Utils::parseInt (val);
     }
 }

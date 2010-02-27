@@ -66,6 +66,8 @@ class SpeedMonitor {
         static void *monitor_main (void *m);
 
         sigc::signal<void, Download*> update;
+
+        void property_changed (const std::string &key, const std::string &val);
 };
 
 #endif /* __SPEED_MONITOR_H__ */
