@@ -27,12 +27,12 @@
 
 static DRegex *regex = new DRegex ("(\\S*)://([^/ \t\r\n\f\v]*)(\\S*)");
 
-Url::Url (std::string &url) : port (0)
+Url::Url (std::string &url) : port (0), url (url)
 {
     parse_url (url);
 }
 
-Url::Url (const char *url) : port (0)
+Url::Url (const char *url) : port (0), url (url)
 {
     parse_url (url);
 }
