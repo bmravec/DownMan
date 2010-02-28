@@ -194,7 +194,7 @@ Config::ac_start_element (void *user_data, const xmlChar *name, const xmlChar **
         case STATE_DOWNMAN:
             if (sname == "config") {
                 sdata->state = STATE_CONFIG;
-            } else if (sname == "Download") {
+            } else if (sname == "download") {
                 sdata->state = STATE_DOWNLOAD;
                 sdata->tdownload.clear ();
             }
