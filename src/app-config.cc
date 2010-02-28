@@ -23,15 +23,11 @@
 #include <cstring>
 #include <cstdlib>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
 
 #include "app-config.h"
-
-#define DEFAULT_DOWNLOAD_DIRECTORY "~/Downloads"
+#include "utils.h"
 
 typedef enum {
     STATE_NULL = 0,
@@ -57,7 +53,7 @@ const std::string Config::DOWNLOAD_DIRECTORY ("DownloadDirectory");
 
 Config::Config () : downloads (new std::vector<std::map<std::string, std::string> >)
 {
-    set_property (DOWNLOAD_DIRECTORY, DEFAULT_DOWNLOAD_DIRECTORY);
+    set_property (DOWNLOAD_DIRECTORY, Utils::getDefaultDownloadDirectory ());
     set_property (MAX_UPLOAD_SPEED, "-1");
     set_property (MAX_DOWNLOAD_SPEED, "-1");
     set_property (MAX_NUM_DOWNLOADS, "1");
@@ -110,13 +106,7 @@ Config::load_settings ()
     data->config = this;
     data->state = STATE_NULL;
 
-    char *home = getenv ("HOME");
-    std::string configpath (home);
-    configpath += "/.config/downman";
-
-    mkdir (configpath.c_str (), 0700);
-
-    configpath += "/config.xml";
+    std::string configpath = Utils::createConfigFilename ("config.xml");
 
     xmlSAXUserParseFile (shandle, data, configpath.c_str ());
 
@@ -143,13 +133,7 @@ Config::save (std::vector<std::map<std::string, std::string> > &dlist)
     xmlTextWriterPtr writer;
     xmlChar *tmp;
 
-    char *home = getenv ("HOME");
-    std::string configpath (home);
-    configpath += "/.config/downman";
-
-    mkdir (configpath.c_str (), 0700);
-
-    configpath += "/config.xml";
+    std::string configpath = Utils::createConfigFilename ("config.xml");
 
     writer = xmlNewTextWriterFilename (configpath.c_str (), 0);
     if (writer == NULL) {

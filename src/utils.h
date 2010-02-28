@@ -33,6 +33,14 @@ class Utils {
         static int parseHexInt (const std::string &str);
         static int parseHexInt (const char *str);
 
+        static std::string formatInt (int val);
+        static std::string formatDouble (double val);
+
+        static std::string createDownloadFilename (std::string &name);
+        static std::string createDownloadFilename (const char *name);
+        static std::string createConfigFilename (std::string &name);
+        static std::string createConfigFilename (const char *name);
+        static std::string getDefaultDownloadDirectory ();
 };
 
 #endif /* __UTILS_H__ */

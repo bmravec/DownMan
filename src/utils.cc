@@ -22,7 +22,11 @@
 #include <cstdio>
 #include <sstream>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include "utils.h"
+#include "app-config.h"
 
 std::string
 Utils::size_to_string (size_t size)
@@ -89,4 +93,67 @@ Utils::parseHexInt (const char *str)
     std::istringstream iss (str);
     iss >> std::hex >> val;
     return val;
+}
+
+std::string
+Utils::formatInt (int val)
+{
+    std::stringstream out;
+    out << val;
+    return out.str ();
+}
+
+std::string
+Utils::formatDouble (double val)
+{
+    std::stringstream out;
+    out << val;
+    return out.str ();
+}
+
+std::string
+Utils::createDownloadFilename (std::string &name)
+{
+    std::string path = Config::Instance ().get_property (Config::DOWNLOAD_DIRECTORY);
+
+    mkdir (path.c_str (), 0700);
+    path += "/" + name;
+
+    return path;
+}
+
+std::string
+Utils::createDownloadFilename (const char *name)
+{
+    std::string sname (name);
+    return createDownloadFilename (sname);
+}
+
+std::string
+Utils::createConfigFilename (std::string &name)
+{
+    std::string path (getenv ("HOME"));
+    path += "/.config/downman";
+
+    mkdir (path.c_str (), 0700);
+
+    path += "/" + name;
+
+    return path;
+}
+
+std::string
+Utils::createConfigFilename (const char *name)
+{
+    std::string sname (name);
+    return createConfigFilename (sname);
+}
+
+std::string
+Utils::getDefaultDownloadDirectory ()
+{
+    std::string path (getenv ("HOME"));
+    path += "/Downloads";
+
+    return path;
 }
