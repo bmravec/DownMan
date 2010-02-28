@@ -78,10 +78,18 @@ DownMan::run ()
 void
 DownMan::shutdown ()
 {
-    std::cout << "DownMan::shutdown (): stub\n";
     std::vector<std::map<std::string, std::string> > dlist;
 
-    //TODO: Fill with downloads
+    for (int i = 0; i < downloadlist->size (); i++) {
+        Download *d = downloadlist->get (i);
+
+        std::map<std::string, std::string> *tmap;
+        tmap = d->shutdown ();
+
+        dlist.push_back (*tmap);
+
+        delete tmap;
+    }
 
     config.save (dlist);
 }
