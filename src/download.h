@@ -49,8 +49,8 @@ typedef enum {
 
 class Download {
     public:
-        Download (Url &url);
-        Download (std::string &url);
+        Download (Url &url, std::string match_str = "");
+        Download (std::string &url, std::string match_str = "");
         ~Download ();
 
         virtual void start_get_info ();
@@ -72,11 +72,14 @@ class Download {
         int get_uspeed ();
         int get_dspeed ();
 
+        std::string get_match_string () { return match_str; }
+
     protected:
         DownloadState state;
         Url url;
         std::string status;
-        std::string name;
+        std::string filename;
+        std::string match_str;
         int dsize, dtrans, usize, utrans;
         SpeedObject *so;
 

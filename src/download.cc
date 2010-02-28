@@ -23,14 +23,16 @@
 
 #include "download.h"
 
-Download::Download (Url &url) : state (STATE_NULL), url (url),
-    dsize (-1), dtrans (0), usize (-1), utrans (0), so (NULL)
+Download::Download (Url &url, std::string match_str) :
+    state (STATE_NULL), url (url), dsize (-1), dtrans (0), usize (-1),
+    utrans (0), so (NULL), match_str (match_str)
 {
 
 }
 
-Download::Download (std::string &url) : state (STATE_NULL), url (url),
-    dsize (-1), dtrans (0), usize (-1), utrans (0), so (NULL)
+Download::Download (std::string &url, std::string match_str) :
+    state (STATE_NULL), url (url), dsize (-1), dtrans (0), usize (-1),
+    utrans (0), so (NULL), match_str (match_str)
 {
 
 }
