@@ -62,11 +62,20 @@ DownMan::~DownMan ()
 void
 DownMan::setup ()
 {
-    std::cout << "DownMan::setup (): stub\n";
+    std::vector<std::map<std::string, std::string> >::iterator iter;
+    std::vector<std::map<std::string, std::string> > *ds = config.load_downloads ();
 
-    config.load_downloads ();
+    for (iter = ds->begin (); iter != ds->end (); iter++) {
 
-    //TODO: Use returned vector to initialize downloadlist
+
+        Download *d = dfactory.build_download (*iter);
+
+        if (d != NULL) {
+            downloadlist->add_download (d, NULL);
+        }
+    }
+
+    delete ds;
 }
 
 void
