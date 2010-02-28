@@ -129,6 +129,23 @@ Utils::createDownloadFilename (const char *name)
     return createDownloadFilename (sname);
 }
 
+int
+Utils::getFileSize (std::string &name)
+{
+    return getFileSize (name.c_str ());
+}
+
+int
+Utils::getFileSize (const char *name)
+{
+    struct stat ostat;
+    if (stat (name, &ostat) == 0) {
+        return ostat.st_size;
+    } else {
+        return 0;
+    }
+}
+
 std::string
 Utils::createConfigFilename (std::string &name)
 {
