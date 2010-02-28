@@ -33,6 +33,7 @@ class DownloadFactory {
         ~DownloadFactory ();
 
         Download *create_download (Url &url);
+        Download *build_download (std::map<std::string, std::string> &data);
 
     private:
 };

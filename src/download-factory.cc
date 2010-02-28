@@ -44,3 +44,21 @@ DownloadFactory::create_download (Url &url)
 
     return d;
 }
+
+Download*
+DownloadFactory::build_download (std::map<std::string, std::string> &data)
+{
+    Download *d = NULL;
+
+    if (data[Download::KEY_MATCH] == "http") {
+        d = new HttpDownload ();
+        if (d->startup (data)) {
+            return d;
+        } else {
+            delete d;
+            return NULL;
+        }
+    }
+
+    return d;
+}
