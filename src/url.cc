@@ -27,12 +27,12 @@
 
 static DRegex *regex = new DRegex ("(\\S*)://([^/ \t\r\n\f\v]*)(\\S*)");
 
-Url::Url (std::string &url) : port (0), url (url)
+Url::Url (std::string &url) : port (0)
 {
     parse_url (url);
 }
 
-Url::Url (const char *url) : port (0), url (url)
+Url::Url (const char *url) : port (0)
 {
     parse_url (url);
 }
@@ -45,6 +45,28 @@ Url::Url () : port (0)
 Url::~Url ()
 {
 
+}
+
+Url&
+Url::operator= (std::string &url)
+{
+    parse_url (url);
+
+    return *this;
+}
+
+Url&
+Url::operator= (Url &url)
+{
+    this->url = url.url;
+    host = url.host;
+    proto = url.proto;
+    path = url.path;
+    name = url.name;
+    ext = url.ext;
+    port = url.port;
+
+    return *this;
 }
 
 void
@@ -70,8 +92,8 @@ Url::parse_url (std::string &url)
     ext = "";
 
     if (regex->find (url, results)) {
+        this->url = results[0];
         proto = results[1];
-
         host = results[2];
 
         pos = host.find (":");

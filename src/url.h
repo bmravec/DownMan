@@ -33,6 +33,9 @@ class Url {
         Url ();
         ~Url ();
 
+        Url &operator= (std::string &url);
+        Url &operator= (Url &url);
+
         void parse_url (std::string &url);
         void parse_url (const char *url);
 
