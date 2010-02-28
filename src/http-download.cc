@@ -34,7 +34,7 @@ HttpDownload::HttpDownload (Url &url) : Download (url, "http")
     filename = Utils::createDownloadFilename (url.get_name ());
 }
 
-HttpDownload::HttpDownload (std::string &url) : Download (url)
+HttpDownload::HttpDownload (std::string url) : Download (url, "http")
 {
 
 }
@@ -59,18 +59,30 @@ HttpDownload::start_download ()
     pthread_create (&thread, NULL, HttpDownload::static_run_download, this);
 }
 
-void
-HttpDownload::startup (const std::map<std::string,std::string> &data)
+bool
+HttpDownload::startup (std::map<std::string,std::string> &data)
 {
-    std::cout << "HttpDownload::startup (data): stub\n";
+    if (data[KEY_MATCH] == match_str && data.count (KEY_NAME) > 0 &&
+        data.count (KEY_URL) > 0 && data.count (KEY_DOWNLOADED) > 0 &&
+        data.count (KEY_SIZE) > 0 && data.count (KEY_STATE) > 0 &&
+        data.count (KEY_LOCATION) > 0 && data.count (KEY_MATCH) > 0) {
+
+        name = data[KEY_NAME];
+        url = data[KEY_URL];
+        dtrans = Utils::parseInt (data[KEY_DOWNLOADED]);
+        dsize = Utils::parseInt (data[KEY_SIZE]);
+        state = (DownloadState) Utils::parseInt (data[KEY_STATE]);
+        filename = data[KEY_LOCATION];
+
+        return true;
+    } else {
+        return false;
+    }
 }
 
 std::map<std::string,std::string>*
 HttpDownload::shutdown ()
 {
-    std::cout << "HttpDownload::shutdown (): stub\n";
-    std::string key;
-
     std::map<std::string, std::string> *data = new std::map<std::string, std::string>;
 
     if (running) {
@@ -82,26 +94,13 @@ HttpDownload::shutdown ()
         state = STATE_QUEUED;
     }
 
-    key = "name";
-    (*data)[key] = url.get_name ();
-
-    key = "url";
-    (*data)[key] = url.get_url ();
-
-    key = "downloaded";
-    (*data)[key] = Utils::formatInt (dtrans);
-
-    key = "total";
-    (*data)[key] = Utils::formatInt (dsize);
-
-    key = "state";
-    (*data)[key] = Utils::formatInt ((int) state);
-
-    key = "location";
-    (*data)[key] = filename;
-
-    key = "match";
-    (*data)[key] = match_str;
+    (*data)[KEY_NAME] = name;
+    (*data)[KEY_URL] = url.get_url ();
+    (*data)[KEY_DOWNLOADED] = Utils::formatInt (dtrans);
+    (*data)[KEY_SIZE] = Utils::formatInt (dsize);
+    (*data)[KEY_STATE] = Utils::formatInt ((int) state);
+    (*data)[KEY_LOCATION] = filename;
+    (*data)[KEY_MATCH] = match_str;
 
     return data;
 }

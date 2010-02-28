@@ -36,13 +36,13 @@ class HttpDownload;
 class HttpDownload : public Download {
     public:
         HttpDownload (Url &url);
-        HttpDownload (std::string &url);
+        HttpDownload (std::string url = "");
         ~HttpDownload ();
 
         void start_get_info ();
         void start_download ();
 
-        void startup (const std::map<std::string,std::string> &data);
+        bool startup (std::map<std::string,std::string> &data);
         std::map<std::string,std::string> *shutdown ();
 
     private:
