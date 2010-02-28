@@ -33,12 +33,6 @@ class HttpConnection;
 #include "url.h"
 #include "socket.h"
 
-typedef enum {
-    HTTP_REQUEST_HEAD,
-    HTTP_REQUEST_GET,
-    HTTP_REQUEST_POST,
-} HttpRequestType;
-
 class HttpConnection {
     public:
         HttpConnection ();
