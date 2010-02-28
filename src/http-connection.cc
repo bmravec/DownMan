@@ -39,14 +39,27 @@ HttpConnection::~HttpConnection ()
 }
 
 bool
-HttpConnection::send_get_request (Url &url, const char *range)
+HttpConnection::send_get_request (Url &url, int start, int end)
 {
     if (socket == NULL) {
         socket = new Socket (url.get_host ().c_str (), url.get_port () != 0 ? url.get_port () : 80);
 
         std::string request = "GET " + url.get_path () + " HTTP/1.1\n";
         request += "Host: " + url.get_host () + "\n";
+
+        if (start != -1) {
+            request += "Range: bytes=";
+            request += Utils::formatInt (start);
+            request += "-";
+            if (end != -1) {
+                request += Utils::formatInt (end);
+            }
+            request += "\n";
+        }
+
         request += "\n";
+
+        std::cout << "Request: " << request;
 
         socket->write (request);
 

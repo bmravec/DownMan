@@ -44,7 +44,7 @@ class HttpConnection {
         HttpConnection ();
         ~HttpConnection ();
 
-        bool send_get_request (Url &url, const char *range = NULL);
+        bool send_get_request (Url &url, int start=-1, int end=-1);
         bool send_head_request (Url &url);
         bool send_post_request (Url &url, const char *post_data);
 

@@ -140,17 +140,27 @@ HttpDownload::run_download ()
 
     so = SpeedMonitor::Instance ().get (this);
 
+    int csize = Utils::getFileSize (filename);
+
     HttpConnection conn;
-    conn.send_get_request (url);
+    if (csize == dtrans) {
+        conn.send_get_request (url, csize);
+    } else {
+        conn.send_get_request (url);
+        csize = 0;
+    }
 
     int rc = conn.get_response_code ();
     if (rc >= 400 || rc < 200) {
         status = "Not Found";
         set_state (STATE_NOT_FOUND);
     } else {
-        ofile.open (filename.c_str (), std::ios::out | std::ios::binary);
+        if (rc == 206) {
+            ofile.open (filename.c_str (), std::ios::out | std::ios::binary | std::ios::app);
+        } else {
+            ofile.open (filename.c_str (), std::ios::out | std::ios::binary);
+        }
 
-        dtrans = 0;
         int len;
         char *buff = new char[2048];
 
