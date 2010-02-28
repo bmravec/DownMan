@@ -29,9 +29,9 @@
 void *static_main_info (void*);
 void *static_main_download (void*);
 
-HttpDownload::HttpDownload (Url &url) : Download (url)
+HttpDownload::HttpDownload (Url &url) : Download (url, "http")
 {
-
+    filename = Utils::createDownloadFilename (url.get_name ());
 }
 
 HttpDownload::HttpDownload (std::string &url) : Download (url)
@@ -69,8 +69,41 @@ std::map<std::string,std::string>*
 HttpDownload::shutdown ()
 {
     std::cout << "HttpDownload::shutdown (): stub\n";
+    std::string key;
 
-    return NULL;
+    std::map<std::string, std::string> *data = new std::map<std::string, std::string>;
+
+    if (running) {
+        running = false;
+        pthread_join (thread, NULL);
+    }
+
+    if (state == STATE_DOWNLOADING) {
+        state = STATE_QUEUED;
+    }
+
+    key = "name";
+    (*data)[key] = url.get_name ();
+
+    key = "url";
+    (*data)[key] = url.get_url ();
+
+    key = "downloaded";
+    (*data)[key] = Utils::formatInt (dtrans);
+
+    key = "total";
+    (*data)[key] = Utils::formatInt (dsize);
+
+    key = "state";
+    (*data)[key] = Utils::formatInt ((int) state);
+
+    key = "location";
+    (*data)[key] = filename;
+
+    key = "match";
+    (*data)[key] = match_str;
+
+    return data;
 }
 
 void
@@ -116,7 +149,7 @@ HttpDownload::run_download ()
         status = "Not Found";
         set_state (STATE_NOT_FOUND);
     } else {
-        ofile.open (url.get_name ().c_str (), std::ios::out | std::ios::binary);
+        ofile.open (filename.c_str (), std::ios::out | std::ios::binary);
 
         dtrans = 0;
         int len;
@@ -135,8 +168,10 @@ HttpDownload::run_download ()
 
         ofile.close ();
 
-        status = "Completed";
-        set_state (STATE_COMPLETED);
+        if (running) {
+            status = "Completed";
+            set_state (STATE_COMPLETED);
+        }
     }
 
     so = NULL;
@@ -144,41 +179,6 @@ HttpDownload::run_download ()
 
     running = false;
 }
-
-/*
-size_t
-HttpDownload::write_function (void *ptr,
-                              size_t size,
-                              size_t nmemb,
-                              void *stream)
-{
-    HttpDownload *d = (HttpDownload*) stream;
-
-    d->ofile.write ((char*) ptr, size * nmemb);
-
-    int wait = d->so->update_downloaded (size * nmemb);
-
-
-    if (wait > 0) {
-        curl_easy_pause (d->curl, CURLPAUSE_ALL);
-        d->so->wait (wait);
-        curl_easy_pause (d->curl, CURLPAUSE_CONT);
-    }
-
-    return size * nmemb;
-}
-
-int
-HttpDownload::progress_function (HttpDownload *d,
-                                 double dt, double dn,
-                                 double ut, double un)
-{
-    d->dsize = dt;
-    d->dtrans = dn;
-
-    return 0;
-}
-*/
 
 void*
 HttpDownload::static_run_info (void *download)
