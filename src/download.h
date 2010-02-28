@@ -56,13 +56,13 @@ class Download {
         virtual void start_get_info ();
         virtual void start_download ();
 
-        virtual void startup (const std::map<std::string,std::string> &data);
+        virtual bool startup (std::map<std::string,std::string> &data);
         virtual std::map<std::string,std::string> *shutdown ();
 
         sigc::signal<void, Download*, DownloadState> &signal_state_changed () { return state_changed; }
 
         const std::string get_status () { return status; }
-        const std::string get_name () { return url.get_name (); }
+        const std::string get_name () { return name; }
         DownloadState get_state () { return state; }
 
         int get_dsize () { return dsize; }
@@ -74,9 +74,18 @@ class Download {
 
         std::string get_match_string () { return match_str; }
 
+        static std::string KEY_NAME;
+        static std::string KEY_URL;
+        static std::string KEY_DOWNLOADED;
+        static std::string KEY_SIZE;
+        static std::string KEY_STATE;
+        static std::string KEY_LOCATION;
+        static std::string KEY_MATCH;
+
     protected:
         DownloadState state;
         Url url;
+        std::string name;
         std::string status;
         std::string filename;
         std::string match_str;

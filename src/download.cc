@@ -23,16 +23,25 @@
 
 #include "download.h"
 
+std::string Download::KEY_NAME ("name");
+std::string Download::KEY_URL ("url");
+std::string Download::KEY_DOWNLOADED ("downloaded");
+std::string Download::KEY_SIZE ("size");
+std::string Download::KEY_STATE ("state");
+std::string Download::KEY_LOCATION ("location");
+std::string Download::KEY_MATCH ("match");
+
+
 Download::Download (Url &url, std::string match_str) :
     state (STATE_NULL), url (url), dsize (-1), dtrans (0), usize (-1),
-    utrans (0), so (NULL), match_str (match_str)
+    utrans (0), so (NULL), match_str (match_str), name (url.get_name ())
 {
 
 }
 
 Download::Download (std::string &url, std::string match_str) :
     state (STATE_NULL), url (url), dsize (-1), dtrans (0), usize (-1),
-    utrans (0), so (NULL), match_str (match_str)
+    utrans (0), so (NULL), match_str (match_str), name (this->url.get_name ())
 {
 
 }
@@ -54,10 +63,12 @@ Download::start_download ()
     set_state (STATE_NOT_FOUND);
 }
 
-void
-Download::startup (const std::map<std::string,std::string> &data)
+bool
+Download::startup (std::map<std::string,std::string> &data)
 {
     std::cout << "Download::startup (data): stub\n";
+
+    return false;
 }
 
 std::map<std::string,std::string>*
