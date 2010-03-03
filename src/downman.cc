@@ -66,8 +66,6 @@ DownMan::setup ()
     std::vector<std::map<std::string, std::string> > *ds = config.load_downloads ();
 
     for (iter = ds->begin (); iter != ds->end (); iter++) {
-
-
         Download *d = dfactory.build_download (*iter);
 
         if (d != NULL) {
@@ -88,16 +86,16 @@ void
 DownMan::shutdown ()
 {
     std::vector<std::map<std::string, std::string> > dlist;
+    std::map<std::string, std::string> tmap;
 
     for (int i = 0; i < downloadlist->size (); i++) {
         Download *d = downloadlist->get (i);
 
-        std::map<std::string, std::string> *tmap;
-        tmap = d->shutdown ();
+        if (d->shutdown (tmap)) {
+            dlist.push_back (tmap);
+        }
 
-        dlist.push_back (*tmap);
-
-        delete tmap;
+        tmap.clear ();
     }
 
     config.save (dlist);

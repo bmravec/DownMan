@@ -71,12 +71,12 @@ Download::startup (std::map<std::string,std::string> &data)
     return false;
 }
 
-std::map<std::string,std::string>*
-Download::shutdown ()
+bool
+Download::shutdown (std::map<std::string,std::string> &data)
 {
     std::cout << "Download::shutdown (): stub\n";
 
-    return NULL;
+    return false;
 }
 
 void

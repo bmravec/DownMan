@@ -57,7 +57,7 @@ class Download {
         virtual void start_download ();
 
         virtual bool startup (std::map<std::string,std::string> &data);
-        virtual std::map<std::string,std::string> *shutdown ();
+        virtual bool shutdown (std::map<std::string,std::string> &data);
 
         sigc::signal<void, Download*, DownloadState> &signal_state_changed () { return state_changed; }
 

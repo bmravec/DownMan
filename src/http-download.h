@@ -43,7 +43,7 @@ class HttpDownload : public Download {
         void start_download ();
 
         bool startup (std::map<std::string,std::string> &data);
-        std::map<std::string,std::string> *shutdown ();
+        bool shutdown (std::map<std::string, std::string> &data);
 
     private:
         void run_info ();
