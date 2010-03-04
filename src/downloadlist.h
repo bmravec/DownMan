@@ -33,6 +33,11 @@ class DownloadList : public DList {
 
     private:
         void download_update (Download *d, DownloadState state);
+
+        void download_view_start (Download *d);
+        void download_view_pause (Download *d);
+        void download_view_remove (Download *d);
+        void download_view_delete (Download *d);
 };
 
 #endif /* __DOWNLOAD_LIST_H__ */

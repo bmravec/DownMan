@@ -20,6 +20,7 @@
  */
 
 #include "downloadlist.h"
+#include "utils.h"
 
 DownloadList::DownloadList ()
 {
@@ -34,9 +35,61 @@ DownloadList::~DownloadList ()
 void
 DownloadList::download_update (Download *d, DownloadState state)
 {
-    if (state == STATE_NULL || state == STATE_INFO_COMPLETED || state == STATE_QUEUED) {
-        d->start_download ();
+    if (state == STATE_CONNECTING || state == STATE_DOWNLOADING) {
+        update (d);
+        return;
+    }
+
+    if (state == STATE_NULL || state == STATE_INFO_COMPLETED) {
+        d->queue ();
+        return;
+    }
+
+    std::vector<Download*>::iterator iter;
+
+    int limit = Utils::parseInt (Config::Instance ().get_property (Config::MAX_NUM_DOWNLOADS));
+    int total_active = 0;
+
+    for (iter = downloads.begin (); iter != downloads.end (); iter++) {
+        DownloadState ds = (*iter)->get_state ();
+
+        if (ds == STATE_CONNECTING || ds == STATE_DOWNLOADING || ds == STATE_WAITING) {
+            total_active++;
+        }
+    }
+
+    for (iter = downloads.begin (); iter != downloads.end () && total_active < limit; iter++) {
+        DownloadState ds = (*iter)->get_state ();
+
+        if (ds == STATE_QUEUED) {
+            (*iter)->start_download ();
+            total_active++;
+        }
     }
 
     update (d);
+}
+
+void
+DownloadList::download_view_start (Download *d)
+{
+
+}
+
+void
+DownloadList::download_view_pause (Download *d)
+{
+
+}
+
+void
+DownloadList::download_view_remove (Download *d)
+{
+
+}
+
+void
+DownloadList::download_view_delete (Download *d)
+{
+
 }
