@@ -55,6 +55,8 @@ class Download {
 
         virtual void start_get_info ();
         virtual void start_download ();
+        virtual void pause ();
+        virtual void queue ();
 
         virtual bool startup (std::map<std::string,std::string> &data);
         virtual bool shutdown (std::map<std::string,std::string> &data);
@@ -63,6 +65,8 @@ class Download {
 
         const std::string get_status () { return status; }
         const std::string get_name () { return name; }
+        void set_name (std::string &name) { this->name = name; set_state (state); }
+
         DownloadState get_state () { return state; }
 
         int get_dsize () { return dsize; }

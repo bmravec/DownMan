@@ -63,6 +63,18 @@ Download::start_download ()
     set_state (STATE_NOT_FOUND);
 }
 
+void
+Download::pause ()
+{
+    set_state (STATE_PAUSED);
+}
+
+void
+Download::queue ()
+{
+    set_state (STATE_QUEUED);
+}
+
 bool
 Download::startup (std::map<std::string,std::string> &data)
 {
