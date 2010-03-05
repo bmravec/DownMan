@@ -37,7 +37,11 @@ class Socket {
 
         int read (char *buff, int size);
 
+        bool is_connected () { return connected; }
+
     private:
+        void connect (const char *host, int port);
+
         int sockfd;
         bool connected;
 };

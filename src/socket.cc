@@ -19,6 +19,7 @@
  *      MA 02110-1301, USA.
  */
 
+#include <cstdio>
 #include <iostream>
 #include <cstring>
 
@@ -29,16 +30,22 @@
 
 #include "socket.h"
 
-Socket::Socket (std::string &url, int port)
+Socket::Socket (std::string &host, int port)
 {
-    Socket (url.c_str (), port);
+    connect (host.c_str (), port);
 }
 
 Socket::Socket (const char *host, int port) : connected (false)
 {
+    connect (host, port);
+}
+
+void
+Socket::connect (const char *host, int port)
+{
     sockfd = socket (AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
-        std::cerr << "Error Opening Socket\n";
+        perror ("Error opening socket");
         return;
     }
 
@@ -55,8 +62,8 @@ Socket::Socket (const char *host, int port) : connected (false)
            (char*) &serv_addr.sin_addr.s_addr,
            server->h_length);
 
-    if (connect (sockfd, (const sockaddr*) &serv_addr, sizeof (serv_addr)) < 0) {
-        std::cerr << "Error Connecting Socket\n";
+    if (::connect (sockfd, (const sockaddr*) &serv_addr, sizeof (serv_addr)) < 0) {
+        perror ("Error connecting socket");
         return;
     }
 
@@ -66,6 +73,7 @@ Socket::Socket (const char *host, int port) : connected (false)
 Socket::~Socket ()
 {
     if (connected) {
+        connected = false;
         close (sockfd);
     }
 }
