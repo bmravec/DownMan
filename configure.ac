@@ -28,4 +28,5 @@ AC_OUTPUT(
 Makefile
 src/Makefile
 images/Makefile
+data/Makefile
 )

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=DownMan
+Comment=Multi-Protocol Download Manager
+Exec=downman
+Terminal=false
+Type=Application
+Icon=@icondir@/downman.svg
+Categories=Application;Network;
