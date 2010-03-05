@@ -20,22 +20,24 @@ bin_PROGRAMS = downman
 
 downman_LDADD = $(GTK_LIBS) $(GLIB_LIBS) $(SIGC_LIBS) $(LIBXML_LIBS)
 
-downman_SOURCES =                  \
-    downman.cc downman.h           \
-    app-config.cc app-config.h     \
-    speed-monitor.cc speed-monitor.h \
-    speed-object.cc speed-object.h \
-    utils.cc utils.h               \
-    dregex.cc dregex.h             \
-    url.cc url.h                   \
-    socket.cc socket.h             \
-    http-connection.cc http-connection.h \
-    dlist.cc dlist.h               \
-    downloadlist.cc downloadlist.h \
-    staginglist.cc staginglist.h   \
+downman_SOURCES =                          \
+    downman.cc downman.h                   \
+    app-config.cc app-config.h             \
+    speed-monitor.cc speed-monitor.h       \
+    speed-object.cc speed-object.h         \
+    utils.cc utils.h                       \
+    dregex.cc dregex.h                     \
+    url.cc url.h                           \
+    socket.cc socket.h                     \
+    http-connection.cc http-connection.h   \
+    ftp-connection.cc ftp-connection.h     \
+    dlist.cc dlist.h                       \
+    downloadlist.cc downloadlist.h         \
+    staginglist.cc staginglist.h           \
     download-factory.cc download-factory.h \
-    download.cc download.h         \
-    http-download.cc http-download.h \
+    download.cc download.h                 \
+    http-download.cc http-download.h       \
+    ftp-download.cc ftp-download.h         \
     $(guisources) $(gtksources)
 
 EXTRA_DIST=

@@ -22,6 +22,7 @@
 #include "download-factory.h"
 
 #include "http-download.h"
+#include "ftp-download.h"
 
 DownloadFactory::DownloadFactory ()
 {
@@ -40,6 +41,8 @@ DownloadFactory::create_download (Url &url)
 
     if (url.get_proto () == "http") {
         d = new HttpDownload (url);
+    } else if (url.get_proto () == "ftp") {
+        d = new FtpDownload (url);
     }
 
     return d;
@@ -52,6 +55,11 @@ DownloadFactory::build_download (std::map<std::string, std::string> &data)
 
     if (data[Download::KEY_MATCH] == "http") {
         d = new HttpDownload ();
+    } else if (data[Download::KEY_MATCH] == "ftp") {
+        d = new FtpDownload ();
+    }
+
+    if (d != NULL) {
         if (d->startup (data)) {
             return d;
         } else {
