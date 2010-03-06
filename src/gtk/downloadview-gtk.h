@@ -42,6 +42,16 @@ class DownloadViewGtk : public DownloadView {
         GtkWidget *widget;
         GtkListStore *store;
 
+        static gboolean button_press_cb (GtkWidget *widget, GdkEventButton *event, DownloadViewGtk *dv);
+        static void cell_edited_cb (GtkCellRenderer *renderer, char *path, char *new_text, DownloadViewGtk *dv);
+        static gboolean start_cb (GtkWidget *widget, DownloadViewGtk *dv);
+        static gboolean pause_cb (GtkWidget *widget, DownloadViewGtk *dv);
+        static gboolean remove_cb (GtkWidget *widget, DownloadViewGtk *dv);
+        static gboolean delete_cb (GtkWidget *widget, DownloadViewGtk *dv);
+        static gboolean open_directory_cb (GtkWidget *widget, DownloadViewGtk *dv);
+        static gboolean change_directory_cb (GtkWidget *widget, DownloadViewGtk *dv);
+        static gboolean properties_cb (GtkWidget *widget, DownloadViewGtk *dv);
+
         void list_add_cb (Download *d, Download *nextd);
         void list_update_cb (Download *d);
         void list_remove_cb (Download *d);

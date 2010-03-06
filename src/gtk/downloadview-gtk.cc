@@ -39,21 +39,27 @@ DownloadViewGtk::DownloadViewGtk (DownloadList *list) :
     gtk_tree_selection_set_mode (sel, GTK_SELECTION_MULTIPLE);
 
     renderer = gtk_cell_renderer_text_new ();
-    g_object_set (G_OBJECT (renderer), "ellipsize", PANGO_ELLIPSIZE_MIDDLE, NULL);
+    g_object_set (G_OBJECT (renderer), "ellipsize", PANGO_ELLIPSIZE_MIDDLE, "editable", TRUE, NULL);
     column = gtk_tree_view_column_new_with_attributes ("Name", renderer, "text", 1, NULL);
     gtk_tree_view_column_set_expand (column, TRUE);
+    gtk_tree_view_column_set_resizable (column, TRUE);
     gtk_tree_view_append_column (GTK_TREE_VIEW (widget), column);
+    g_signal_connect (renderer, "edited", G_CALLBACK (DownloadViewGtk::cell_edited_cb), this);
 
     renderer = gtk_cell_renderer_text_new ();
     g_object_set (G_OBJECT (renderer), "ellipsize", PANGO_ELLIPSIZE_MIDDLE, NULL);
     column = gtk_tree_view_column_new_with_attributes ("Status", renderer, "text", 2, NULL);
     gtk_tree_view_column_set_expand (column, TRUE);
+    gtk_tree_view_column_set_resizable (column, TRUE);
     gtk_tree_view_append_column (GTK_TREE_VIEW (widget), column);
 
     renderer = gtk_cell_renderer_progress_new ();
     column = gtk_tree_view_column_new_with_attributes ("Progress", renderer,
         "text", 3, "value", 4, "pulse", 5, NULL);
+    gtk_tree_view_column_set_resizable (column, TRUE);
     gtk_tree_view_append_column (GTK_TREE_VIEW (widget), column);
+
+    g_signal_connect (widget, "button-press-event", G_CALLBACK (DownloadViewGtk::button_press_cb), this);
 
     gtk_widget_show_all (widget);
 }
@@ -177,4 +183,207 @@ void
 DownloadViewGtk::list_reorder_cb (Download *d, Download *nextd)
 {
     std::cout << "DownloadViewGtk::list_reorder_cb (d, nextd): stub\n";
+}
+
+gboolean
+DownloadViewGtk::button_press_cb (GtkWidget *widget, GdkEventButton *event, DownloadViewGtk *dv)
+{
+    if (event->button == 3) {
+        gboolean retval = TRUE;
+        GtkTreePath *cpath;
+
+        gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (dv->widget), event->x, event->y,
+            &cpath, NULL, NULL, NULL);
+
+        if (cpath) {
+            GtkTreeSelection *sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (dv->widget));
+
+            if (!gtk_tree_selection_path_is_selected (sel, cpath)) {
+                retval = FALSE;
+            }
+
+            gtk_tree_path_free (cpath);
+        }
+
+        GtkWidget *menu = gtk_menu_new ();
+
+        GtkWidget *item = gtk_image_menu_item_new_from_stock (GTK_STOCK_MEDIA_PLAY, NULL);
+        gtk_menu_item_set_label (GTK_MENU_ITEM (item), "Start");
+        gtk_menu_append (GTK_MENU (menu), item);
+        g_signal_connect (item, "activate", G_CALLBACK (DownloadViewGtk::start_cb), dv);
+
+        item = gtk_image_menu_item_new_from_stock (GTK_STOCK_MEDIA_PAUSE, NULL);
+        gtk_menu_item_set_label (GTK_MENU_ITEM (item), "Pause");
+        gtk_menu_append (GTK_MENU (menu), item);
+        g_signal_connect (item, "activate", G_CALLBACK (DownloadViewGtk::pause_cb), dv);
+
+        item = gtk_image_menu_item_new_from_stock (GTK_STOCK_REMOVE, NULL);
+        gtk_menu_item_set_label (GTK_MENU_ITEM (item), "Remove");
+        gtk_menu_append (GTK_MENU (menu), item);
+        g_signal_connect (item, "activate", G_CALLBACK (DownloadViewGtk::remove_cb), dv);
+
+        item = gtk_image_menu_item_new_from_stock (GTK_STOCK_DELETE, NULL);
+        gtk_menu_item_set_label (GTK_MENU_ITEM (item), "Delete");
+        gtk_menu_append (GTK_MENU (menu), item);
+        g_signal_connect (item, "activate", G_CALLBACK (DownloadViewGtk::delete_cb), dv);
+
+        gtk_menu_append (GTK_MENU (menu), gtk_separator_menu_item_new ());
+
+        item = gtk_image_menu_item_new_from_stock (GTK_STOCK_DIRECTORY, NULL);
+        gtk_menu_item_set_label (GTK_MENU_ITEM (item), "Open Directory");
+        gtk_menu_append (GTK_MENU (menu), item);
+        g_signal_connect (item, "activate", G_CALLBACK (DownloadViewGtk::open_directory_cb), dv);
+
+        item = gtk_image_menu_item_new_from_stock (GTK_STOCK_COPY, NULL);
+        gtk_menu_item_set_label (GTK_MENU_ITEM (item), "Change Directory");
+        gtk_menu_append (GTK_MENU (menu), item);
+        g_signal_connect (item, "activate", G_CALLBACK (DownloadViewGtk::change_directory_cb), dv);
+
+        gtk_menu_append (GTK_MENU (menu), gtk_separator_menu_item_new ());
+
+        item = gtk_image_menu_item_new_from_stock (GTK_STOCK_PROPERTIES, NULL);
+        gtk_menu_item_set_label (GTK_MENU_ITEM (item), "Properties");
+        gtk_menu_append (GTK_MENU (menu), item);
+        g_signal_connect (item, "activate", G_CALLBACK (DownloadViewGtk::properties_cb), dv);
+
+        gtk_widget_show_all (menu);
+
+        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL,
+                        event->button, event->time);
+
+        return retval;
+    }
+
+    return FALSE;
+}
+
+void
+DownloadViewGtk::cell_edited_cb (GtkCellRenderer *renderer, char *path, char *new_text, DownloadViewGtk *dv)
+{
+    GtkTreeIter iter;
+
+    if (gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (dv->store), &iter, path)) {
+        Download *d;
+
+        gtk_tree_model_get (GTK_TREE_MODEL (dv->store), &iter, 0, &d, -1);
+
+        if (d) {
+            std::string name = new_text;
+            d->set_name (name);
+        }
+    }
+}
+
+gboolean
+DownloadViewGtk::start_cb (GtkWidget *widget, DownloadViewGtk *dv)
+{
+    GtkTreeIter iter;
+    Download *d;
+    GList *list, *liter;
+
+    GtkTreeSelection *sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (dv->widget));
+
+    list = gtk_tree_selection_get_selected_rows (sel, NULL);
+
+    if (list != NULL) {
+        for (liter = list; liter; liter = liter->next) {
+            if (gtk_tree_model_get_iter (GTK_TREE_MODEL (dv->store), &iter, (GtkTreePath*) liter->data)) {
+                gtk_tree_model_get (GTK_TREE_MODEL (dv->store), &iter, 0, &d, -1);
+                dv->list->start_download (d);
+            }
+        }
+
+        g_list_foreach (list, (GFunc) gtk_tree_path_free, NULL);
+        g_list_free (list);
+    }
+}
+
+gboolean
+DownloadViewGtk::pause_cb (GtkWidget *widget, DownloadViewGtk *dv)
+{
+    GtkTreeIter iter;
+    Download *d;
+    GList *list, *liter;
+
+    GtkTreeSelection *sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (dv->widget));
+
+    list = gtk_tree_selection_get_selected_rows (sel, NULL);
+
+    if (list != NULL) {
+        for (liter = list; liter; liter = liter->next) {
+            if (gtk_tree_model_get_iter (GTK_TREE_MODEL (dv->store), &iter, (GtkTreePath*) liter->data)) {
+                gtk_tree_model_get (GTK_TREE_MODEL (dv->store), &iter, 0, &d, -1);
+                dv->list->pause_download (d);
+            }
+        }
+
+        g_list_foreach (list, (GFunc) gtk_tree_path_free, NULL);
+        g_list_free (list);
+    }
+}
+
+gboolean
+DownloadViewGtk::remove_cb (GtkWidget *widget, DownloadViewGtk *dv)
+{
+    GtkTreeIter iter;
+    Download *d;
+    GList *list, *liter;
+
+    GtkTreeSelection *sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (dv->widget));
+
+    list = gtk_tree_selection_get_selected_rows (sel, NULL);
+
+    if (list != NULL) {
+        for (liter = list; liter; liter = liter->next) {
+            if (gtk_tree_model_get_iter (GTK_TREE_MODEL (dv->store), &iter, (GtkTreePath*) liter->data)) {
+                gtk_tree_model_get (GTK_TREE_MODEL (dv->store), &iter, 0, &d, -1);
+                dv->list->remove_download (d);
+            }
+        }
+
+        g_list_foreach (list, (GFunc) gtk_tree_path_free, NULL);
+        g_list_free (list);
+    }
+}
+
+gboolean
+DownloadViewGtk::delete_cb (GtkWidget *widget, DownloadViewGtk *dv)
+{
+    GtkTreeIter iter;
+    Download *d;
+    GList *list, *liter;
+
+    GtkTreeSelection *sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (dv->widget));
+
+    list = gtk_tree_selection_get_selected_rows (sel, NULL);
+
+    if (list != NULL) {
+        for (liter = list; liter; liter = liter->next) {
+            if (gtk_tree_model_get_iter (GTK_TREE_MODEL (dv->store), &iter, (GtkTreePath*) liter->data)) {
+                gtk_tree_model_get (GTK_TREE_MODEL (dv->store), &iter, 0, &d, -1);
+                dv->list->delete_download (d);
+            }
+        }
+
+        g_list_foreach (list, (GFunc) gtk_tree_path_free, NULL);
+        g_list_free (list);
+    }
+}
+
+gboolean
+DownloadViewGtk::open_directory_cb (GtkWidget *widget, DownloadViewGtk *dv)
+{
+    std::cout << "DownloadViewGtk::open_directory_cb (): stub\n";
+}
+
+gboolean
+DownloadViewGtk::change_directory_cb (GtkWidget *widget, DownloadViewGtk *dv)
+{
+    std::cout << "DownloadViewGtk::change_directory_cb (): stub\n";
+}
+
+gboolean
+DownloadViewGtk::properties_cb (GtkWidget *widget, DownloadViewGtk *dv)
+{
+    std::cout << "DownloadViewGtk::properties_cb (): stub\n";
 }
