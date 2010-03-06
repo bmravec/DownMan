@@ -19,6 +19,8 @@
  *      MA 02110-1301, USA.
  */
 
+#include <iostream>
+
 #include "downloadlist.h"
 #include "utils.h"
 
@@ -71,25 +73,25 @@ DownloadList::download_update (Download *d, DownloadState state)
 }
 
 void
-DownloadList::download_view_start (Download *d)
+DownloadList::start_download (Download *d)
 {
-
+    std::cout << "Starting download: " << d->get_name () << std::endl;
 }
 
 void
-DownloadList::download_view_pause (Download *d)
+DownloadList::pause_download (Download *d)
 {
-
+    std::cout << "Pause download: " << d->get_name () << std::endl;
 }
 
 void
-DownloadList::download_view_remove (Download *d)
+DownloadList::remove_download (Download *d)
 {
-
+    std::cout << "Remove download: " << d->get_name () << std::endl;
 }
 
 void
-DownloadList::download_view_delete (Download *d)
+DownloadList::delete_download (Download *d)
 {
-
+    std::cout << "Delete download: " << d->get_name () << std::endl;
 }

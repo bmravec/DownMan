@@ -31,13 +31,13 @@ class DownloadList : public DList {
         DownloadList ();
         ~DownloadList ();
 
+        void start_download (Download *d);
+        void pause_download (Download *d);
+        void remove_download (Download *d);
+        void delete_download (Download *d);
+
     private:
         void download_update (Download *d, DownloadState state);
-
-        void download_view_start (Download *d);
-        void download_view_pause (Download *d);
-        void download_view_remove (Download *d);
-        void download_view_delete (Download *d);
 };
 
 #endif /* __DOWNLOAD_LIST_H__ */
