@@ -31,17 +31,16 @@ std::string Download::KEY_STATE ("state");
 std::string Download::KEY_LOCATION ("location");
 std::string Download::KEY_MATCH ("match");
 
-
-Download::Download (Url &url, std::string match_str) :
-    state (STATE_NULL), url (url), dsize (-1), dtrans (0), usize (-1),
-    utrans (0), so (NULL), match_str (match_str), name (url.get_name ())
+Download::Download (std::string match_str) :
+    state (STATE_NULL), url (""), dsize (-1), dtrans (0), usize (-1),
+    utrans (0), so (NULL), match_str (match_str), name (this->url.get_name ())
 {
 
 }
 
-Download::Download (std::string &url, std::string match_str) :
+Download::Download (Url &url, std::string match_str) :
     state (STATE_NULL), url (url), dsize (-1), dtrans (0), usize (-1),
-    utrans (0), so (NULL), match_str (match_str), name (this->url.get_name ())
+    utrans (0), so (NULL), match_str (match_str), name (url.get_name ())
 {
 
 }
@@ -61,6 +60,12 @@ void
 Download::start_download ()
 {
     set_state (STATE_NOT_FOUND);
+}
+
+void
+Download::delete_data ()
+{
+
 }
 
 void
@@ -100,11 +105,11 @@ Download::set_state (DownloadState state)
 }
 
 int
-Download::get_uspeed () {
+Download::get_uspeed () const {
     return so != NULL ? so->get_uspeed () : 0;
 }
 
 int
-Download::get_dspeed () {
+Download::get_dspeed () const {
     return so != NULL ? so->get_dspeed () : 0;
 }
