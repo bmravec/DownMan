@@ -30,7 +30,7 @@ void *static_main_info (void*);
 void *static_main_download (void*);
 
 HttpDownload::HttpDownload () :
-    Download (url, "http"), running (false)
+    Download ("http"), running (false)
 {
 
 }
