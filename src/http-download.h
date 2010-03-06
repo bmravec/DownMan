@@ -35,8 +35,8 @@ class HttpDownload;
 
 class HttpDownload : public Download {
     public:
+        HttpDownload ();
         HttpDownload (Url &url);
-        HttpDownload (std::string url = "");
         ~HttpDownload ();
 
         void start_get_info ();

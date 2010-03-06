@@ -29,16 +29,16 @@
 void *static_main_info (void*);
 void *static_main_download (void*);
 
+FtpDownload::FtpDownload () :
+    Download ("ftp"), running (false)
+{
+
+}
+
 FtpDownload::FtpDownload (Url &url) :
     Download (url, "ftp"), running (false)
 {
     filename = Utils::createDownloadFilename (url.get_name ());
-}
-
-FtpDownload::FtpDownload (std::string url) :
-    Download (url, "ftp"), running (false)
-{
-
 }
 
 FtpDownload::~FtpDownload ()

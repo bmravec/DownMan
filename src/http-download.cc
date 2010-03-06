@@ -29,16 +29,16 @@
 void *static_main_info (void*);
 void *static_main_download (void*);
 
+HttpDownload::HttpDownload () :
+    Download (url, "http"), running (false)
+{
+
+}
+
 HttpDownload::HttpDownload (Url &url) :
     Download (url, "http"), running (false)
 {
     filename = Utils::createDownloadFilename (url.get_name ());
-}
-
-HttpDownload::HttpDownload (std::string url) :
-    Download (url, "http"), running (false)
-{
-
 }
 
 HttpDownload::~HttpDownload ()

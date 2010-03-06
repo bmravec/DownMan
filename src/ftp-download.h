@@ -35,8 +35,8 @@ class FtpDownload;
 
 class FtpDownload : public Download {
     public:
+        FtpDownload ();
         FtpDownload (Url &url);
-        FtpDownload (std::string url = "");
         ~FtpDownload ();
 
         void start_get_info ();
