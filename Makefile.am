@@ -1,3 +1,6 @@
 SUBDIRS = src images data
 
-EXTRA_DIST = autogen.sh
+doc: src
+	doxygen doxygen.cfg
+
+EXTRA_DIST = autogen.sh doxygen.cfg
