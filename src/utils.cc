@@ -20,6 +20,9 @@
  */
 
 #include <cstdio>
+#include <cstring>
+#include <dirent.h>
+#include <iostream>
 #include <sstream>
 
 #include <sys/types.h>
@@ -143,6 +146,46 @@ Utils::getFileSize (const char *name)
         return ostat.st_size;
     } else {
         return 0;
+    }
+}
+
+bool
+Utils::removePath (std::string &name)
+{
+    return removePath (name.c_str ());
+}
+
+bool
+Utils::removePath (const char *name)
+{
+    struct stat ostat;
+
+    if (stat (name, &ostat) == 0) {
+        if (S_ISDIR (ostat.st_mode)) {
+            struct dirent *dp;
+            DIR *dir = opendir (name);
+            while ((dp = readdir (dir)) != NULL) {
+                if (!strcmp (dp->d_name, ".") ||
+                    !strcmp (dp->d_name, "..")) {
+                    continue;
+                }
+                std::string lpath = name;
+                lpath += "/";
+                lpath += dp->d_name;
+                removePath (lpath.c_str ());
+            }
+            closedir (dir);
+
+            std::cout << "Remove Dir: " << name << std::endl;
+            remove (name);
+        } else {
+            std::cout << "Remove File: " << name << std::endl;
+            remove (name);
+        }
+
+        return true;
+    } else {
+        return false;
     }
 }
 

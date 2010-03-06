@@ -41,6 +41,9 @@ class Utils {
         static int getFileSize (std::string &name);
         static int getFileSize (const char *name);
 
+        static bool removePath (std::string &name);
+        static bool removePath (const char *name);
+
         static std::string createConfigFilename (std::string &name);
         static std::string createConfigFilename (const char *name);
         static std::string getDefaultDownloadDirectory ();
