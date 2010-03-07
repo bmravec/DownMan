@@ -42,6 +42,12 @@ class DownloadViewGtk : public DownloadView {
         GtkWidget *widget;
         GtkListStore *store;
 
+        GdkPixbuf *complete;
+        GdkPixbuf *go;
+        GdkPixbuf *pause;
+        GdkPixbuf *stop;
+        GdkPixbuf *yield;
+
         static gboolean button_press_cb (GtkWidget *widget, GdkEventButton *event, DownloadViewGtk *dv);
         static void cell_edited_cb (GtkCellRenderer *renderer, char *path, char *new_text, DownloadViewGtk *dv);
         static gboolean start_cb (GtkWidget *widget, DownloadViewGtk *dv);

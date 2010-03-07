@@ -30,13 +30,17 @@ DownloadViewGtk::DownloadViewGtk (DownloadList *list) :
     GtkTreeViewColumn *column;
     GtkCellRenderer *renderer;
 
-    store = gtk_list_store_new (6, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING,
-        G_TYPE_STRING, G_TYPE_FLOAT, G_TYPE_INT);
+    store = gtk_list_store_new (7, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_STRING,
+        G_TYPE_STRING, G_TYPE_FLOAT, G_TYPE_INT, GDK_TYPE_PIXBUF);
 
     widget = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
 
     GtkTreeSelection *sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
     gtk_tree_selection_set_mode (sel, GTK_SELECTION_MULTIPLE);
+
+    renderer = gtk_cell_renderer_pixbuf_new ();
+    column = gtk_tree_view_column_new_with_attributes ("", renderer, "pixbuf", 6, NULL);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (widget), column);
 
     renderer = gtk_cell_renderer_text_new ();
     g_object_set (G_OBJECT (renderer), "ellipsize", PANGO_ELLIPSIZE_MIDDLE, "editable", TRUE, NULL);
@@ -60,6 +64,21 @@ DownloadViewGtk::DownloadViewGtk (DownloadList *list) :
     gtk_tree_view_append_column (GTK_TREE_VIEW (widget), column);
 
     g_signal_connect (widget, "button-press-event", G_CALLBACK (DownloadViewGtk::button_press_cb), this);
+
+    std::string path = Utils::getImageResource ("download-complete.svg");
+    complete = gdk_pixbuf_new_from_file_at_scale (path.c_str (), -1, 16, TRUE, NULL);
+
+    path = Utils::getImageResource ("download-go.svg");
+    go = gdk_pixbuf_new_from_file_at_scale (path.c_str (), -1, 16, TRUE, NULL);
+
+    path = Utils::getImageResource ("download-pause.svg");
+    pause = gdk_pixbuf_new_from_file_at_scale (path.c_str (), -1, 16, TRUE, NULL);
+
+    path = Utils::getImageResource ("download-stop.svg");
+    stop = gdk_pixbuf_new_from_file_at_scale (path.c_str (), -1, 16, TRUE, NULL);
+
+    path = Utils::getImageResource ("download-yield.svg");
+    yield = gdk_pixbuf_new_from_file_at_scale (path.c_str (), -1, 16, TRUE, NULL);
 
     gtk_widget_show_all (widget);
 }
@@ -148,6 +167,8 @@ DownloadViewGtk::update_row (GtkTreeIter *iter, Download *d)
     float percent = 0.0;
     std::string text;
 
+    GdkPixbuf *npb = NULL;
+
     if (d->get_dsize () != -1) {
         if (d->get_dsize () != 0) {
             percent = 100.0 * d->get_dtrans () / d->get_dsize ();
@@ -172,11 +193,34 @@ DownloadViewGtk::update_row (GtkTreeIter *iter, Download *d)
         status = d->get_status ();
     }
 
+    switch (d->get_state ()) {
+        case STATE_PAUSED:
+            npb = pause;
+            break;
+        case STATE_COMPLETED:
+            npb = complete;
+            break;
+        case STATE_CONNECTING:
+        case STATE_DOWNLOADING:
+        case STATE_WAITING:
+            npb = go;
+            break;
+        case STATE_QUEUED:
+        case STATE_HOLDING:
+            npb = yield;
+            break;
+        case STATE_NOT_FOUND:
+        case STATE_NULL:
+            npb = stop;
+            break;
+    };
+
     gtk_list_store_set (store, iter,
         0, d,
         1, d->get_name ().c_str (),
         2, status.c_str (),
-        3, text.c_str (), 4, percent, 5, pulse, -1);
+        3, text.c_str (), 4, percent, 5, pulse,
+        6, npb, -1);
 }
 
 void
