@@ -34,7 +34,7 @@
 std::string
 Utils::size_to_string (size_t size)
 {
-    const char *ss[] = { "Kb", "Mb", "Gb", "Tb" };
+    const char *ss[] = { "KB", "MB", "GB", "TB" };
 
     char digits = 2;
     char str[50];
@@ -77,10 +77,14 @@ Utils::parseInt (const std::string &str)
 int
 Utils::parseInt (const char *str)
 {
-    int val;
-    std::istringstream iss (str);
-    iss >> val;
-    return val;
+    if (str[0] >= '0' && str[0] <= '9') {
+        int val;
+        std::istringstream iss (str);
+        iss >> val;
+        return val;
+    } else {
+        return 0;
+    }
 }
 
 int
@@ -92,10 +96,16 @@ Utils::parseHexInt (const std::string &str)
 int
 Utils::parseHexInt (const char *str)
 {
-    int val;
-    std::istringstream iss (str);
-    iss >> std::hex >> val;
-    return val;
+    if ((str[0] >= '0' && str[0] <= '9') ||
+        (str[0] >= 'a' && str[0] <= 'f') ||
+        (str[0] >= 'A' && str[0] <= 'F')) {
+        int val;
+        std::istringstream iss (str);
+        iss >> std::hex >> val;
+        return val;
+    } else {
+        return 0;
+    }
 }
 
 std::string
