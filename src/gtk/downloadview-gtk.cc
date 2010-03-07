@@ -313,7 +313,10 @@ DownloadViewGtk::cell_edited_cb (GtkCellRenderer *renderer, char *path, char *ne
 
         if (d) {
             std::string name = new_text;
+
+            gdk_threads_leave ();
             d->set_name (name);
+            gdk_threads_enter ();
         }
     }
 }
@@ -333,7 +336,10 @@ DownloadViewGtk::start_cb (GtkWidget *widget, DownloadViewGtk *dv)
         for (liter = list; liter; liter = liter->next) {
             if (gtk_tree_model_get_iter (GTK_TREE_MODEL (dv->store), &iter, (GtkTreePath*) liter->data)) {
                 gtk_tree_model_get (GTK_TREE_MODEL (dv->store), &iter, 0, &d, -1);
+
+                gdk_threads_leave ();
                 dv->list->start_download (d);
+                gdk_threads_enter ();
             }
         }
 
@@ -357,7 +363,10 @@ DownloadViewGtk::pause_cb (GtkWidget *widget, DownloadViewGtk *dv)
         for (liter = list; liter; liter = liter->next) {
             if (gtk_tree_model_get_iter (GTK_TREE_MODEL (dv->store), &iter, (GtkTreePath*) liter->data)) {
                 gtk_tree_model_get (GTK_TREE_MODEL (dv->store), &iter, 0, &d, -1);
+
+                gdk_threads_leave ();
                 dv->list->pause_download (d);
+                gdk_threads_enter ();
             }
         }
 
@@ -381,7 +390,10 @@ DownloadViewGtk::remove_cb (GtkWidget *widget, DownloadViewGtk *dv)
         for (liter = list; liter; liter = liter->next) {
             if (gtk_tree_model_get_iter (GTK_TREE_MODEL (dv->store), &iter, (GtkTreePath*) liter->data)) {
                 gtk_tree_model_get (GTK_TREE_MODEL (dv->store), &iter, 0, &d, -1);
+
+                gdk_threads_leave ();
                 dv->list->remove_download (d);
+                gdk_threads_enter ();
             }
         }
 
@@ -405,7 +417,10 @@ DownloadViewGtk::delete_cb (GtkWidget *widget, DownloadViewGtk *dv)
         for (liter = list; liter; liter = liter->next) {
             if (gtk_tree_model_get_iter (GTK_TREE_MODEL (dv->store), &iter, (GtkTreePath*) liter->data)) {
                 gtk_tree_model_get (GTK_TREE_MODEL (dv->store), &iter, 0, &d, -1);
+
+                gdk_threads_leave ();
                 dv->list->delete_download (d);
+                gdk_threads_enter ();
             }
         }
 
