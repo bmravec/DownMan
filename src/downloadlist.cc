@@ -75,23 +75,20 @@ DownloadList::download_update (Download *d, DownloadState state)
 void
 DownloadList::start_download (Download *d)
 {
-    std::cout << "Starting download: " << d->get_name () << std::endl;
+    std::cout << "DownloadList::Starting download: " << d->get_name () << std::endl;
 }
 
 void
 DownloadList::pause_download (Download *d)
 {
-    std::cout << "Pause download: " << d->get_name () << std::endl;
-}
-
-void
-DownloadList::remove_download (Download *d)
-{
-    std::cout << "Remove download: " << d->get_name () << std::endl;
+    std::cout << "DownloadList::Pause download: " << d->get_name () << std::endl;
 }
 
 void
 DownloadList::delete_download (Download *d)
 {
-    std::cout << "Delete download: " << d->get_name () << std::endl;
+    std::cout << "DownloadList::Delete download: " << d->get_name () << std::endl;
+    //TODO: Delete from hard disk
+
+    remove_download (d);
 }

@@ -33,7 +33,6 @@ class DownloadList : public DList {
 
         void start_download (Download *d);
         void pause_download (Download *d);
-        void remove_download (Download *d);
         void delete_download (Download *d);
 
     private:
