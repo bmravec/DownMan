@@ -200,7 +200,7 @@ FtpDownload::run_download ()
             set_state (STATE_COMPLETED);
         }
 
-        status = "":
+        status = "";
     }
 
     so = NULL;
