@@ -41,6 +41,7 @@ class FtpDownload : public Download {
 
         void start_get_info ();
         void start_download ();
+        void pause ();
 
         bool startup (std::map<std::string,std::string> &data);
         bool shutdown (std::map<std::string, std::string> &data);

@@ -61,6 +61,17 @@ HttpDownload::start_download ()
     pthread_create (&thread, NULL, HttpDownload::static_run_download, this);
 }
 
+void
+HttpDownload::pause ()
+{
+    if (running) {
+        running = false;
+        pthread_join (thread, NULL);
+    }
+
+    set_state (STATE_PAUSED);
+}
+
 bool
 HttpDownload::startup (std::map<std::string,std::string> &data)
 {
@@ -178,9 +189,10 @@ HttpDownload::run_download ()
         ofile.close ();
 
         if (running) {
-            status = "Completed";
             set_state (STATE_COMPLETED);
         }
+
+        status = "";
     }
 
     so = NULL;

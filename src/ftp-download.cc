@@ -61,6 +61,17 @@ FtpDownload::start_download ()
     pthread_create (&thread, NULL, FtpDownload::static_run_download, this);
 }
 
+void
+FtpDownload::pause ()
+{
+    if (running) {
+        running = false;
+        pthread_join (thread, NULL);
+    }
+
+    set_state (STATE_PAUSED);
+}
+
 bool
 FtpDownload::startup (std::map<std::string,std::string> &data)
 {
@@ -186,9 +197,10 @@ FtpDownload::run_download ()
         ofile.close ();
 
         if (running) {
-            status = "Completed";
             set_state (STATE_COMPLETED);
         }
+
+        status = "":
     }
 
     so = NULL;
