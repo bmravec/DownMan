@@ -217,3 +217,14 @@ Utils::getDefaultDownloadDirectory ()
 
     return path;
 }
+
+std::string
+Utils::getImageResource (const char *name)
+{
+    std::string path = SHARE_DIR;
+
+    path += "/imgs/";
+    path += name;
+
+    return path;
+}

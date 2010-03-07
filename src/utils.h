@@ -47,6 +47,8 @@ class Utils {
         static std::string createConfigFilename (std::string &name);
         static std::string createConfigFilename (const char *name);
         static std::string getDefaultDownloadDirectory ();
+
+        static std::string getImageResource (const char *name);
 };
 
 #endif /* __UTILS_H__ */
