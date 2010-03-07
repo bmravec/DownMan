@@ -75,13 +75,18 @@ DownloadList::download_update (Download *d, DownloadState state)
 void
 DownloadList::start_download (Download *d)
 {
-    std::cout << "DownloadList::Starting download: " << d->get_name () << std::endl;
+    if (d->get_state () == STATE_PAUSED) {
+        d->queue ();
+    }
 }
 
 void
 DownloadList::pause_download (Download *d)
 {
-    std::cout << "DownloadList::Pause download: " << d->get_name () << std::endl;
+    DownloadState ds = d->get_state ();
+    if (ds == STATE_CONNECTING || ds == STATE_DOWNLOADING || ds == STATE_WAITING) {
+        d->pause ();
+    }
 }
 
 void
