@@ -77,7 +77,7 @@ Utils::parseInt (const std::string &str)
 int
 Utils::parseInt (const char *str)
 {
-    if (str[0] >= '0' && str[0] <= '9') {
+    if (str[0] >= '0' && str[0] <= '9' || str[0] == '-') {
         int val;
         std::istringstream iss (str);
         iss >> val;
