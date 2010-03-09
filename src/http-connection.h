@@ -65,6 +65,7 @@ class HttpConnection {
         int cpos;
 
         bool read_header ();
+        bool read_line (std::string &line);
 };
 
 #endif /* __HTTP_CONNECTION_H__ */

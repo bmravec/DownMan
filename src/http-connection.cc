@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 #include "http-connection.h"
 #include "utils.h"
@@ -28,7 +29,8 @@
 #define BUFFER_TOTAL 51200
 
 HttpConnection::HttpConnection () :
-    url (NULL), socket (NULL), buff (new char [BUFFER_TOTAL]), bufflen (0)
+    url (NULL), socket (NULL), buff (new char [BUFFER_TOTAL]), bufflen (0), buffpos (0),
+    cpos (0), clength (-1)
 {
 
 }
@@ -44,8 +46,9 @@ HttpConnection::send_get_request (Url &url, int start, int end)
     if (socket == NULL) {
         socket = new Socket (url.get_host ().c_str (), url.get_port () != 0 ? url.get_port () : 80);
 
-        std::string request = "GET " + url.get_path () + " HTTP/1.1\n";
-        request += "Host: " + url.get_host () + "\n";
+        std::string request = "GET " + url.get_path () + " HTTP/1.1\r\n";
+        request += "Host: " + url.get_host () + "\r\n";
+        request += "User-Agent: DownMan-BMT/1.0\r\n";
 
         if (start != -1) {
             request += "Range: bytes=";
@@ -54,10 +57,10 @@ HttpConnection::send_get_request (Url &url, int start, int end)
             if (end != -1) {
                 request += Utils::formatInt (end);
             }
-            request += "\n";
+            request += "\r\n";
         }
 
-        request += "\n";
+        request += "\r\n";
 
         std::cout << "Request: " << request;
 
@@ -75,9 +78,10 @@ HttpConnection::send_head_request (Url &url)
     if (socket == NULL) {
         socket = new Socket (url.get_host ().c_str (), url.get_port () != 0 ? url.get_port () : 80);
 
-        std::string request = "HEAD " + url.get_path () + " HTTP/1.1\n";
-        request += "Host: " + url.get_host () + "\n";
-        request += "\n";
+        std::string request = "HEAD " + url.get_path () + " HTTP/1.1\r\n";
+        request += "Host: " + url.get_host () + "\r\n";
+        request += "User-Agent: DownMan-BMT/1.0\r\n";
+        request += "\r\n";
 
         socket->write (request);
 
@@ -131,37 +135,68 @@ HttpConnection::read_header ()
             lbegin = lend + 1;
         }
     }
+
+    std::string KEY_TRANSFER_ENCODING ("Transfer-Encoding");
+    if (header[KEY_TRANSFER_ENCODING] == "chunked") {
+        cpos = 0;
+
+        std::string line;
+        if (read_line (line)) {
+            clength = Utils::parseHexInt (line);
+        }
+    } else {
+        clength = -1;
+    }
 }
 
 int
-HttpConnection::read (char *buff, int len)
+HttpConnection::read (char *retbuff, int len)
 {
-    if (bufflen == -1) {
-        return socket->read (buff, len);
-    } else if (buffpos < bufflen) {
-        int copylen = bufflen - buffpos;
-        if (len < copylen) {
-            copylen = len;
+    if (clength == 0) { // clength == 0 signals end of clustered transfer
+        len = 0;
+    } else if (clength > 0) {
+        // Make len min of len, buff left, and chunk left
+        len = len < (bufflen - buffpos) ? len : bufflen - buffpos;
+        len = len < (clength - cpos) ? len : clength - cpos;
+
+        memcpy (retbuff, buff + buffpos, len);
+        buffpos += len;
+        cpos += len;
+
+        // Finished buff
+        if (buffpos >= bufflen) {
+            bufflen = socket->read (buff, BUFFER_TOTAL);
+            buffpos = 0;
         }
 
-        for (int i = 0; i < copylen; i++) {
-            buff[i] = this->buff[buffpos + i];
+        // Finished chunk
+        if (cpos >= clength) {
+            std::string line;
+            read_line (line);
+            if (read_line (line)) {
+                clength = Utils::parseHexInt (line);
+                cpos = 0;
+            }
         }
-
-        if (len < bufflen - buffpos) {
-            buffpos += len;
-        } else {
-            bufflen = -1;
-            len = copylen;
-        }
-
-        return len;
+    } else if (bufflen == -1) {
+        len = socket->read (retbuff, len);
     } else {
-        bufflen = -1;
-        return socket->read (buff, len);
+        if (buffpos >= bufflen) {
+            delete buff;
+            buff = NULL;
+            bufflen = -1;
+            buffpos = 0;
+
+            len = socket->read (retbuff, len);
+        } else {
+            len = len < (bufflen - buffpos) ? len : bufflen - buffpos;
+
+            memcpy (retbuff, buff + buffpos, len);
+            buffpos += len;
+        }
     }
 
-    return 0;
+    return len;
 }
 
 int
@@ -172,4 +207,37 @@ HttpConnection::get_content_length ()
     } else {
         return -1;
     }
+}
+
+bool
+HttpConnection::read_line (std::string &line)
+{
+    line = "";
+    bool gotr = false;
+
+    for (;true; buffpos++) {
+        if (buffpos >= bufflen) {
+            bufflen = socket->read (buff, BUFFER_TOTAL);
+            buffpos = 0;
+
+            if (bufflen <= 0) {
+                return false;
+            }
+        }
+
+        if (buff[buffpos] == '\r') {
+            gotr = true;
+        } else if (buff[buffpos] == '\n') {
+            buffpos++;
+            break;
+        } else {
+            if (gotr) {
+                line += '\r';
+                gotr = false;
+            }
+            line += buff[buffpos];
+        }
+    }
+
+    return true;
 }
