@@ -57,6 +57,7 @@ class Config {
         static const std::string MAX_UPLOAD_SPEED;
         static const std::string MAX_NUM_DOWNLOADS;
         static const std::string DOWNLOAD_DIRECTORY;
+        static const std::string LOG_LEVEL;
 
     private:
         Config ();

@@ -27,6 +27,7 @@
 #include <libxml/xmlwriter.h>
 
 #include "app-config.h"
+#include "app-log.h"
 #include "utils.h"
 
 typedef enum {
@@ -50,6 +51,7 @@ const std::string Config::MAX_DOWNLOAD_SPEED ("MaxDownloadSpeed");
 const std::string Config::MAX_UPLOAD_SPEED ("MaxUploadSpeed");
 const std::string Config::MAX_NUM_DOWNLOADS ("MaxNumDownloads");
 const std::string Config::DOWNLOAD_DIRECTORY ("DownloadDirectory");
+const std::string Config::LOG_LEVEL ("LogLevel");
 
 Config::Config () : downloads (new std::vector<std::map<std::string, std::string> >)
 {
@@ -57,6 +59,7 @@ Config::Config () : downloads (new std::vector<std::map<std::string, std::string
     set_property (MAX_UPLOAD_SPEED, "-1");
     set_property (MAX_DOWNLOAD_SPEED, "-1");
     set_property (MAX_NUM_DOWNLOADS, "1");
+    set_property (LOG_LEVEL, Log::LL_ALL.get_name ());
 }
 
 Config::~Config ()
