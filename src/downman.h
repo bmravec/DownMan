@@ -76,3 +76,9 @@ class DownMan {
 };
 
 #endif /* __DOWNMAN_H__ */
+
+/**
+ * @mainpage %Downman - Multi-Protocol %Download Manager
+ *
+ * @author Brett Mravec <brett.mravec@gmail.com>
+ */

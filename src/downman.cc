@@ -24,6 +24,7 @@
 #include "downman.h"
 
 #include "application.h"
+#include "app-log.h"
 #include "mainwindow.h"
 #include "gui-factory.h"
 
@@ -62,6 +63,8 @@ DownMan::~DownMan ()
 void
 DownMan::setup ()
 {
+    LOG_INFO ("DownMan::setup ()");
+
     std::vector<std::map<std::string, std::string> >::iterator iter;
     std::vector<std::map<std::string, std::string> > *ds = config.load_downloads ();
 
@@ -85,6 +88,7 @@ DownMan::run ()
 void
 DownMan::shutdown ()
 {
+    LOG_INFO ("DownMan::shutdown ()");
     std::vector<std::map<std::string, std::string> > dlist;
     std::map<std::string, std::string> tmap;
 
