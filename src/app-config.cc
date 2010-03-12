@@ -88,14 +88,6 @@ Config::set_property (const std::string &key, const std::string &val)
 }
 
 void
-Config::set_property (const std::string &key, const char *val)
-{
-    std::string sval (val);
-
-    set_property (key, sval);
-}
-
-bool
 Config::load_settings ()
 {
     xmlSAXHandlerPtr shandle = new xmlSAXHandler;

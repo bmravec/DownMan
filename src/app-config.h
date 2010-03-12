@@ -28,14 +28,14 @@ class Config;
 #include <string>
 #include <vector>
 
-#include <sigc++/sigc++.h>
 #include <libxml/parser.h>
+#include <sigc++/sigc++.h>
 
-typedef struct {
-    std::string val;
-    sigc::signal<void, const std::string&, const std::string&> sig;
-} PropertySet;
-
+/**
+ * Configuration manager.
+ * Configuration manager that loads and stores settings, and also can notify
+ * listeners about changes to properties so that they can react to changes.
+ */
 class Config {
     public:
         static Config &Instance () {
@@ -43,14 +43,58 @@ class Config {
             return config;
         }
 
+        /**
+         * Get the changed signal associated with a given key.
+         * Retrieve the property_changed signal for a given configuration key.
+         * If the key does not exist, it will be created and a valid signal
+         * object will be returned
+         * @param key key to lookup the signal for
+         * @return valid signal for the given key
+         */
         sigc::signal<void, const std::string&, const std::string&> &get_signal (const std::string &key);
 
-        std::string get_property (const std::string &key);
+        /**
+         * Set the value for a specific key.
+         * Change the value of a specific key to the value passed in to the
+         * function.  Method also sends the associated property_changed signal
+         * allowing all the listeners to be notified of the change.  The caller
+         * of the method should use the signal to update rather than what is
+         * passed into the function.
+         * @param key key to store value to
+         * @param val value to store
+         */
         void set_property (const std::string &key, const std::string &val);
-        void set_property (const std::string &key, const char *val);
 
-        bool load_settings ();
+        /**
+         * Get value associated with a key.
+         * @param key to lookup
+         * @return always returns a valid string, will be zero-length if the key
+         *         was not already present.
+         */
+        std::string get_property (const std::string &key);
+
+        /**
+         * Load configuration settings from the config.xml file.
+         */
+        void load_settings ();
+
+        /**
+         * Get list of saved downloads.
+         * The download list is created during the load_settings call and stored
+         * until the load_downloads call is made.  The list is then owned by the
+         * caller and should be deleted when the caller is done with it.
+         * @return a valid vector containing all saved downloads, an empty
+         *         vector if there are no saved downloads, and a NULL pointer if
+         *         the function had already been called before.
+         */
         std::vector<std::map<std::string, std::string> > *load_downloads ();
+
+        /**
+         * Save settings and downloads to config.xml.
+         * Save all of the settings and the downloads passed into the function
+         * into the save config.xml file.
+         * @param dlist list of downloads stored as dictionaries to save
+         */
         void save (std::vector<std::map<std::string, std::string> > &dlist);
 
         static const std::string MAX_DOWNLOAD_SPEED;
@@ -62,6 +106,11 @@ class Config {
     private:
         Config ();
         ~Config ();
+
+        typedef struct {
+            std::string val;
+            sigc::signal<void, const std::string&, const std::string&> sig;
+        } PropertySet;
 
         static void ac_start_element (void *user_data, const xmlChar *name, const xmlChar **attrs);
         static void ac_end_element (void *user_data, const xmlChar *name);
