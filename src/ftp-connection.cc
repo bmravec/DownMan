@@ -19,8 +19,7 @@
  *      MA 02110-1301, USA.
  */
 
-#include <iostream>
-
+#include "app-log.h"
 #include "ftp-connection.h"
 #include "utils.h"
 #include "dregex.h"
@@ -87,7 +86,8 @@ FtpConnection::FtpConnection (std::string &host, int port) :
         dsock = new Socket (newhost, dport);
 
         if (dsock->is_connected () == false) {
-            std::cout << "Cannot connect data socket\n";
+            LOG_ERROR ("Ftp Connection: Can not connect to data socket");
+
             delete dsock;
             dsock = NULL;
             delete csock;

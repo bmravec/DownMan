@@ -24,7 +24,6 @@ class FtpConnection;
 #ifndef __FTP_CONNECTION_H__
 #define __FTP_CONNECTION_H__
 
-#include <iostream>
 #include <string>
 
 #include "socket.h"
