@@ -23,6 +23,7 @@ downman_LDADD = $(GTK_LIBS) $(GLIB_LIBS) $(SIGC_LIBS) $(LIBXML_LIBS)
 downman_SOURCES =                          \
     downman.cc downman.h                   \
     app-config.cc app-config.h             \
+    app-log.cc app-log.h                   \
     speed-monitor.cc speed-monitor.h       \
     speed-object.cc speed-object.h         \
     utils.cc utils.h                       \
