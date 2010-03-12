@@ -22,12 +22,12 @@
 #include <cstdio>
 #include <cstring>
 #include <dirent.h>
-#include <iostream>
 #include <sstream>
 
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "app-log.h"
 #include "utils.h"
 #include "app-config.h"
 
@@ -71,12 +71,6 @@ Utils::size_to_string (size_t size)
 int
 Utils::parseInt (const std::string &str)
 {
-    return parseInt (str.c_str ());
-}
-
-int
-Utils::parseInt (const char *str)
-{
     if (str[0] >= '0' && str[0] <= '9' || str[0] == '-') {
         int val;
         std::istringstream iss (str);
@@ -89,12 +83,6 @@ Utils::parseInt (const char *str)
 
 int
 Utils::parseHexInt (const std::string &str)
-{
-    return parseHexInt (str.c_str ());
-}
-
-int
-Utils::parseHexInt (const char *str)
 {
     if ((str[0] >= '0' && str[0] <= '9') ||
         (str[0] >= 'a' && str[0] <= 'f') ||
@@ -125,7 +113,7 @@ Utils::formatDouble (double val)
 }
 
 std::string
-Utils::createDownloadFilename (std::string &name)
+Utils::createDownloadFilename (const std::string &name)
 {
     std::string path = Config::Instance ().get_property (Config::DOWNLOAD_DIRECTORY);
 
@@ -135,62 +123,41 @@ Utils::createDownloadFilename (std::string &name)
     return path;
 }
 
-std::string
-Utils::createDownloadFilename (const char *name)
-{
-    std::string sname (name);
-    return createDownloadFilename (sname);
-}
-
 int
-Utils::getFileSize (std::string &name)
-{
-    return getFileSize (name.c_str ());
-}
-
-int
-Utils::getFileSize (const char *name)
+Utils::getFileSize (const std::string &name)
 {
     struct stat ostat;
-    if (stat (name, &ostat) == 0) {
+    if (stat (name.c_str (), &ostat) == 0) {
         return ostat.st_size;
     } else {
-        return 0;
+        return -1;
     }
 }
 
 bool
-Utils::removePath (std::string &name)
-{
-    return removePath (name.c_str ());
-}
-
-bool
-Utils::removePath (const char *name)
+Utils::removePath (const std::string &name)
 {
     struct stat ostat;
 
-    if (stat (name, &ostat) == 0) {
+    if (stat (name.c_str (), &ostat) == 0) {
         if (S_ISDIR (ostat.st_mode)) {
             struct dirent *dp;
-            DIR *dir = opendir (name);
+            DIR *dir = opendir (name.c_str ());
             while ((dp = readdir (dir)) != NULL) {
                 if (!strcmp (dp->d_name, ".") ||
                     !strcmp (dp->d_name, "..")) {
                     continue;
                 }
-                std::string lpath = name;
-                lpath += "/";
-                lpath += dp->d_name;
-                removePath (lpath.c_str ());
+
+                removePath (name + "/" + dp->d_name);
             }
             closedir (dir);
 
-            std::cout << "Remove Dir: " << name << std::endl;
-            remove (name);
+            LOG_INFO ("Remove Dir: " + name);
+            remove (name.c_str ());
         } else {
-            std::cout << "Remove File: " << name << std::endl;
-            remove (name);
+            LOG_INFO ("Remove File: " + name);
+            remove (name.c_str ());
         }
 
         return true;
@@ -200,7 +167,7 @@ Utils::removePath (const char *name)
 }
 
 std::string
-Utils::createConfigFilename (std::string &name)
+Utils::createConfigFilename (const std::string &name)
 {
     std::string path (getenv ("HOME"));
     path += "/.config/downman";
@@ -213,13 +180,6 @@ Utils::createConfigFilename (std::string &name)
 }
 
 std::string
-Utils::createConfigFilename (const char *name)
-{
-    std::string sname (name);
-    return createConfigFilename (sname);
-}
-
-std::string
 Utils::getDefaultDownloadDirectory ()
 {
     std::string path (getenv ("HOME"));
@@ -229,7 +189,7 @@ Utils::getDefaultDownloadDirectory ()
 }
 
 std::string
-Utils::getImageResource (const char *name)
+Utils::getImageResource (const std::string &name)
 {
     std::string path = SHARE_DIR;
 

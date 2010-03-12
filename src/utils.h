@@ -47,28 +47,12 @@ class Utils {
         static int parseInt (const std::string &str);
 
         /**
-         * Parse an integer from a string.
-         * Parse the first integer in the given string
-         * @param str string to parse
-         * @return integer value or 0 for an error
-         */
-        static int parseInt (const char *str);
-
-        /**
          * Parse an hexadecimal integer from a string.
          * Parse the first hexadecimal integer in the given string
          * @param str string to parse
          * @return integer value or 0 for an error
          */
         static int parseHexInt (const std::string &str);
-
-        /**
-         * Parse an hexadecimal integer from a string.
-         * Parse the first hexadecimal integer in the given string
-         * @param str string to parse
-         * @return integer value or 0 for an error
-         */
-        static int parseHexInt (const char *str);
 
         /**
          * Format an integer and store in a string
@@ -92,31 +76,14 @@ class Utils {
          * @param name file name to get the path for
          * @return full path to the file including the filename itself
          */
-        static std::string createDownloadFilename (std::string &name);
-
-        /**
-         * Get an absolute path given a name for a download.
-         * Given a file name, the full path of a download is returned taking
-         * into account the stored download directory from Config.  The path
-         * will also be created if it does not already exist.
-         * @param name file name to get the path for
-         * @return full path to the file including the filename itself
-         */
-        static std::string createDownloadFilename (const char *name);
+        static std::string createDownloadFilename (const std::string &name);
 
         /**
          * Get the file size for a file at the path passed in.
          * @param name fullname of the file to lookup
-         * @return size of the file or 0 if the file does not exist
+         * @return size of the file or -1 if the file does not exist
          */
-        static int getFileSize (std::string &name);
-
-        /**
-         * Get the file size for a file at the path passed in.
-         * @param name fullname of the file to lookup
-         * @return size of the file or 0 if the file does not exist
-         */
-        static int getFileSize (const char *name);
+        static int getFileSize (const std::string &name);
 
         /**
          * Delete the path from the hard drive.
@@ -125,16 +92,7 @@ class Utils {
          * @return true if the path was deleted successfully, or false if an
          *         error occured.
          */
-        static bool removePath (std::string &name);
-
-        /**
-         * Delete the path from the hard drive.
-         * Removes the file or directory specified by name from the hard drive
-         * @param name absolute path to delete
-         * @return true if the path was deleted successfully, or false if an
-         *         error occured.
-         */
-        static bool removePath (const char *name);
+        static bool removePath (const std::string &name);
 
         /**
          * Get an absolute path to config file with the given name.
@@ -143,16 +101,7 @@ class Utils {
          * @param name name of the file to make the path to
          * @return absolute path to the file
          */
-        static std::string createConfigFilename (std::string &name);
-
-        /**
-         * Get an absolute path to config file with the given name.
-         * Take the file name passed in and join it with the path to the config
-         * directory and return the result
-         * @param name name of the file to make the path to
-         * @return absolute path to the file
-         */
-        static std::string createConfigFilename (const char *name);
+        static std::string createConfigFilename (const std::string &name);
 
         /**
          * Create the default download directory.
@@ -167,7 +116,7 @@ class Utils {
          * @param name resource to provide the path to
          * @return absolute path to the named resource
          */
-        static std::string getImageResource (const char *name);
+        static std::string getImageResource (const std::string &name);
 };
 
 #endif /* __UTILS_H__ */
