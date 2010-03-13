@@ -28,17 +28,46 @@ class DRegex;
 #include <vector>
 #include <regex.h>
 
+/**
+ * Basic regex wrapper class.
+ */
 class DRegex {
     public:
-        DRegex (std::string &m);
-        DRegex (const char *m);
+        /**
+         * Create a basic regex.
+         * @param m regex string to compile
+         */
+        DRegex (const std::string &m);
         ~DRegex ();
 
+        /**
+         * Check for occurrence of the match string in str.
+         * @param str string to search for the match string in
+         * @return true if string is found, else false
+         */
         bool match (std::string &str);
-        bool find (std::string &str, std::vector<std::string> &m);
-        bool find (const char *str, std::vector<std::string> &m);
-        bool find_all (std::string &str, std::vector<std::string> &matches);
-        bool find_all (const char *str, std::vector<std::string> &matches);
+
+        /**
+         * Find the first occurrence.
+         * Search for the first occurrence of the match string in the passed in
+         * string and return all groups associated with the match string
+         * for that occurrence.
+         * @param str string to search for the match string
+         * @param m list to fill with strings from the match string groups
+         * @return true if match was found in str, else false
+         */
+        bool find (const std::string &str, std::vector<std::string> &m);
+
+        /**
+         * Find all occurrences.
+         * Search for all the occurrences of the match string in the passed in
+         * string and returns the main group for every occurrence of the match
+         * string.
+         * @param str string to search for the match string in
+         * @param matches list to fill with the main group of all occurrences
+         * @return true if any occurrences were found, else false
+         */
+        bool find_all (const std::string &str, std::vector<std::string> &matches);
 
     private:
         std::string m_str;

@@ -23,12 +23,7 @@
 
 #include "dregex.h"
 
-DRegex::DRegex (std::string &m) : m_str (m)
-{
-    regcomp (&pattern, m_str.c_str (), REG_EXTENDED);
-}
-
-DRegex::DRegex (const char *m) : m_str (m)
+DRegex::DRegex (const std::string &m) : m_str (m)
 {
     regcomp (&pattern, m_str.c_str (), REG_EXTENDED);
 }
@@ -52,21 +47,15 @@ DRegex::match (std::string &str)
 }
 
 bool
-DRegex::find (std::string &str, std::vector<std::string> &m)
-{
-    return find (str.c_str (), m);
-}
-
-bool
-DRegex::find (const char *str, std::vector<std::string> &m)
+DRegex::find (const std::string &str, std::vector<std::string> &m)
 {
     size_t no_sub = pattern.re_nsub + 1;
     regmatch_t *result = new regmatch_t[no_sub];
     bool res = false;
 
-    if (regexec (&pattern, str, no_sub, result, 0) == 0) {
+    if (regexec (&pattern, str.c_str (), no_sub, result, 0) == 0) {
         for (int i = 0; i < no_sub; i++) {
-            std::string smatch (str + result[i].rm_so, result[i].rm_eo - result[i].rm_so);
+            std::string smatch (str.c_str () + result[i].rm_so, result[i].rm_eo - result[i].rm_so);
             m.push_back (smatch);
         }
         res = true;
@@ -78,21 +67,15 @@ DRegex::find (const char *str, std::vector<std::string> &m)
 }
 
 bool
-DRegex::find_all (std::string &str, std::vector<std::string> &matches)
-{
-    return find_all (str.c_str (), matches);
-}
-
-bool
-DRegex::find_all (const char *str, std::vector<std::string> &matches)
+DRegex::find_all (const std::string &str, std::vector<std::string> &matches)
 {
     int start = 0;
     size_t no_sub = pattern.re_nsub + 1;
     regmatch_t *result = new regmatch_t[no_sub];
     bool res = false;
 
-    while (regexec (&pattern, str + start, no_sub, result, 0) == 0) {
-        std::string smatch (str + start + result->rm_so,
+    while (regexec (&pattern, str.c_str () + start, no_sub, result, 0) == 0) {
+        std::string smatch (str.c_str () + start + result->rm_so,
             result->rm_eo - result->rm_so);
         matches.push_back (smatch);
         start += result->rm_eo;
