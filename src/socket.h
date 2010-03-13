@@ -26,22 +26,47 @@ class Socket;
 
 #include <string>
 
+/**
+ * Basic wrapper around a c socket.
+ */
 class Socket {
     public:
-        Socket (std::string &host, int port);
-        Socket (const char *host, int port);
+        /**
+         * Create a socket and connect it.
+         */
+        Socket (const std::string &host, int port);
         ~Socket ();
 
+        /**
+         * Write string out.
+         * @param str string to write out
+         * @return size of data written out
+         */
         int write (std::string &str);
+
+        /**
+         * Write character buffer out.
+         * @param buff data to write out
+         * @param len length of data in the buffer ready to be written
+         * @return size of data written out
+         */
         int write (const char *buff, int len);
 
+        /**
+         * Read data into buffer.
+         * @param buff buffer to read data into
+         * @param size max size of buffer
+         * @return length of data read in or -1 to indicate read error
+         */
         int read (char *buff, int size);
 
+        /**
+         * Check if the socket is connected
+         * @return true if socket is connected, else false
+         */
         bool is_connected () { return connected; }
 
     private:
-        void connect (const char *host, int port);
-
         int sockfd;
         bool connected;
 };

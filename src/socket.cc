@@ -20,7 +20,6 @@
  */
 
 #include <cstdio>
-#include <iostream>
 #include <cstring>
 
 #include <sys/types.h>
@@ -30,18 +29,7 @@
 
 #include "socket.h"
 
-Socket::Socket (std::string &host, int port)
-{
-    connect (host.c_str (), port);
-}
-
-Socket::Socket (const char *host, int port) : connected (false)
-{
-    connect (host, port);
-}
-
-void
-Socket::connect (const char *host, int port)
+Socket::Socket (const std::string &host, int port) : connected (false)
 {
     sockfd = socket (AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
@@ -52,7 +40,7 @@ Socket::connect (const char *host, int port)
     struct sockaddr_in serv_addr;
     struct hostent *server;
 
-    server = gethostbyname (host);
+    server = gethostbyname (host.c_str ());
     bzero ((char*) &serv_addr, sizeof (serv_addr));
 
     serv_addr.sin_family = AF_INET;
