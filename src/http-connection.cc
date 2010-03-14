@@ -121,6 +121,43 @@ HttpConnection::send_head_request (Url &url)
 bool
 HttpConnection::send_post_request (Url &url, std::map<std::string, std::string> &post_data)
 {
+    reset_connection ();
+
+    socket = new Socket (url.get_host ().c_str (), url.get_port () != 0 ? url.get_port () : 80);
+
+    if (socket->is_connected ()) {
+        std::string request = "POST " + url.get_path () + " HTTP/1.1\r\n";
+        request += "Host: " + url.get_host () + "\r\n";
+        request += "User-Agent: " + USER_AGENT +"\r\n";
+        request += "Content-Type: application/x-www-form-urlencoded\r\n";
+
+        std::string post_str;
+
+        std::map<std::string, std::string>::iterator iter;
+        for (iter = post_data.begin (); iter != post_data.end (); iter++) {
+            post_str += (*iter).first + "="
+                      + Url::encode ((*iter).second) + "&";
+        }
+
+        if (post_str.size () > 0) {
+            post_str.erase (post_str.size () - 1);
+            request += "Content-Length: " + Utils::formatInt (post_str.size ()) + "\r\n";
+        } else {
+            LOG_DEBUG ("Invalid post request: " + url.get_url ());
+            return false;
+        }
+
+        LOG_DEBUG ("Http Post Request:\n" + request);
+        LOG_DEBUG ("Http Post Data:\n" + post_str);
+
+        request += "\r\n";
+
+        socket->write (request);
+        socket->write (post_str);
+
+        return read_header ();
+    }
+
     return false;
 }
 
