@@ -25,11 +25,13 @@ class LogLevel;
 #ifndef __LOG_H__
 #define __LOG_H__
 
+#include <string>
+
 #include "app-config.h"
 
 class LogLevel {
     public:
-        LogLevel (const char *name) : name (name), log_num (next_log_number++) { }
+        LogLevel (const std::string &name) : name (name), log_num (next_log_number++) { }
 
         int get_level () const { return log_num; }
         std::string get_name () const { return name; }
