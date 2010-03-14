@@ -105,6 +105,14 @@ Utils::formatInt (int val)
 }
 
 std::string
+Utils::formatHexInt (int val)
+{
+    std::stringstream out;
+    out << std::hex << val;
+    return out.str ();
+}
+
+std::string
 Utils::formatDouble (double val)
 {
     std::stringstream out;

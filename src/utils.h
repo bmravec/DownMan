@@ -62,6 +62,13 @@ class Utils {
         static std::string formatInt (int val);
 
         /**
+         * Format an integer int hexadecimal and store in a string
+         * @param val integer value to write to a string
+         * @return string representation of an integer
+         */
+        static std::string formatHexInt (int val);
+
+        /**
          * Format a double and store in a string
          * @param val double value to write to a string
          * @return string representation of a double
