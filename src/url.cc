@@ -114,3 +114,72 @@ Url::parse_url (std::string &url)
         }
     }
 }
+
+std::string
+Url::encode (const std::string &url)
+{
+    std::string str;
+
+    for (int i = 0; i < url.size (); i++) {
+        if ((url[i] >= '0' && url[i] <= '9') ||
+            (url[i] >= 'A' && url[i] <= 'Z') ||
+            (url[i] >= 'a' && url[i] <= 'z')) {
+            str += url[i];
+        } else {
+            if (url[i] & 0xff < 16) {
+                str += "%0" + Utils::formatHexInt (url[i] & 0xff);
+            } else {
+                str += "%" + Utils::formatHexInt (url[i] & 0xff);
+            }
+        }
+    }
+
+    return str;
+}
+
+int
+get_hex_digit (char b)
+{
+    if (b >= '0' && b <= '9') {
+        return b - '0';
+    } else if (b >= 'A' && b <= 'F') {
+        return 10 + b - 'A';
+    } else if (b >= 'a' && b <= 'f') {
+        return 10 + b - 'a';
+    }
+
+    return 0;
+}
+
+std::string
+Url::decode (const std::string &url)
+{
+    std::string str;
+
+    for (int i = 0; i < url.size (); i++) {
+        if (url[i] == '%') {
+            int val = 0;
+            int tmp;
+            if ((tmp = get_hex_digit (url[i+1])) != -1) {
+                val += 16 * tmp;
+            } else {
+               return "";
+            }
+
+            if ((tmp = get_hex_digit (url[i+2])) != -1) {
+                val += tmp;
+            } else {
+               return "";
+            }
+
+            str += (char) val;
+            i += 2;
+        } else if (url[i] == '+') {
+            str += ' ';
+        } else {
+            str += url[i];
+        }
+    }
+
+    return str;
+}

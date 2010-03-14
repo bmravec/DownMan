@@ -47,6 +47,9 @@ class Url {
         std::string &get_name () { return name; }
         std::string &get_ext () { return ext; }
 
+        static std::string encode (const std::string &url);
+        static std::string decode (const std::string &url);
+
     private:
         std::string url, host, proto, path, name, ext;
         int port;
