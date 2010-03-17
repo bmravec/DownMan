@@ -32,6 +32,7 @@ downman_SOURCES =                          \
     socket.cc socket.h                     \
     http-connection.cc http-connection.h   \
     ftp-connection.cc ftp-connection.h     \
+    browser.cc browser.h                   \
     dlist.cc dlist.h                       \
     downloadlist.cc downloadlist.h         \
     staginglist.cc staginglist.h           \
