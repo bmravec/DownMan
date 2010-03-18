@@ -26,9 +26,6 @@
 #include "utils.h"
 #include "socket.h"
 
-void *static_main_info (void*);
-void *static_main_download (void*);
-
 HttpDownload::HttpDownload () :
     Download ("http"), running (false)
 {
