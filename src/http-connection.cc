@@ -61,7 +61,7 @@ HttpConnection::reset_connection ()
 }
 
 bool
-HttpConnection::send_get_request (Url &url, int start, int end)
+HttpConnection::send_get_request (const Url &url, int start, int end)
 {
     reset_connection ();
 
@@ -95,7 +95,7 @@ HttpConnection::send_get_request (Url &url, int start, int end)
 }
 
 bool
-HttpConnection::send_head_request (Url &url)
+HttpConnection::send_head_request (const Url &url)
 {
     reset_connection ();
 
@@ -119,7 +119,7 @@ HttpConnection::send_head_request (Url &url)
 }
 
 bool
-HttpConnection::send_post_request (Url &url, std::map<std::string, std::string> &post_data)
+HttpConnection::send_post_request (const Url &url, std::map<std::string, std::string> &post_data)
 {
     reset_connection ();
 

@@ -30,7 +30,7 @@ class FtpConnection;
 
 class FtpConnection {
     public:
-        FtpConnection (std::string &host, int port=21);
+        FtpConnection (const std::string &host, int port=21);
         ~FtpConnection ();
 
         bool send_get_request (std::string path, int start=-1);

@@ -26,7 +26,7 @@
 
 #define BUFFER_TOTAL 51200
 
-FtpConnection::FtpConnection (std::string &host, int port) :
+FtpConnection::FtpConnection (const std::string &host, int port) :
     host (host), csock (NULL), dsock (NULL),
     buff (new char [BUFFER_TOTAL]), bufflen (0)
 {

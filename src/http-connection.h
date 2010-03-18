@@ -54,7 +54,7 @@ class HttpConnection {
          * @param end
          * @return true if the connection was successful, false otherwise
          */
-        bool send_get_request (Url &url, int start=-1, int end=-1);
+        bool send_get_request (const Url &url, int start=-1, int end=-1);
 
         /**
          * Initiate a http head request.
@@ -66,7 +66,7 @@ class HttpConnection {
          * @param url resource to connect to and retrieve information about
          * @return true if the connection was successful, false otherwise
          */
-        bool send_head_request (Url &url);
+        bool send_head_request (const Url &url);
 
         /**
          * Initiate a http post request.
@@ -81,7 +81,7 @@ class HttpConnection {
          *                  post request
          * @return true if the connection was successful, false otherwise
          */
-        bool send_post_request (Url &url, std::map<std::string, std::string> &post_data);
+        bool send_post_request (const Url &url, std::map<std::string, std::string> &post_data);
 
         /**
          * Read data from the connection
