@@ -33,7 +33,7 @@ Browser::~Browser ()
 }
 
 bool
-Browser::load_page (Url &url)
+Browser::load_page (const Url &url)
 {
     HttpConnection conn;
 
@@ -56,7 +56,7 @@ Browser::load_page (Url &url)
 }
 
 bool
-Browser::send_post (Url &url, std::map<std::string,std::string> &post_data)
+Browser::send_post (const Url &url, std::map<std::string,std::string> &post_data)
 {
     HttpConnection conn;
 
