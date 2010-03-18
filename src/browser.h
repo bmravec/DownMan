@@ -24,6 +24,7 @@ class Browser;
 #ifndef __BROWSER_H__
 #define __BROWSER_H__
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -35,6 +36,8 @@ class Browser {
         ~Browser ();
 
         bool load_page (Url &url);
+        bool send_post (Url &url, std::map<std::string, std::string> &post_data);
+
         bool find (std::string &str, std::vector<std::string> &m);
 
     private:

@@ -56,6 +56,29 @@ Browser::load_page (Url &url)
 }
 
 bool
+Browser::send_post (Url &url, std::map<std::string,std::string> &post_data)
+{
+    HttpConnection conn;
+
+    buff.clear ();
+
+    if (conn.send_post_request (url, post_data)) {
+        char *tbuff = new char[5120];
+
+        int len;
+        while ((len = conn.read (tbuff, 5120)) > 0) {
+            buff.append (tbuff, len);
+        }
+
+        delete tbuff;
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool
 Browser::find (std::string &str, std::vector<std::string> &m)
 {
     DRegex regex (str);
