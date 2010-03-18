@@ -25,21 +25,14 @@
 #include "dregex.h"
 #include "utils.h"
 
-static DRegex *regex = new DRegex ("(\\S*)://([^/ \t\r\n\f\v]*)(\\S*)");
-
-Url::Url (std::string &url) : port (0)
-{
-    parse_url (url);
-}
-
-Url::Url (const char *url) : port (0)
-{
-    parse_url (url);
-}
-
 Url::Url () : port (0)
 {
 
+}
+
+Url::Url (const std::string &url) : port (0)
+{
+    parse_url (url);
 }
 
 Url::~Url ()
@@ -48,7 +41,7 @@ Url::~Url ()
 }
 
 Url&
-Url::operator= (std::string &url)
+Url::operator= (const std::string &url)
 {
     parse_url (url);
 
@@ -56,7 +49,7 @@ Url::operator= (std::string &url)
 }
 
 Url&
-Url::operator= (Url &url)
+Url::operator= (const Url &url)
 {
     this->url = url.url;
     host = url.host;
@@ -70,20 +63,14 @@ Url::operator= (Url &url)
 }
 
 void
-Url::parse_url (const char *url)
+Url::parse_url (const std::string &url)
 {
-    std::string turl (url);
+    DRegex regex ("(\\S*)://([^/ \t\r\n\f\v]*)(\\S*)");
 
-    parse_url (turl);
-}
-
-void
-Url::parse_url (std::string &url)
-{
     std::vector<std::string> results;
     size_t pos;
 
-    url = url,
+    this->url = "";
     proto = "";
     host = "";
     port = 0;
@@ -91,7 +78,7 @@ Url::parse_url (std::string &url)
     name = "";
     ext = "";
 
-    if (regex->find (url, results)) {
+    if (regex.find (url, results)) {
         this->url = results[0];
         proto = results[1];
         host = results[2];

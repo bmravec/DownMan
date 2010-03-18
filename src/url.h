@@ -28,24 +28,22 @@ class Url;
 
 class Url {
     public:
-        Url (std::string &url);
-        Url (const char *url);
         Url ();
+        Url (const std::string &url);
         ~Url ();
 
-        Url &operator= (std::string &url);
-        Url &operator= (Url &url);
+        Url &operator= (const std::string &url);
+        Url &operator= (const Url &url);
 
-        void parse_url (std::string &url);
-        void parse_url (const char *url);
+        void parse_url (const std::string &url);
 
-        std::string &get_url () { return url; }
-        std::string &get_host () { return host; }
-        int get_port () { return port; }
-        std::string &get_proto () { return proto; }
-        std::string &get_path () { return path; }
-        std::string &get_name () { return name; }
-        std::string &get_ext () { return ext; }
+        std::string get_url () const { return url; }
+        std::string get_host () const { return host; }
+        int get_port () const { return port; }
+        std::string get_proto () const { return proto; }
+        std::string get_path () const { return path; }
+        std::string get_name () const { return name; }
+        std::string get_ext () const { return ext; }
 
         static std::string encode (const std::string &url);
         static std::string decode (const std::string &url);
