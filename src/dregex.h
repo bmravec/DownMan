@@ -45,7 +45,7 @@ class DRegex {
          * @param str string to search for the match string in
          * @return true if string is found, else false
          */
-        bool match (std::string &str);
+        bool match (std::string &str) const;
 
         /**
          * Find the first occurrence.
@@ -56,7 +56,7 @@ class DRegex {
          * @param m list to fill with strings from the match string groups
          * @return true if match was found in str, else false
          */
-        bool find (const std::string &str, std::vector<std::string> &m);
+        bool find (const std::string &str, std::vector<std::string> &m) const;
 
         /**
          * Find all occurrences.
@@ -67,7 +67,13 @@ class DRegex {
          * @param matches list to fill with the main group of all occurrences
          * @return true if any occurrences were found, else false
          */
-        bool find_all (const std::string &str, std::vector<std::string> &matches);
+        bool find_all (const std::string &str, std::vector<std::string> &matches) const;
+
+        /**
+         * Return the match string
+         * @return match string
+         */
+        std::string get_string () const { return m_str; }
 
     private:
         std::string m_str;

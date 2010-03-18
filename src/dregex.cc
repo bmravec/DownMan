@@ -34,7 +34,7 @@ DRegex::~DRegex ()
 }
 
 bool
-DRegex::match (std::string &str)
+DRegex::match (std::string &str) const
 {
     size_t no_sub = pattern.re_nsub + 1;
     regmatch_t *result = new regmatch_t[no_sub];
@@ -47,7 +47,7 @@ DRegex::match (std::string &str)
 }
 
 bool
-DRegex::find (const std::string &str, std::vector<std::string> &m)
+DRegex::find (const std::string &str, std::vector<std::string> &m) const
 {
     size_t no_sub = pattern.re_nsub + 1;
     regmatch_t *result = new regmatch_t[no_sub];
@@ -67,7 +67,7 @@ DRegex::find (const std::string &str, std::vector<std::string> &m)
 }
 
 bool
-DRegex::find_all (const std::string &str, std::vector<std::string> &matches)
+DRegex::find_all (const std::string &str, std::vector<std::string> &matches) const
 {
     int start = 0;
     size_t no_sub = pattern.re_nsub + 1;
