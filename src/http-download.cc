@@ -148,14 +148,11 @@ HttpDownload::run_download ()
 
     so = SpeedMonitor::Instance ().get (this);
 
-    int csize = Utils::getFileSize (filename);
-
     HttpConnection conn;
-    if (csize == dtrans) {
-        conn.send_get_request (url, csize);
+    if (Utils::getFileSize (filename) == dtrans) {
+        conn.send_get_request (url, dtrans);
     } else {
         conn.send_get_request (url);
-        csize = 0;
     }
 
     int rc = conn.get_response_code ();
@@ -167,6 +164,7 @@ HttpDownload::run_download ()
             ofile.open (filename.c_str (), std::ios::out | std::ios::binary | std::ios::app);
         } else {
             ofile.open (filename.c_str (), std::ios::out | std::ios::binary);
+            dtrans = 0;
         }
 
         int len;
@@ -183,6 +181,7 @@ HttpDownload::run_download ()
             so->wait (so->update_downloaded (len));
         }
 
+        delete buff;
         ofile.close ();
 
         if (running) {
