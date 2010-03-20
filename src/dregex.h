@@ -75,6 +75,8 @@ class DRegex {
          */
         std::string get_string () const { return m_str; }
 
+        bool operator== (const std::string &str) const { return str == m_str; }
+
     private:
         std::string m_str;
         regex_t pattern;
