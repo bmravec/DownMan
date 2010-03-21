@@ -206,3 +206,72 @@ Utils::getImageResource (const std::string &name)
 
     return path;
 }
+
+std::string
+Utils::escape (const std::string &str)
+{
+    std::string ret;
+
+    for (int i = 0; i < str.size (); i++) {
+        if ((str[i] >= '0' && str[i] <= '9') ||
+            (str[i] >= 'A' && str[i] <= 'Z') ||
+            (str[i] >= 'a' && str[i] <= 'z')) {
+            ret += str[i];
+        } else {
+            if (str[i] & 0xff < 16) {
+                ret += "%0" + Utils::formatHexInt (str[i] & 0xff);
+            } else {
+                ret += "%" + Utils::formatHexInt (str[i] & 0xff);
+            }
+        }
+    }
+
+    return ret;
+}
+
+static int
+get_hex_digit (char b)
+{
+    if (b >= '0' && b <= '9') {
+        return b - '0';
+    } else if (b >= 'A' && b <= 'F') {
+        return 10 + b - 'A';
+    } else if (b >= 'a' && b <= 'f') {
+        return 10 + b - 'a';
+    }
+
+    return 0;
+}
+
+std::string
+Utils::unescape (const std::string &url)
+{
+    std::string str;
+
+    for (int i = 0; i < url.size (); i++) {
+        if (url[i] == '%') {
+            int val = 0;
+            int tmp;
+            if ((tmp = get_hex_digit (url[i+1])) != -1) {
+                val += 16 * tmp;
+            } else {
+               return "";
+            }
+
+            if ((tmp = get_hex_digit (url[i+2])) != -1) {
+                val += tmp;
+            } else {
+               return "";
+            }
+
+            str += (char) val;
+            i += 2;
+        } else if (url[i] == '+') {
+            str += ' ';
+        } else {
+            str += url[i];
+        }
+    }
+
+    return str;
+}

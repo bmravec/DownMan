@@ -124,6 +124,20 @@ class Utils {
          * @return absolute path to the named resource
          */
         static std::string getImageResource (const std::string &name);
+
+        /**
+         * Escape the string to be used as a url.
+         * @param str string to escape
+         * @return escaped string
+         */
+        static std::string escape (const std::string &str);
+
+        /**
+         * Unescape the string.
+         * @param url url string to unescape
+         * @return unescaped string
+         */
+        static std::string unescape (const std::string &url);
 };
 
 #endif /* __UTILS_H__ */
