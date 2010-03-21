@@ -29,14 +29,16 @@ class FtpDownload;
 #include <string>
 #include <map>
 #include <pthread.h>
+#include <vector>
 
 #include "download.h"
+#include "dregex.h"
 #include "url.h"
 
 class FtpDownload : public Download {
     public:
         FtpDownload ();
-        FtpDownload (Url &url);
+        FtpDownload (std::vector<std::string> &m);
         ~FtpDownload ();
 
         void start_get_info ();
@@ -46,12 +48,26 @@ class FtpDownload : public Download {
         bool startup (std::map<std::string,std::string> &data);
         bool shutdown (std::map<std::string, std::string> &data);
 
+        static Download *create (std::vector<std::string> &m) { return new FtpDownload (m); }
+        static Download *create () { return new FtpDownload (); }
+        static const DRegex MATCH_REGEX;
+
+        static const std::string KEY_LOCAL_PATH;
+        static const std::string KEY_REMOTE_PATH;
+        static const std::string KEY_REMOTE_HOST;
+        static const std::string KEY_REMOTE_PORT;
+
     private:
         void run_info ();
         void run_download ();
 
         static void *static_run_info (void *download);
         static void *static_run_download (void *download);
+
+        std::string local_path;
+        std::string remote_host;
+        int remote_port;
+        std::string remote_path;
 
         pthread_t thread;
         bool running;

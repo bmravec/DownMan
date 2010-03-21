@@ -26,16 +26,31 @@
 #include "utils.h"
 #include "socket.h"
 
-FtpDownload::FtpDownload () :
-    Download ("ftp"), running (false)
+const DRegex FtpDownload::MATCH_REGEX ("ftp://([^/:]+?)(:[0-9]+)?(/[^[:space:]]+/([^[:space:]\\?]+))(\\?[^[:space:]]+)?");
+
+const std::string FtpDownload::KEY_LOCAL_PATH ("local-path");
+const std::string FtpDownload::KEY_REMOTE_PATH ("remote-path");
+const std::string FtpDownload::KEY_REMOTE_HOST ("remote-host");
+const std::string FtpDownload::KEY_REMOTE_PORT ("remote-port");
+
+FtpDownload::FtpDownload () : running (false), remote_port (0)
 {
 
 }
 
-FtpDownload::FtpDownload (Url &url) :
-    Download (url, "ftp"), running (false)
+FtpDownload::FtpDownload (std::vector<std::string> &m) :
+    running (false), remote_port (0)
 {
-    filename = Utils::createDownloadFilename (url.get_name ());
+    local_path = Utils::createDownloadFilename (m[4]);
+
+    display_name = m[4];
+
+    remote_host = m[1];
+    remote_path = m[3];
+
+    if (m[2].size () > 0) {
+        remote_port = Utils::parseInt (m[2].substr (1));
+    }
 }
 
 FtpDownload::~FtpDownload ()
@@ -72,17 +87,21 @@ FtpDownload::pause ()
 bool
 FtpDownload::startup (std::map<std::string,std::string> &data)
 {
-    if (data[KEY_MATCH] == match_str && data.count (KEY_NAME) > 0 &&
-        data.count (KEY_URL) > 0 && data.count (KEY_DOWNLOADED) > 0 &&
-        data.count (KEY_SIZE) > 0 && data.count (KEY_STATE) > 0 &&
-        data.count (KEY_LOCATION) > 0 && data.count (KEY_MATCH) > 0) {
+    if (MATCH_REGEX == data[KEY_MATCH] && data.count (KEY_DISPLAY_NAME) > 0 &&
+        data.count (KEY_DOWNLOADED) > 0 && data.count (KEY_SIZE) > 0 &&
+        data.count (KEY_STATE) > 0 && data.count (KEY_LOCAL_PATH) > 0 &&
+        data.count (KEY_REMOTE_HOST) > 0 && data.count (KEY_REMOTE_PORT) > 0 &&
+        data.count (KEY_REMOTE_PATH) > 0) {
 
-        name = data[KEY_NAME];
-        url = data[KEY_URL];
+        display_name = data[KEY_DISPLAY_NAME];
         dtrans = Utils::parseInt (data[KEY_DOWNLOADED]);
         dsize = Utils::parseInt (data[KEY_SIZE]);
         state = (DownloadState) Utils::parseInt (data[KEY_STATE]);
-        filename = data[KEY_LOCATION];
+
+        local_path= data[KEY_LOCAL_PATH];
+        remote_path = data[KEY_REMOTE_PATH];
+        remote_host = data[KEY_REMOTE_HOST];
+        remote_port = Utils::parseInt (data[KEY_REMOTE_PORT]);
 
         return true;
     } else {
@@ -102,13 +121,15 @@ FtpDownload::shutdown (std::map<std::string, std::string> &data)
         state = STATE_QUEUED;
     }
 
-    data[KEY_NAME] = name;
-    data[KEY_URL] = url.get_url ();
+    data[KEY_DISPLAY_NAME] = display_name;
     data[KEY_DOWNLOADED] = Utils::formatInt (dtrans);
     data[KEY_SIZE] = Utils::formatInt (dsize);
     data[KEY_STATE] = Utils::formatInt ((int) state);
-    data[KEY_LOCATION] = filename;
-    data[KEY_MATCH] = match_str;
+    data[KEY_MATCH] = MATCH_REGEX.get_string ();
+    data[KEY_LOCAL_PATH] = local_path;
+    data[KEY_REMOTE_PATH] = remote_path;
+    data[KEY_REMOTE_HOST] = remote_host;
+    data[KEY_REMOTE_PORT] = Utils::formatInt (remote_port);
 
     return true;
 }
@@ -119,8 +140,8 @@ FtpDownload::run_info ()
     running = true;
     set_state (STATE_INFO);
 
-    FtpConnection conn (url.get_host (), url.get_port ());
-    if (conn.get_file_size (url.get_path (), &dsize)) {
+    FtpConnection conn (remote_host, remote_port);
+    if (conn.get_file_size (remote_path, &dsize)) {
         status = "Online";
         set_state (STATE_INFO_COMPLETED);
     } else {
@@ -140,21 +161,18 @@ FtpDownload::run_download ()
 
     so = SpeedMonitor::Instance ().get (this);
 
-    int csize = Utils::getFileSize (filename);
     bool append = false;
     bool connected = false;
 
-    FtpConnection conn (url.get_host (), url.get_port ());
-    if (csize == dtrans) {
+    FtpConnection conn (remote_host, remote_port);
+    if (Utils::getFileSize (local_path) == dtrans) {
         append = true;
-    } else {
-        csize = 0;
     }
 
     if (append) {
-        if (conn.send_get_request (url.get_path (), csize)) {
+        if (conn.send_get_request (remote_path, dtrans)) {
             connected = true;
-        } else if (conn.send_get_request (url.get_path ())) {
+        } else if (conn.send_get_request (remote_path)) {
             append = false;
             connected = true;
         } else {
@@ -162,7 +180,7 @@ FtpDownload::run_download ()
             set_state (STATE_NOT_FOUND);
         }
     } else {
-        if (conn.send_get_request (url.get_path ())) {
+        if (conn.send_get_request (remote_path)) {
             connected = true;
         } else {
             status = "Not Found";
@@ -172,9 +190,10 @@ FtpDownload::run_download ()
 
     if (connected) {
         if (append) {
-            ofile.open (filename.c_str (), std::ios::out | std::ios::binary | std::ios::app);
+            ofile.open (local_path.c_str (), std::ios::out | std::ios::binary | std::ios::app);
         } else {
-            ofile.open (filename.c_str (), std::ios::out | std::ios::binary);
+            ofile.open (local_path.c_str (), std::ios::out | std::ios::binary);
+            dtrans = 0;
         }
 
         int len;
@@ -191,6 +210,7 @@ FtpDownload::run_download ()
             so->wait (so->update_downloaded (len));
         }
 
+        delete buff;
         ofile.close ();
 
         if (running) {
