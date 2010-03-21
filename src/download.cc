@@ -23,24 +23,16 @@
 
 #include "download.h"
 
-std::string Download::KEY_NAME ("name");
-std::string Download::KEY_URL ("url");
-std::string Download::KEY_DOWNLOADED ("downloaded");
-std::string Download::KEY_SIZE ("size");
-std::string Download::KEY_STATE ("state");
-std::string Download::KEY_LOCATION ("location");
-std::string Download::KEY_MATCH ("match");
+const std::string Download::KEY_DISPLAY_NAME ("display-name");
+const std::string Download::KEY_DOWNLOADED ("downloaded");
+const std::string Download::KEY_SIZE ("size");
+const std::string Download::KEY_STATE ("state");
+const std::string Download::KEY_LOCATION ("location");
+const std::string Download::KEY_MATCH ("match");
 
-Download::Download (std::string match_str) :
-    state (STATE_NULL), url (""), dsize (-1), dtrans (0), usize (-1),
-    utrans (0), so (NULL), match_str (match_str), name (this->url.get_name ())
-{
-
-}
-
-Download::Download (Url &url, std::string match_str) :
-    state (STATE_NULL), url (url), dsize (-1), dtrans (0), usize (-1),
-    utrans (0), so (NULL), match_str (match_str), name (url.get_name ())
+Download::Download () :
+    state (STATE_NULL), so (NULL),
+    dsize (-1), dtrans (0), usize (-1), utrans (0)
 {
 
 }

@@ -45,6 +45,8 @@ typedef enum {
     STATE_INFO,
     STATE_INFO_COMPLETED,
     STATE_NOT_FOUND,
+    STATE_CANNOT_CONNECT,
+    STATE_PROTOCOL_ERROR,
 } DownloadState;
 
 /**
@@ -56,20 +58,7 @@ typedef enum {
 
 class Download {
     public:
-        /**
-         * Constructor without a valid Url.
-         * @parm match_str String unique to download type used to match against
-         *                 urls when a download is created or loaded from disk
-         */
-        Download (std::string match_str = "");
-
-        /**
-         * Constructor with a valid Url.
-         * @param url A valid url to associate with this download
-         * @param match_str String unique to download type used to match against
-         *                 urls when a download is created or loaded from disk
-         */
-        Download (Url &url, std::string match_str = "");
+        Download ();
         ~Download ();
 
         /**
@@ -134,11 +123,11 @@ class Download {
 
         sigc::signal<void, Download*, DownloadState> &signal_state_changed () { return state_changed; }
 
-        std::string get_status () const { return status; }
-        std::string get_name () const { return name; }
-        void set_name (std::string &name) { this->name = name; set_state (state); }
+        std::string get_display_name () const { return display_name; }
+        void set_display_name (std::string &new_name) { display_name = new_name; set_state (state); }
 
         DownloadState get_state () const { return state; }
+        std::string get_status () const { return status; }
 
         int get_dsize () const { return dsize; }
         int get_dtrans () const { return dtrans; }
@@ -147,25 +136,24 @@ class Download {
         int get_uspeed () const;
         int get_dspeed () const;
 
-        std::string get_match_string () const { return match_str; }
-
-        static std::string KEY_NAME;
-        static std::string KEY_URL;
-        static std::string KEY_DOWNLOADED;
-        static std::string KEY_SIZE;
-        static std::string KEY_STATE;
-        static std::string KEY_LOCATION;
-        static std::string KEY_MATCH;
+        static const std::string KEY_DISPLAY_NAME;
+        static const std::string KEY_URL;
+        static const std::string KEY_DOWNLOADED;
+        static const std::string KEY_SIZE;
+        static const std::string KEY_STATE;
+        static const std::string KEY_LOCATION;
+        static const std::string KEY_MATCH;
 
     protected:
         DownloadState state;
-        Url url;
-        std::string name;
         std::string status;
+
+        std::string display_name;
+
         std::string filename;
-        std::string match_str;
-        int dsize, dtrans, usize, utrans;
+
         SpeedObject *so;
+        int dsize, dtrans, usize, utrans;
 
         /**
          * Set internal download state.
