@@ -131,6 +131,7 @@ Config::save (std::vector<std::map<std::string, std::string> > &dlist)
     std::string configpath = Utils::createConfigFilename ("config.xml");
 
     writer = xmlNewTextWriterFilename (configpath.c_str (), 0);
+    xmlTextWriterSetIndent (writer, 2);
     if (writer == NULL) {
         std::cerr << "Error creating xml writer\n";
         return;
