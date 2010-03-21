@@ -217,7 +217,7 @@ DownloadViewGtk::update_row (GtkTreeIter *iter, Download *d)
 
     gtk_list_store_set (store, iter,
         0, d,
-        1, d->get_name ().c_str (),
+        1, d->get_display_name ().c_str (),
         2, status.c_str (),
         3, text.c_str (), 4, percent, 5, pulse,
         6, npb, -1);
@@ -315,7 +315,7 @@ DownloadViewGtk::cell_edited_cb (GtkCellRenderer *renderer, char *path, char *ne
             std::string name = new_text;
 
             gdk_threads_leave ();
-            d->set_name (name);
+            d->set_display_name (name);
             gdk_threads_enter ();
         }
     }

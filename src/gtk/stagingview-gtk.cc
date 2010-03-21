@@ -76,7 +76,7 @@ StagingViewGtk::list_add_cb (Download *d, Download *nextd)
     if (nextd == NULL) {
         gtk_list_store_insert_with_values (store, NULL, -1,
             0, d,
-            1, d->get_name ().c_str (),
+            1, d->get_display_name ().c_str (),
             2, size.c_str (),
             3, d->get_status ().c_str (), -1);
     } else {
@@ -89,7 +89,7 @@ StagingViewGtk::list_add_cb (Download *d, Download *nextd)
                     gtk_list_store_insert_before (store, &iter2, &iter);
                     gtk_list_store_set (store, &iter,
                         0, d,
-                        1, d->get_name ().c_str (),
+                        1, d->get_display_name ().c_str (),
                         2, size.c_str (),
                         3, d->get_status ().c_str (), -1);
                     return;
@@ -99,14 +99,14 @@ StagingViewGtk::list_add_cb (Download *d, Download *nextd)
             gtk_list_store_append (store, &iter);
             gtk_list_store_set (store, &iter,
                 0, d,
-                1, d->get_name ().c_str (),
+                1, d->get_display_name ().c_str (),
                 2, size.c_str (),
                 3, d->get_status ().c_str (), -1);
         } else {
             gtk_list_store_append (store, &iter);
             gtk_list_store_set (store, &iter,
                 0, d,
-                1, d->get_name ().c_str (),
+                1, d->get_display_name ().c_str (),
                 2, size.c_str (),
                 3, d->get_status ().c_str (), -1);
         }
@@ -132,7 +132,7 @@ StagingViewGtk::list_update_cb (Download *d)
 
             if (diter == d) {
                 gtk_list_store_set (store, &iter,
-                    1, d->get_name ().c_str (),
+                    1, d->get_display_name ().c_str (),
                     2, size.c_str (),
                     3, d->get_status ().c_str (), -1);
             }
