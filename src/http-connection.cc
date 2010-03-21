@@ -31,9 +31,9 @@
 
 const std::string HttpConnection::USER_AGENT (PACKAGE_NAME "/" PACKAGE_VERSION);
 
-HttpConnection::HttpConnection () :
-    url (NULL), socket (NULL), buff (new char [BUFFER_TOTAL]), bufflen (0), buffpos (0),
-    cpos (0), clength (-1), response_code (-1)
+HttpConnection::HttpConnection (const std::string &h, int p) :
+    socket (NULL), buff (new char [BUFFER_TOTAL]), bufflen (0), buffpos (0),
+    cpos (0), clength (-1), response_code (-1), host (h), port (p != 0 ? p : 80)
 {
 
 }
@@ -61,15 +61,15 @@ HttpConnection::reset_connection ()
 }
 
 bool
-HttpConnection::send_get_request (const Url &url, int start, int end)
+HttpConnection::send_get_request (const std::string &path, int start, int end)
 {
     reset_connection ();
 
-    socket = new Socket (url.get_host ().c_str (), url.get_port () != 0 ? url.get_port () : 80);
+    socket = new Socket (host, port);
 
     if (socket->is_connected ()) {
-        std::string request = "GET " + url.get_path () + " HTTP/1.1\r\n";
-        request += "Host: " + url.get_host () + "\r\n";
+        std::string request = "GET " + path + " HTTP/1.1\r\n";
+        request += "Host: " + host + "\r\n";
         request += "User-Agent: " + USER_AGENT +"\r\n";
 
         if (start != -1) {
@@ -95,15 +95,15 @@ HttpConnection::send_get_request (const Url &url, int start, int end)
 }
 
 bool
-HttpConnection::send_head_request (const Url &url)
+HttpConnection::send_head_request (const std::string &path)
 {
     reset_connection ();
 
-    socket = new Socket (url.get_host ().c_str (), url.get_port () != 0 ? url.get_port () : 80);
+    socket = new Socket (host, port);
 
     if (socket->is_connected ()) {
-        std::string request = "HEAD " + url.get_path () + " HTTP/1.1\r\n";
-        request += "Host: " + url.get_host () + "\r\n";
+        std::string request = "HEAD " + path + " HTTP/1.1\r\n";
+        request += "Host: " + host + "\r\n";
         request += "User-Agent: " + USER_AGENT +"\r\n";
 
         LOG_DEBUG ("Http Head Request:\n" + request);
@@ -119,15 +119,15 @@ HttpConnection::send_head_request (const Url &url)
 }
 
 bool
-HttpConnection::send_post_request (const Url &url, std::map<std::string, std::string> &post_data)
+HttpConnection::send_post_request (const std::string &path, std::map<std::string, std::string> &post_data)
 {
     reset_connection ();
 
-    socket = new Socket (url.get_host ().c_str (), url.get_port () != 0 ? url.get_port () : 80);
+    socket = new Socket (host, port);
 
     if (socket->is_connected ()) {
-        std::string request = "POST " + url.get_path () + " HTTP/1.1\r\n";
-        request += "Host: " + url.get_host () + "\r\n";
+        std::string request = "POST " + path + " HTTP/1.1\r\n";
+        request += "Host: " + host + "\r\n";
         request += "User-Agent: " + USER_AGENT +"\r\n";
         request += "Content-Type: application/x-www-form-urlencoded\r\n";
 
@@ -136,14 +136,14 @@ HttpConnection::send_post_request (const Url &url, std::map<std::string, std::st
         std::map<std::string, std::string>::iterator iter;
         for (iter = post_data.begin (); iter != post_data.end (); iter++) {
             post_str += (*iter).first + "="
-                      + Url::encode ((*iter).second) + "&";
+                      + Utils::escape ((*iter).second) + "&";
         }
 
         if (post_str.size () > 0) {
             post_str.erase (post_str.size () - 1);
             request += "Content-Length: " + Utils::formatInt (post_str.size ()) + "\r\n";
         } else {
-            LOG_DEBUG ("Invalid post request: " + url.get_url ());
+            LOG_DEBUG ("Invalid post request: " + path);
             return false;
         }
 

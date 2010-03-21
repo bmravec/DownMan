@@ -27,7 +27,6 @@ class HttpConnection;
 #include <string>
 #include <map>
 
-#include "url.h"
 #include "socket.h"
 
 /**
@@ -40,48 +39,46 @@ class HttpConnection {
         /**
          * Created un-associated connection.
          */
-        HttpConnection ();
+        HttpConnection (const std::string &h, int p);
         ~HttpConnection ();
 
         /**
          * Initiate a http get request.
-         * Connect to host specified in the url and starts a get request using
-         * the path given in the url.  After the call is completed, the
-         * connection is ready to have data read from it.  Subsequent calls to
-         * any request method will reset the connection and start a new one.
-         * @param url resource to connect to and download
+         * Starts a get request using the path given.  After the call is
+         * completed, the connection is ready to have data read from it.
+         * Subsequent calls to any request method will reset the connection and
+         * start a new one.
+         * @param path resource to download
          * @param start
          * @param end
          * @return true if the connection was successful, false otherwise
          */
-        bool send_get_request (const Url &url, int start=-1, int end=-1);
+        bool send_get_request (const std::string &path, int start=-1, int end=-1);
 
         /**
          * Initiate a http head request.
-         * Connect to host specified in the url and start a head request using
-         * the path given in the url.  After the call is completed, all the
-         * necessary data is retrieved and available with the get_* methods.
-         * Subsiquent calls to any request method will reset the connection and
-         * start a new one.
-         * @param url resource to connect to and retrieve information about
+         * Start a head request using the path given.  After the call is
+         * completed, all the necessary data is retrieved and available with the
+         * get_* methods.  Subsiquent calls to any request method will reset the
+         * connection and start a new one.
+         * @param path resource to retrieve information about
          * @return true if the connection was successful, false otherwise
          */
-        bool send_head_request (const Url &url);
+        bool send_head_request (const std::string &path);
 
         /**
          * Initiate a http post request.
-         * Connect to host specified in the url and start a post request using
-         * the path given in the url and the data given in post_data.  The
-         * post_data is correctly encoded and send in the body of the post
-         * request.  After the call is completed, the connection is ready to
-         * have data read from it.  Subsiquent calls to any request method will
-         * reset the connection and start a new one.
-         * @param url resource to connect to and retrieve information about
+         * Start a post request using the path given in the url and the data
+         * given in post_data.  The post_data is correctly encoded and send in
+         * the body of the post request.  After the call is completed, the
+         * connection is ready to have data read from it.  Subsiquent calls to
+         * any request method will reset the connection and start a new one.
+         * @param path resource to retrieve information about
          * @param post_data dictionary to be encoded and send as the body of the
          *                  post request
          * @return true if the connection was successful, false otherwise
          */
-        bool send_post_request (const Url &url, std::map<std::string, std::string> &post_data);
+        bool send_post_request (const std::string &path, std::map<std::string, std::string> &post_data);
 
         /**
          * Read data from the connection
@@ -120,7 +117,8 @@ class HttpConnection {
     private:
         static const std::string USER_AGENT;
 
-        Url *url;
+        std::string host;
+        int port;
         Socket *socket;
 
         std::map<std::string, std::string> header;
