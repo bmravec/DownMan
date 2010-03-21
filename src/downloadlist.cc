@@ -92,7 +92,7 @@ DownloadList::pause_download (Download *d)
 void
 DownloadList::delete_download (Download *d)
 {
-    std::cout << "DownloadList::Delete download: " << d->get_name () << std::endl;
+    std::cout << "DownloadList::Delete download: " << d->get_display_name () << std::endl;
     //TODO: Delete from hard disk
 
     remove_download (d);
