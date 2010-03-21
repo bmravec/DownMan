@@ -21,8 +21,7 @@
 
 #include "download-factory.h"
 
-#include "http-download.h"
-#include "ftp-download.h"
+#include "download-objects.h"
 
 DownloadFactory::DownloadFactory ()
 {
@@ -39,12 +38,16 @@ DownloadFactory::create_download (Url &url)
 {
     Download *d = NULL;
 
-    if (url.get_proto () == "http") {
-        d = new HttpDownload (url);
-    } else if (url.get_proto () == "ftp") {
-        d = new FtpDownload (url);
+    std::vector<std::string> m;
+    for (int i = 0; dos[i].regex; i++) {
+        if (dos[i].regex->find (url.get_url (), m)) {
+            d = dos[i].func_vec (m);
+            if (d != NULL) {
+                return d;
+            }
+        }
     }
-
+    
     return d;
 }
 
@@ -53,12 +56,15 @@ DownloadFactory::build_download (std::map<std::string, std::string> &data)
 {
     Download *d = NULL;
 
-    if (data[Download::KEY_MATCH] == "http") {
-        d = new HttpDownload ();
-    } else if (data[Download::KEY_MATCH] == "ftp") {
-        d = new FtpDownload ();
+    for (int i = 0; dos[i].regex; i++) {
+        if (*dos[i].regex == data[Download::KEY_MATCH]) {
+            d = dos[i].func ();
+            if (d != NULL) {
+                break;
+            }
+        }
     }
-
+    
     if (d != NULL) {
         if (d->startup (data)) {
             return d;
