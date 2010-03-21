@@ -38,7 +38,7 @@ class Browser {
         bool load_page (const Url &url);
         bool send_post (const Url &url, std::map<std::string, std::string> &post_data);
 
-        bool find (std::string &str, std::vector<std::string> &m);
+        bool find (const std::string &str, std::vector<std::string> &m);
 
     private:
         std::string buff;

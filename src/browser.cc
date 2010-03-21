@@ -35,11 +35,11 @@ Browser::~Browser ()
 bool
 Browser::load_page (const Url &url)
 {
-    HttpConnection conn;
+    HttpConnection conn (url.get_host (), url.get_port ());
 
     buff.clear ();
 
-    if (conn.send_get_request (url)) {
+    if (conn.send_get_request (url.get_path ())) {
         char *tbuff = new char[5120];
 
         int len;
@@ -58,11 +58,11 @@ Browser::load_page (const Url &url)
 bool
 Browser::send_post (const Url &url, std::map<std::string,std::string> &post_data)
 {
-    HttpConnection conn;
+    HttpConnection conn (url.get_host (), url.get_port ());
 
     buff.clear ();
 
-    if (conn.send_post_request (url, post_data)) {
+    if (conn.send_post_request (url.get_path (), post_data)) {
         char *tbuff = new char[5120];
 
         int len;
@@ -79,7 +79,7 @@ Browser::send_post (const Url &url, std::map<std::string,std::string> &post_data
 }
 
 bool
-Browser::find (std::string &str, std::vector<std::string> &m)
+Browser::find (const std::string &str, std::vector<std::string> &m)
 {
     DRegex regex (str);
 
