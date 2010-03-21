@@ -24,19 +24,19 @@ class HttpDownload;
 #ifndef __HTTP_DOWNLOAD_H__
 #define __HTTP_DOWNLOAD_H__
 
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <map>
 #include <pthread.h>
+#include <vector>
 
 #include "download.h"
-#include "url.h"
+#include "dregex.h"
 
 class HttpDownload : public Download {
     public:
         HttpDownload ();
-        HttpDownload (Url &url);
+        HttpDownload (std::vector<std::string> &m);
         ~HttpDownload ();
 
         void start_get_info ();
@@ -46,9 +46,23 @@ class HttpDownload : public Download {
         bool startup (std::map<std::string,std::string> &data);
         bool shutdown (std::map<std::string, std::string> &data);
 
+        static Download *create (std::vector<std::string> &m) { return new HttpDownload (m); }
+        static Download *create () { return new HttpDownload (); }
+        static const DRegex MATCH_REGEX;
+
+        static const std::string KEY_LOCAL_PATH;
+        static const std::string KEY_REMOTE_PATH;
+        static const std::string KEY_REMOTE_HOST;
+        static const std::string KEY_REMOTE_PORT;
+
     private:
         void run_info ();
         void run_download ();
+
+        std::string local_path;
+        std::string remote_host;
+        int remote_port;
+        std::string remote_path;
 
         static void *static_run_info (void *download);
         static void *static_run_download (void *download);

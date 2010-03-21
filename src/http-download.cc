@@ -26,16 +26,31 @@
 #include "utils.h"
 #include "socket.h"
 
-HttpDownload::HttpDownload () :
-    Download ("http"), running (false)
+const DRegex HttpDownload::MATCH_REGEX ("http://([^/:]+?)(:[0-9]+)?(/[^[:space:]]+/([^[:space:]\\?]+))(\\?[^[:space:]]+)?");
+
+const std::string HttpDownload::KEY_LOCAL_PATH ("local-path");
+const std::string HttpDownload::KEY_REMOTE_PATH ("remote-path");
+const std::string HttpDownload::KEY_REMOTE_HOST ("remote-host");
+const std::string HttpDownload::KEY_REMOTE_PORT ("remote-port");
+
+HttpDownload::HttpDownload () : running (false)
 {
 
 }
 
-HttpDownload::HttpDownload (Url &url) :
-    Download (url, "http"), running (false)
+HttpDownload::HttpDownload (std::vector<std::string> &m) : running (false),
+    remote_port (0)
 {
-    filename = Utils::createDownloadFilename (url.get_name ());
+    local_path = Utils::createDownloadFilename (m[4]);
+
+    display_name = m[4];
+
+    remote_host = m[1];
+    remote_path = m[3];
+
+    if (m[2].size () > 0) {
+        remote_port = Utils::parseInt (m[2].substr (1));
+    }
 }
 
 HttpDownload::~HttpDownload ()
@@ -72,17 +87,21 @@ HttpDownload::pause ()
 bool
 HttpDownload::startup (std::map<std::string,std::string> &data)
 {
-    if (data[KEY_MATCH] == match_str && data.count (KEY_NAME) > 0 &&
-        data.count (KEY_URL) > 0 && data.count (KEY_DOWNLOADED) > 0 &&
-        data.count (KEY_SIZE) > 0 && data.count (KEY_STATE) > 0 &&
-        data.count (KEY_LOCATION) > 0 && data.count (KEY_MATCH) > 0) {
+    if (MATCH_REGEX == data[KEY_MATCH] && data.count (KEY_DISPLAY_NAME) > 0 &&
+        data.count (KEY_DOWNLOADED) > 0 && data.count (KEY_SIZE) > 0 &&
+        data.count (KEY_STATE) > 0 && data.count (KEY_LOCAL_PATH) > 0 &&
+        data.count (KEY_REMOTE_HOST) > 0 && data.count (KEY_REMOTE_PORT) > 0 &&
+        data.count (KEY_REMOTE_PATH) > 0) {
 
-        name = data[KEY_NAME];
-        url = data[KEY_URL];
+        display_name = data[KEY_DISPLAY_NAME];
         dtrans = Utils::parseInt (data[KEY_DOWNLOADED]);
         dsize = Utils::parseInt (data[KEY_SIZE]);
         state = (DownloadState) Utils::parseInt (data[KEY_STATE]);
-        filename = data[KEY_LOCATION];
+//        filename = data[KEY_LOCATION];
+        local_path= data[KEY_LOCAL_PATH];
+        remote_path = data[KEY_REMOTE_PATH];
+        remote_host = data[KEY_REMOTE_HOST];
+        remote_port = Utils::parseInt (data[KEY_REMOTE_PORT]);
 
         return true;
     } else {
@@ -102,13 +121,15 @@ HttpDownload::shutdown (std::map<std::string, std::string> &data)
         state = STATE_QUEUED;
     }
 
-    data[KEY_NAME] = name;
-    data[KEY_URL] = url.get_url ();
+    data[KEY_DISPLAY_NAME] = display_name;
     data[KEY_DOWNLOADED] = Utils::formatInt (dtrans);
     data[KEY_SIZE] = Utils::formatInt (dsize);
     data[KEY_STATE] = Utils::formatInt ((int) state);
-    data[KEY_LOCATION] = filename;
-    data[KEY_MATCH] = match_str;
+    data[KEY_MATCH] = MATCH_REGEX.get_string ();
+    data[KEY_LOCAL_PATH] = local_path;
+    data[KEY_REMOTE_PATH] = remote_path;
+    data[KEY_REMOTE_HOST] = remote_host;
+    data[KEY_REMOTE_PORT] = Utils::formatInt (remote_port);
 
     return true;
 }
@@ -121,8 +142,8 @@ HttpDownload::run_info ()
     running = true;
     set_state (STATE_INFO);
 
-    HttpConnection conn;
-    conn.send_head_request (url);
+    HttpConnection conn (remote_host, remote_port);
+    conn.send_head_request (remote_path);
 
     dsize = conn.get_content_length ();
 
@@ -148,11 +169,11 @@ HttpDownload::run_download ()
 
     so = SpeedMonitor::Instance ().get (this);
 
-    HttpConnection conn;
-    if (Utils::getFileSize (filename) == dtrans) {
-        conn.send_get_request (url, dtrans);
+    HttpConnection conn (remote_host, remote_port);
+    if (Utils::getFileSize (local_path) == dtrans) {
+        conn.send_get_request (remote_path, dtrans);
     } else {
-        conn.send_get_request (url);
+        conn.send_get_request (remote_path);
     }
 
     int rc = conn.get_response_code ();
@@ -161,9 +182,9 @@ HttpDownload::run_download ()
         set_state (STATE_NOT_FOUND);
     } else {
         if (rc == 206) {
-            ofile.open (filename.c_str (), std::ios::out | std::ios::binary | std::ios::app);
+            ofile.open (local_path.c_str (), std::ios::out | std::ios::binary | std::ios::app);
         } else {
-            ofile.open (filename.c_str (), std::ios::out | std::ios::binary);
+            ofile.open (local_path.c_str (), std::ios::out | std::ios::binary);
             dtrans = 0;
         }
 
