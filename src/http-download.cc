@@ -33,13 +33,13 @@ const std::string HttpDownload::KEY_REMOTE_PATH ("remote-path");
 const std::string HttpDownload::KEY_REMOTE_HOST ("remote-host");
 const std::string HttpDownload::KEY_REMOTE_PORT ("remote-port");
 
-HttpDownload::HttpDownload () : running (false)
+HttpDownload::HttpDownload () : running (false), remote_port (0)
 {
 
 }
 
-HttpDownload::HttpDownload (std::vector<std::string> &m) : running (false),
-    remote_port (0)
+HttpDownload::HttpDownload (std::vector<std::string> &m) :
+    running (false), remote_port (0)
 {
     local_path = Utils::createDownloadFilename (m[4]);
 
@@ -97,7 +97,7 @@ HttpDownload::startup (std::map<std::string,std::string> &data)
         dtrans = Utils::parseInt (data[KEY_DOWNLOADED]);
         dsize = Utils::parseInt (data[KEY_SIZE]);
         state = (DownloadState) Utils::parseInt (data[KEY_STATE]);
-//        filename = data[KEY_LOCATION];
+
         local_path= data[KEY_LOCAL_PATH];
         remote_path = data[KEY_REMOTE_PATH];
         remote_host = data[KEY_REMOTE_HOST];
